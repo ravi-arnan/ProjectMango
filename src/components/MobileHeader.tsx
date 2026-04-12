@@ -1,0 +1,18 @@
+import Icon from './Icon'
+
+export default function MobileHeader() {
+  return (
+    <header className="fixed top-0 w-full max-w-[390px] h-14 bg-[#fff8f5]/80 backdrop-blur-xl flex items-center justify-between px-6 z-50 lg:hidden">
+      {/* Location chip */}
+      <div className="flex items-center gap-1 text-stone-600">
+        <Icon name="location_on" size="18px" className="text-primary" />
+        <span className="text-sm font-medium">Denpasar, Bali</span>
+      </div>
+
+      {/* User avatar */}
+      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+        <span className="text-white text-xs font-bold">LT</span>
+      </div>
+    </header>
+  )
+}

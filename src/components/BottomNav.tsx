@@ -1,0 +1,39 @@
+import { NavLink } from 'react-router-dom'
+import Icon from './Icon'
+
+const tabs = [
+  { to: '/app', icon: 'home', label: 'Home' },
+  { to: '/app/peta', icon: 'map', label: 'Peta' },
+  { to: '/app/prediksi', icon: 'query_stats', label: 'Prediksi' },
+  { to: '/app/profil', icon: 'person', label: 'Profil' },
+]
+
+export default function BottomNav() {
+  return (
+    <nav className="fixed bottom-0 w-full max-w-[390px] z-50 flex justify-around items-center px-4 pt-3 pb-6 h-20 bg-[#fff8f5]/80 backdrop-blur-xl rounded-t-3xl shadow-[0_-4px_24px_rgba(31,27,23,0.06)] lg:hidden">
+      {tabs.map((tab) => (
+        <NavLink
+          key={tab.to}
+          to={tab.to}
+          end={tab.to === '/app'}
+          className={({ isActive }) =>
+            `flex flex-col items-center justify-center ${
+              isActive
+                ? 'bg-cyan-50 text-cyan-700 rounded-2xl px-5 py-1'
+                : 'text-stone-400'
+            }`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <Icon name={tab.icon} filled={isActive} />
+              <span className="text-[10px] font-semibold uppercase tracking-wider mt-1">
+                {tab.label}
+              </span>
+            </>
+          )}
+        </NavLink>
+      ))}
+    </nav>
+  )
+}
