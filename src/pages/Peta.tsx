@@ -105,7 +105,7 @@ export default function Peta() {
     : null
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full -mx-4 -mb-24 lg:-mx-10 lg:-my-8 w-[calc(100%+2rem)] lg:w-[calc(100%+5rem)]">
       {/* ===== MOBILE VIEW ===== */}
       <div className="lg:hidden relative w-full h-[calc(100vh-56px-80px)]">
         {/* Floating Search */}
@@ -255,7 +255,7 @@ export default function Peta() {
               {/* Buttons */}
               <div className="flex gap-3">
                 <Link
-                  to={`/destinasi/${selectedDestination.id}`}
+                  to={`/app/destinasi/${selectedDestination.id}`}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-primary text-on-primary text-sm font-medium no-underline"
                 >
                   <Icon name="info" size="18px" />
@@ -410,7 +410,7 @@ export default function Peta() {
 
               {/* Button */}
               <Link
-                to={`/destinasi/${selectedDestination.id}`}
+                to={`/app/destinasi/${selectedDestination.id}`}
                 className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-full bg-primary text-on-primary text-sm font-medium no-underline"
               >
                 <Icon name="analytics" size="18px" />

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { destinations, getDensityTextColor, getDensityBgColor } from '../data/destinations'
@@ -79,6 +80,8 @@ export default function DestinationDetail() {
 
   const fullStars = Math.floor(destination.rating)
   const hasHalf = destination.rating % 1 >= 0.25
+  const [isWatchlisted, setIsWatchlisted] = useState(false)
+  const [visitorCount, setVisitorCount] = useState(2)
 
   // Shared sub-components
 
@@ -97,7 +100,17 @@ export default function DestinationDetail() {
         >
           <Icon name="arrow_back_ios_new" size="20px" />
         </Link>
-        <button className="w-10 h-10 rounded-full bg-black/30 backdrop-blur flex items-center justify-center text-white">
+        <button
+          onClick={() => {
+            if (navigator.share) {
+              navigator.share({ title: destination.name, url: window.location.href })
+            } else {
+              navigator.clipboard.writeText(window.location.href)
+              alert('Link disalin!')
+            }
+          }}
+          className="w-10 h-10 rounded-full bg-black/30 backdrop-blur flex items-center justify-center text-white"
+        >
           <Icon name="share" size="20px" />
         </button>
       </div>
@@ -281,7 +294,10 @@ export default function DestinationDetail() {
       <span className="text-sm text-on-surface-variant">
         {destination.reviewCount.toLocaleString('id-ID')} ulasan
       </span>
-      <button className="mt-3 px-5 py-2 border border-outline rounded-full text-sm font-semibold text-primary">
+      <button
+        onClick={() => alert('Fitur ulasan akan segera hadir')}
+        className="mt-3 px-5 py-2 border border-outline rounded-full text-sm font-semibold text-primary"
+      >
         Tulis Ulasan
       </button>
     </div>
@@ -324,16 +340,22 @@ export default function DestinationDetail() {
   const BottomActionBar = () => (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-t border-outline-variant px-4 py-3 flex items-center justify-between lg:hidden">
       <div className="flex gap-2">
-        <button className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-outline text-sm font-semibold text-on-surface">
+        <Link to="/app/peta" className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-outline text-sm font-semibold text-on-surface">
           <Icon name="sensors" size="18px" className="text-error" />
           Live
-        </button>
-        <button className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-outline text-sm font-semibold text-on-surface">
-          <Icon name="bookmark" size="18px" />
-          Watchlist
+        </Link>
+        <button
+          onClick={() => setIsWatchlisted(!isWatchlisted)}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-outline text-sm font-semibold text-on-surface"
+        >
+          <Icon name="bookmark" filled={isWatchlisted} size="18px" />
+          {isWatchlisted ? 'Tersimpan' : 'Watchlist'}
         </button>
       </div>
-      <button className="px-5 py-2.5 bg-primary text-on-primary rounded-full font-semibold text-sm shadow-md">
+      <button
+        onClick={() => alert('Fitur pemesanan tiket akan segera hadir!')}
+        className="px-5 py-2.5 bg-primary text-on-primary rounded-full font-semibold text-sm shadow-md"
+      >
         Pesan Tiket
       </button>
     </div>
@@ -409,20 +431,29 @@ export default function DestinationDetail() {
             Jumlah Pengunjung
           </label>
           <div className="flex items-center gap-3">
-            <button className="w-9 h-9 rounded-full border border-outline-variant flex items-center justify-center text-on-surface">
+            <button
+              onClick={() => setVisitorCount((c) => Math.max(1, c - 1))}
+              className="w-9 h-9 rounded-full border border-outline-variant flex items-center justify-center text-on-surface"
+            >
               <Icon name="remove" size="18px" />
             </button>
-            <span className="text-lg font-semibold text-on-surface w-8 text-center">2</span>
-            <button className="w-9 h-9 rounded-full border border-outline-variant flex items-center justify-center text-on-surface">
+            <span className="text-lg font-semibold text-on-surface w-8 text-center">{visitorCount}</span>
+            <button
+              onClick={() => setVisitorCount((c) => c + 1)}
+              className="w-9 h-9 rounded-full border border-outline-variant flex items-center justify-center text-on-surface"
+            >
               <Icon name="add" size="18px" />
             </button>
           </div>
         </div>
         <div className="flex items-center justify-between pt-2 border-t border-outline-variant">
           <span className="text-sm text-on-surface-variant">Total Harga</span>
-          <span className="text-xl font-headline font-bold text-on-surface">Rp 120.000</span>
+          <span className="text-xl font-headline font-bold text-on-surface">Rp {(visitorCount * 60000).toLocaleString('id-ID')}</span>
         </div>
-        <button className="w-full py-3 bg-primary text-on-primary rounded-full font-semibold text-sm shadow-md">
+        <button
+          onClick={() => alert('Fitur pemesanan tiket akan segera hadir!')}
+          className="w-full py-3 bg-primary text-on-primary rounded-full font-semibold text-sm shadow-md"
+        >
           Book Tickets Now
         </button>
       </div>

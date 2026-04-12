@@ -31,7 +31,7 @@ export default function Profil() {
             <div className="w-[72px] h-[72px] rounded-full bg-primary flex items-center justify-center">
               <span className="text-on-primary text-xl font-bold">LT</span>
             </div>
-            <button className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center shadow-md">
+            <button onClick={() => alert('Fitur ubah foto profil akan segera hadir!')} className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center shadow-md">
               <Icon name="edit" size="14px" className="text-on-surface" />
             </button>
           </div>
@@ -57,7 +57,16 @@ export default function Profil() {
         {/* Settings List */}
         <div className="bg-surface-container-low rounded-2xl p-4 flex flex-col gap-1">
           {settingsItems.map((item) => (
-            <div key={item.label} className="flex items-center gap-3 py-3">
+            <div
+              key={item.label}
+              className="flex items-center gap-3 py-3 cursor-pointer"
+              onClick={() => {
+                if (item.label === 'Bahasa') alert('Fitur pengaturan bahasa akan segera hadir!')
+                else if (item.label === 'Privasi') alert('Fitur pengaturan privasi akan segera hadir!')
+                else if (item.label === 'Bantuan') alert('Hubungi kami di support@balisense.id')
+                else if (item.label === 'Tentang') alert('BaliSense v1.0.0\nDibangun untuk AI Impact Challenge')
+              }}
+            >
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                 <Icon name={item.icon} size="20px" className="text-primary" />
               </div>
@@ -137,11 +146,18 @@ export default function Profil() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <button className="bg-primary text-on-primary text-sm font-bold px-6 py-2.5 rounded-full flex items-center gap-2">
+                <button onClick={() => alert('Fitur edit profil akan segera hadir!')} className="bg-primary text-on-primary text-sm font-bold px-6 py-2.5 rounded-full flex items-center gap-2">
                   <Icon name="edit" size="16px" />
                   Edit Profile
                 </button>
-                <button className="bg-surface-container-high text-on-surface text-sm font-bold px-6 py-2.5 rounded-full flex items-center gap-2">
+                <button onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: 'Profil BaliSense', url: window.location.href })
+                  } else {
+                    navigator.clipboard.writeText(window.location.href)
+                    alert('Link profil disalin!')
+                  }
+                }} className="bg-surface-container-high text-on-surface text-sm font-bold px-6 py-2.5 rounded-full flex items-center gap-2">
                   <Icon name="share" size="16px" />
                   Share Profile
                 </button>
@@ -193,6 +209,14 @@ export default function Profil() {
             {desktopSettings.map((item) => (
               <button
                 key={item.label}
+                onClick={() => {
+                  if (item.label === 'Notifications') alert('Fitur pengaturan notifikasi akan segera hadir!')
+                  else if (item.label === 'Privacy & Security') alert('Fitur pengaturan privasi akan segera hadir!')
+                  else if (item.label === 'Language') alert('Fitur pengaturan bahasa akan segera hadir!')
+                  else if (item.label === 'Help & Support') alert('Hubungi kami di support@balisense.id')
+                  else if (item.label === 'Appearance') alert('Fitur pengaturan tampilan akan segera hadir!')
+                  else if (item.label === 'Logout') alert('Fitur logout akan segera hadir!')
+                }}
                 className="flex items-center gap-4 p-4 rounded-2xl hover:bg-surface-container-high/50 transition-all hover:translate-x-1 text-left"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -221,9 +245,9 @@ export default function Profil() {
               <h3 className="text-2xl font-bold text-white">Sukai BaliSense?</h3>
               <p className="text-white/60 text-sm mt-1">Bantu kami mewujudkan pariwisata berkelanjutan di Bali</p>
             </div>
-            <button className="bg-white text-stone-900 font-bold text-sm px-6 py-3 rounded-full shrink-0">
+            <a href="https://balisense.id" target="_blank" rel="noopener noreferrer" className="bg-white text-stone-900 font-bold text-sm px-6 py-3 rounded-full shrink-0">
               Kunjungi Website
-            </button>
+            </a>
           </div>
         </div>
       </div>

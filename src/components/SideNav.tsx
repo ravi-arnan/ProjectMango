@@ -50,7 +50,7 @@ export default function SideNav() {
       </nav>
 
       {/* Bottom button */}
-      <button className="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-xl font-bold">
+      <button onClick={() => alert('Fitur analisis baru akan segera hadir!')} className="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-xl font-bold">
         New Analysis
       </button>
     </aside>

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { destinations, getDensityBgColor, getDensityTextColor } from '../data/destinations'
 
@@ -57,6 +56,7 @@ function getImpactBadge(impact: string) {
 
 export default function Prediksi() {
   const [selectedDestination, setSelectedDestination] = useState(destinations[0])
+  const [chartMode, setChartMode] = useState<'probability' | 'visitors'>('probability')
 
   const tanahLot = destinations.find((d) => d.id === 'tanah-lot')!
   const ubudMonkey = destinations.find((d) => d.id === 'ubud-monkey-forest')!
@@ -358,7 +358,7 @@ export default function Prediksi() {
               )
             })}
             {/* Add destination card */}
-            <button className="border-2 border-dashed border-outline-variant rounded-2xl p-5 flex flex-col items-center justify-center gap-2 text-on-surface-variant hover:border-primary hover:text-primary transition-colors">
+            <button onClick={() => alert('Fitur tambah destinasi akan segera hadir!')} className="border-2 border-dashed border-outline-variant rounded-2xl p-5 flex flex-col items-center justify-center gap-2 text-on-surface-variant hover:border-primary hover:text-primary transition-colors">
               <div className="w-12 h-12 rounded-full border-2 border-dashed border-current flex items-center justify-center">
                 <Icon name="add" size="24px" />
               </div>
@@ -379,10 +379,16 @@ export default function Prediksi() {
                 </p>
               </div>
               <div className="flex items-center gap-1 bg-surface-container rounded-full p-1">
-                <button className="bg-primary text-on-primary text-xs font-bold px-4 py-2 rounded-full">
+                <button
+                  onClick={() => setChartMode('probability')}
+                  className={`text-xs font-bold px-4 py-2 rounded-full ${chartMode === 'probability' ? 'bg-white shadow-sm text-primary' : 'text-on-surface-variant'}`}
+                >
                   Probability
                 </button>
-                <button className="text-on-surface-variant text-xs font-bold px-4 py-2 rounded-full">
+                <button
+                  onClick={() => setChartMode('visitors')}
+                  className={`text-xs font-bold px-4 py-2 rounded-full ${chartMode === 'visitors' ? 'bg-white shadow-sm text-primary' : 'text-on-surface-variant'}`}
+                >
                   Visitors
                 </button>
               </div>
@@ -519,17 +525,17 @@ export default function Prediksi() {
             </h3>
           </div>
           <div className="flex items-center gap-3 shrink-0 ml-8">
-            <button className="bg-white text-primary font-bold text-sm px-6 py-3 rounded-full flex items-center gap-2">
+            <button onClick={() => alert('Laporan akan segera tersedia untuk diunduh!')} className="bg-white text-primary font-bold text-sm px-6 py-3 rounded-full flex items-center gap-2">
               <Icon name="download" size="18px" />
               Download Report
             </button>
-            <Link
-              to="/app/live"
+            <button
+              onClick={() => alert('Fitur live cam akan segera hadir!')}
               className="bg-white/20 backdrop-blur-sm text-white font-bold text-sm px-6 py-3 rounded-full flex items-center gap-2"
             >
               <Icon name="videocam" size="18px" />
               Live Cam
-            </Link>
+            </button>
           </div>
         </div>
       </div>

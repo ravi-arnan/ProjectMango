@@ -2,32 +2,34 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
 
-const navLinks = ['Features', 'Map', 'Forecasts']
+const navLinks = [
+  { label: 'Features', href: '#features' },
+  { label: 'Map', href: '#map' },
+  { label: 'Forecasts', href: '#forecasts' },
+]
 
 export default function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-white text-stone-900">
-      {/* ===================== TOP NAV BAR ===================== */}
+    <div className="min-h-screen bg-white text-on-surface font-body">
+      {/* ==================== TOP NAV ==================== */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#fff8f5]/80 backdrop-blur-xl border-b border-stone-200/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <Icon name="travel_explore" size="18px" className="text-on-primary" />
-            </div>
-            <span className="text-lg font-extrabold text-on-surface">BaliSense</span>
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 h-14 flex items-center justify-between">
+          <span className="text-xl font-extrabold text-cyan-900 font-headline tracking-tight">BaliSense</span>
 
-          {/* Desktop nav links */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
+          <div className="hidden md:flex items-center gap-8 font-headline font-medium text-sm tracking-tight">
+            {navLinks.map((link, i) => (
               <a
-                key={link}
-                href={`#${link.toLowerCase()}`}
-                className="text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors"
+                key={link.label}
+                href={link.href}
+                className={
+                  i === 0
+                    ? 'text-cyan-700 border-b-2 border-cyan-600 pb-0.5'
+                    : 'text-slate-600 hover:text-cyan-600 transition-colors'
+                }
               >
-                {link}
+                {link.label}
               </a>
             ))}
           </div>
@@ -35,359 +37,393 @@ export default function Landing() {
           <div className="flex items-center gap-3">
             <Link
               to="/app"
-              className="bg-primary text-on-primary text-sm font-bold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity"
+              className="bg-primary hover:opacity-90 transition-opacity text-on-primary px-5 py-2 rounded-lg font-headline font-bold text-sm"
             >
               Access App
             </Link>
-            <button
-              className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              <Icon name={mobileMenuOpen ? 'close' : 'menu'} size="24px" className="text-on-surface" />
+            <button className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              <Icon name={mobileMenuOpen ? 'close' : 'menu'} className="text-on-surface" />
             </button>
           </div>
         </div>
 
-        {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#fff8f5]/95 backdrop-blur-xl border-t border-stone-200/50 px-4 py-4 flex flex-col gap-3">
+          <div className="md:hidden bg-[#fff8f5]/95 backdrop-blur-xl border-t border-stone-200/50 px-6 py-4 flex flex-col gap-3">
             {navLinks.map((link) => (
               <a
-                key={link}
-                href={`#${link.toLowerCase()}`}
+                key={link.label}
+                href={link.href}
                 className="text-sm font-medium text-on-surface-variant py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {link}
+                {link.label}
               </a>
             ))}
           </div>
         )}
       </nav>
 
-      {/* ===================== HERO SECTION ===================== */}
-      <section className="relative h-[600px] lg:h-[870px] overflow-hidden">
-        <img
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQZrkgR9E8aRTbbl2lzoV3nu0Dzn7NKA7v6W8NR5Stvcu-r73ly8vaq19HsCEJoEf0IX-jcz4U-htDzF5z7RUnC_qi6Eyk7o8ut2PUvmA9lvqYMXNXTXwUH4gQ4nmZ6giUW6teZIbEzhUTJkqGpfWM0xg8BAq1qX8Uo39bfNtIUGlrV6QK_qE4wzVr5-Wc3eh8yO2qO2eEq9kf4lmNd7o4dPZdJBR80IWol_0y3B-tVusuHLO528WS1jeaAIxGasz8OGeZ3tDdkkbG"
-          alt="Bali temple"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-end pb-16 lg:pb-24">
-          <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-bold px-3.5 py-1.5 rounded-full w-fit mb-5">
-            <Icon name="auto_awesome" size="14px" />
-            Island Intelligence
-          </span>
-          <h1 className="text-4xl lg:text-6xl font-extrabold text-white max-w-3xl leading-tight">
-            Travel Smarter,{' '}
-            <span className="text-primary-container">Avoid the Crowds</span>
-          </h1>
-          <p className="text-white/70 text-base lg:text-lg max-w-xl mt-4">
-            Real-time crowd monitoring powered by AI. Know before you go -- find the perfect moment to visit Bali's most beautiful destinations.
-          </p>
-          <div className="flex flex-wrap gap-3 mt-8">
-            <button className="bg-primary text-on-primary font-bold text-sm px-6 py-3.5 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity">
-              <Icon name="install_mobile" size="18px" />
-              Add to Home Screen
-            </button>
-            <Link
-              to="/app/peta"
-              className="bg-white/15 backdrop-blur-sm text-white font-bold text-sm px-6 py-3.5 rounded-full flex items-center gap-2 hover:bg-white/25 transition-colors"
-            >
-              <Icon name="map" size="18px" />
-              View Live Map
-            </Link>
-          </div>
-        </div>
-      </section>
+      <main className="pt-14">
+        {/* ==================== HERO ==================== */}
+        <section className="relative h-[520px] sm:h-[600px] lg:h-[85vh] min-h-[600px] overflow-hidden mx-3 sm:mx-4 lg:mx-6 mt-3 rounded-2xl lg:rounded-3xl">
+          <img
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPkyKpOUGRxjZaYoSPnwTv6kQxiuRodxfFVuy8pf_OspiMe_t_ARtW81u-N0HRKbzRZWPEUaGU4XiIYxxpDWxPE5CYvzeKAjwgL6narP9awa6i2AqpxdKgd9IXw76EGOdb2QtQbSYJWxmkAX_hq56a30lKRNF30uZDX5InyuU8A8vNcwEar1bcUPUBIZNmATetRwRlhNUuEGyZ_-bVLdc3N4BsYh9F7ruytFA4eiCXBjchmVjh9OCMZJGJuLCj7n0wre71c7Eorp81"
+            alt="Tanah Lot temple at sunset"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-      {/* ===================== FEATURE GRID (BENTO) ===================== */}
-      <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-on-surface">Built for Smarter Travel</h2>
-          <p className="text-on-surface-variant mt-3 max-w-lg mx-auto">
-            Everything you need to navigate Bali's tourism landscape with confidence
-          </p>
-        </div>
-
-        <div className="grid grid-cols-12 gap-4">
-          {/* Real-time density tracking */}
-          <div className="col-span-12 lg:col-span-7 bg-surface-container-low rounded-[2rem] p-8">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Icon name="speed" size="22px" className="text-primary" />
-              </div>
-              <h3 className="text-lg font-bold text-on-surface">Real-time density tracking</h3>
-            </div>
-            <p className="text-sm text-on-surface-variant mb-6 max-w-md">
-              Monitor crowd levels at every destination in real-time. Get instant updates so you always know the best time to visit.
+          <div className="relative z-10 h-full flex flex-col justify-end px-6 sm:px-10 lg:px-14 pb-10 lg:pb-14 max-w-2xl">
+            <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white/90 text-[10px] font-bold px-3 py-1 rounded-full w-fit mb-4 uppercase tracking-widest">
+              Island Intelligence
+            </span>
+            <h1 className="text-3xl sm:text-4xl lg:text-[52px] font-headline font-extrabold text-white leading-[1.1] mb-4">
+              Travel Smarter,<br />Avoid the Crowds
+            </h1>
+            <p className="text-white/70 text-sm sm:text-base leading-relaxed mb-8 max-w-lg">
+              Experience Bali's serenity exactly how it was meant to be. Our AI-driven
+              forecasts help you find the quietest moments at the island's most iconic destinations.
             </p>
-            <div className="flex flex-col gap-3">
-              {[
-                { name: 'Tanah Lot', density: 87, level: 'Peak', color: 'bg-error' },
-                { name: 'Ubud Monkey Forest', density: 45, level: 'Moderate', color: 'bg-amber-500' },
-                { name: 'Bedugul', density: 22, level: 'Ideal', color: 'bg-primary' },
-              ].map((d) => (
-                <div key={d.name} className="bg-white/60 rounded-xl p-4 flex items-center gap-4">
-                  <div className={`w-3 h-3 rounded-full ${d.color} shrink-0`} />
-                  <span className="text-sm font-semibold text-on-surface flex-1">{d.name}</span>
-                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${d.color} text-white`}>
-                    {d.density}% {d.level}
-                  </span>
-                </div>
-              ))}
+            <div className="flex flex-wrap gap-3">
+              <Link
+                to="/app"
+                className="bg-primary text-on-primary font-bold text-sm px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
+              >
+                Add to Home Screen
+              </Link>
+              <a
+                href="#map"
+                className="bg-white/15 backdrop-blur-sm text-white font-bold text-sm px-6 py-3 rounded-xl hover:bg-white/25 transition-colors border border-white/20"
+              >
+                View Live Map
+              </a>
             </div>
           </div>
+        </section>
 
-          {/* 7-day forecasts */}
-          <div className="col-span-12 lg:col-span-5 bg-tertiary-container rounded-[2rem] p-8 flex flex-col">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-on-tertiary-container/10 flex items-center justify-center">
-                <Icon name="analytics" size="22px" className="text-on-tertiary-container" />
-              </div>
-              <h3 className="text-lg font-bold text-on-tertiary-container">7-day crowd forecasts</h3>
-            </div>
-            <p className="text-sm text-on-tertiary-container/70 mb-6">
-              Plan ahead with AI-powered predictions for the week
-            </p>
-            <div className="flex-1 flex items-end gap-2">
-              {[40, 65, 85, 70, 35, 25, 50].map((h, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                  <div
-                    className={`w-full rounded-lg ${
-                      h > 70 ? 'bg-error/80' : h > 50 ? 'bg-amber-500/80' : 'bg-on-tertiary-container/30'
-                    }`}
-                    style={{ height: `${h}px` }}
-                  />
-                  <span className="text-[10px] font-semibold text-on-tertiary-container/60">
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]}
-                  </span>
+        {/* ==================== FEATURES BENTO ==================== */}
+        <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16 lg:py-24">
+          <div className="grid grid-cols-12 gap-4 lg:gap-6">
+            {/* Real-time density tracking */}
+            <div className="col-span-12 lg:col-span-7 bg-surface-container-low rounded-[1.5rem] lg:rounded-[2rem] p-7 lg:p-10 flex flex-col justify-between min-h-[320px]">
+              <div>
+                <div className="w-11 h-11 bg-primary rounded-xl flex items-center justify-center text-white mb-5">
+                  <Icon name="speed" />
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* AI-powered recommendations */}
-          <div className="col-span-12 bg-surface-container-low rounded-[2rem] p-8">
-            <div className="flex flex-col lg:flex-row lg:items-start gap-6">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Icon name="auto_awesome" size="22px" className="text-primary" />
-                  </div>
-                  <h3 className="text-lg font-bold text-on-surface">AI-powered recommendations</h3>
-                </div>
-                <p className="text-sm text-on-surface-variant mb-4 max-w-md">
-                  Get personalized destination suggestions based on your preferences, current crowd levels, and weather conditions.
+                <h3 className="text-xl lg:text-2xl font-headline font-bold text-on-surface mb-3">
+                  Real-time density tracking
+                </h3>
+                <p className="text-on-surface-variant text-sm leading-relaxed max-w-md">
+                  Using anonymized satellite data and ground-level sensors,
+                  we provide live occupancy updates for over 200 locations across Bali.
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {['Hidden Gems', 'Off-Peak Hours', 'Similar Vibes', 'Local Favorites', 'Budget Friendly'].map(
-                    (tag) => (
+              </div>
+              <div className="flex gap-3 mt-6 overflow-x-auto no-scrollbar">
+                <div className="bg-surface-container-lowest p-3.5 rounded-xl min-w-[170px] shadow-sm border border-stone-100">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-[11px] font-bold text-on-surface-variant tracking-wide">ULI KITCHEN</span>
+                    <span className="bg-error/10 text-error px-2.5 py-0.5 rounded-full text-[10px] font-extrabold">BUSY</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+                    <div className="bg-error h-full rounded-full" style={{ width: '85%' }} />
+                  </div>
+                </div>
+                <div className="bg-surface-container-lowest p-3.5 rounded-xl min-w-[170px] shadow-sm border border-stone-100">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-[11px] font-bold text-on-surface-variant tracking-wide">MELASTI BEACH</span>
+                    <span className="bg-primary/10 text-primary px-2.5 py-0.5 rounded-full text-[10px] font-extrabold">CALM</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+                    <div className="bg-primary h-full rounded-full" style={{ width: '20%' }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 7-day crowd forecasts */}
+            <div className="col-span-12 lg:col-span-5 bg-tertiary-container rounded-[1.5rem] lg:rounded-[2rem] p-7 lg:p-10 text-white flex flex-col justify-between min-h-[320px]">
+              <div>
+                <div className="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center mb-5">
+                  <Icon name="analytics" />
+                </div>
+                <h3 className="text-xl lg:text-2xl font-headline font-bold mb-3">
+                  7-day crowd forecasts
+                </h3>
+                <p className="text-white/80 text-sm leading-relaxed">
+                  Plan your itinerary with precision. Our machine learning models predict peaks
+                  based on tourism trends, local ceremonies, and flight data.
+                </p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 mt-6 border border-white/10">
+                <div className="flex items-end gap-2 h-24">
+                  {[38, 55, 42, 80, 62, 48, 30].map((h, i) => (
+                    <div
+                      key={i}
+                      className={`flex-1 rounded-t-md ${i === 3 ? 'bg-white' : 'bg-white/40'}`}
+                      style={{ height: `${h}%` }}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-between mt-3 text-[10px] font-bold opacity-60 uppercase">
+                  {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((d) => (
+                    <span key={d}>{d}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* AI-powered recommendations */}
+            <div className="col-span-12 bg-surface-container-highest rounded-[1.5rem] lg:rounded-[2rem] p-7 lg:p-10">
+              <div className="flex flex-col md:flex-row md:items-start gap-6 lg:gap-10">
+                <div className="flex-1">
+                  <div className="w-11 h-11 bg-primary-container rounded-xl flex items-center justify-center text-white mb-5">
+                    <Icon name="auto_awesome" />
+                  </div>
+                  <h3 className="text-xl lg:text-2xl font-headline font-bold text-on-surface mb-3">
+                    AI-powered recommendations
+                  </h3>
+                  <p className="text-on-surface-variant text-sm leading-relaxed mb-5 max-w-md">
+                    Tailored suggestions that adapt to your style and the current island vibe.
+                    Whether you seek hidden waterfalls or sunset cocktails, BaliSense guides you
+                    to the perfect spot at the perfect time.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {['#HiddenGems', '#QuietMorning', '#SurfReport'].map((tag) => (
                       <span
                         key={tag}
-                        className="bg-primary/10 text-primary text-xs font-bold px-3 py-1.5 rounded-full"
+                        className="px-4 py-1.5 bg-surface-container-low text-on-surface-variant text-xs rounded-full font-medium"
                       >
                         {tag}
                       </span>
-                    )
-                  )}
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-3 shrink-0">
-                <div className="w-[140px] h-[180px] lg:w-[160px] lg:h-[200px] rounded-2xl overflow-hidden">
-                  <img
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOiPb4R_lTPY_1v0Bnqtuwp0PkLxJyGhONL3Dsvdg4usHWy5OWuTNBLi6eDlULDkFbE-YaaxTIyRG73HKci6HHQa_MRK2e6OJ_DA7BY33b36KQS3YY9sQ-roxZrd76W7hz-pJoT8LarVyZt9PZgbF5WjBiBFYmjnsMeGsPCoaPUUzj4cXJ4fcWlWXarc0ax92-pJOukDf6QmV05UUbWqWFEw9wNbyC1KMqVFhAJwq7Tsr7mzDSqcPeId60ySMS4S6qiwnJypIe2_LG"
-                    alt="Bedugul"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="w-[140px] h-[180px] lg:w-[160px] lg:h-[200px] rounded-2xl overflow-hidden">
-                  <img
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsXSktpF3R6KkvhXzlAB8uQuGxq2iw7cy5ThjZqShUKo-GdCAqFcxJuC-QyrOEuNMQ1xFZuadYwgavd0J_c01cTa9Epg8TTaxL91OrXXrOPanHhCCTuubbeYomCoTqpXPs4k1bX1YodFFom2o40t5_f5J78d0k-SRIg-0dlWW9EeCdSa6-YfiHpmEJ9ErVYTITCZIoU4qkbDTfNQREO3a_VHng2iSQbWqU25jcTH5isZoubzCdBf_AAcR6g97S6kC2bqD7m7HSV_Km"
-                    alt="Sanur"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===================== LIVE NOW SECTION ===================== */}
-      <section id="map" className="bg-surface-container-low py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            {/* Left - Text + Cards */}
-            <div>
-              <span className="inline-flex items-center gap-1.5 bg-error/10 text-error text-xs font-bold px-3 py-1.5 rounded-full mb-4">
-                <span className="w-2 h-2 rounded-full bg-error animate-pulse" />
-                Live Now
-              </span>
-              <h2 className="text-3xl lg:text-4xl font-extrabold text-on-surface mb-3">
-                See What's Happening Right Now
-              </h2>
-              <p className="text-on-surface-variant mb-8 max-w-md">
-                Real-time crowd data from across the island. Plan your next move with confidence.
-              </p>
-              <div className="flex flex-col gap-3">
-                <div className="bg-white rounded-2xl p-5 flex items-center gap-4 shadow-sm">
-                  <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0">
+                <div className="flex gap-3 shrink-0">
+                  <div className="w-[130px] h-[170px] lg:w-[160px] lg:h-[200px] rounded-2xl overflow-hidden">
                     <img
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF4oacVI2oNDBhKrKKx6XnxC3RY1U-Lbid1sQ-Y1zhyENTJw8QKj4z2YBwNP1BcGSV9lMRep8kyxWxdQ5fTGpmZqaYBEvmH6H_wG62x2fVIsjdRTYLGTgBCeC52UV8UoFXxPdV_ttwz9X3ftAJuf6LCf5FwozQ1HNpqVESrZri6ZXPQe8-J91Hyj4P2C_OI1C-xjgaOVTb9Ipcu8254RV8WdXnRA5Qsg-9ejPWngj_3bmWkA88BsCGPQi3yoU30fwTiJx7CofBUBLk"
-                      alt="Uluwatu"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgmeM2kxs0PnMzEiCZXeSVytMB3vvx2I9K2zm7YDk-KpNdC9KmoYAcrDGaO_Dn8QL4YqGKgFG9PnWuyLIVztHgPNvs5MqM0otb1bAmyNIMoC2CZ6_JXr7uYfYkY_PrTx3U7MERHLQd6loHnpnkpkme4Vcu3FIkXupKasHJDmudu9JBeEGbSYTh0r-luNn4x9Byu-GeUdpCXcx_WFF4gscGVUZL6wQ2i6UnXR7i5vjwcXR2lS8ZWuT5VotScLdOemLvNnxfnTEshYJY"
+                      alt="Tropical breakfast"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-on-surface">Uluwatu Temple</p>
-                    <p className="text-xs text-on-surface-variant">Pecatu, Badung</p>
-                  </div>
-                  <span className="bg-error text-white text-xs font-bold px-3 py-1.5 rounded-full shrink-0">
-                    88% Peak
-                  </span>
-                </div>
-                <div className="bg-white rounded-2xl p-5 flex items-center gap-4 shadow-sm">
-                  <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0">
+                  <div className="w-[130px] h-[170px] lg:w-[160px] lg:h-[200px] rounded-2xl overflow-hidden">
                     <img
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo6aKGaGU92q0xYEQ_QqBmxMDrcUuvJUoTh9qV4p8ZbVglihhmVeVSj566VKf2HICoufCLyPKeRPh_WTKzOe5aLZ_5BPVeoTU5V2pyMioOTfcMKRgVbqoFaPc7vSo-S7OCBG326fQeTX0rEqKGKHco6eciD1dgAF3xsadpi_2GYwfTMVIkSHMA2B2EVjIxDXDEDSx70QJI1R6f5NEsK5OM8jmFHHyU6_XCz_XKLMyEhT5us9D7Q5nWV1VOxZr7nVvZjFEnPOMjiwsO"
-                      alt="Tegalalang"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzSaLnUuBNhk1IxlNanTZ-nP0p3RHZpBG1bD8kAcB4V0HOU3L3NwGBHwex3p8BVkhiAYcrs8cfOB4vU2nAB5TfqurxCHfttaHL7i-N3DxfJhHpKWkGWKPz5vzGPmATH315rSmeYxifYZFERhGeEWpiaVu9I-xc5oQMoHdxccEZk0XxJminbPuyluuJ6xyBAOLK8gffLEOjvpnzzSE8e6H2oIZCnxKWLHUGpRsN7U_H8oglOgtx6qEa5qJbhIUyTFkIMOaAl1m0FOq_"
+                      alt="Waterfall"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-on-surface">Tegalalang Rice Terrace</p>
-                    <p className="text-xs text-on-surface-variant">Ubud, Gianyar</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ==================== LIVE NOW ==================== */}
+        <section id="map" className="bg-surface-container-low py-16 lg:py-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+              {/* Left text + cards */}
+              <div>
+                <h2 className="text-3xl lg:text-4xl font-headline font-extrabold text-on-surface mb-4">Live Now</h2>
+                <p className="text-on-surface-variant text-sm leading-relaxed mb-8 max-w-md">
+                  The island is breathing. Watch live density pulses across Bali's hotspots.
+                  Green markers indicate optimal visiting times, while amber and red show growing crowds.
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl shadow-sm">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shrink-0">
+                      <img
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF4oacVI2oNDBhKrKKx6XnxC3RY1U-Lbid1sQ-Y1zhyENTJw8QKj4z2YBwNP1BcGSV9lMRep8kyxWxdQ5fTGpmZqaYBEvmH6H_wG62x2fVIsjdRTYLGTgBCeC52UV8UoFXxPdV_ttwz9X3ftAJuf6LCf5FwozQ1HNpqVESrZri6ZXPQe8-J91Hyj4P2C_OI1C-xjgaOVTb9Ipcu8254RV8WdXnRA5Qsg-9ejPWngj_3bmWkA88BsCGPQi3yoU30fwTiJx7CofBUBLk"
+                        alt="Uluwatu"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-on-surface">Uluwatu Temple</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="w-2 h-2 rounded-full bg-error" />
+                        <span className="text-xs text-error font-bold">Peak Crowd (88%)</span>
+                      </div>
+                    </div>
                   </div>
-                  <span className="bg-primary text-on-primary text-xs font-bold px-3 py-1.5 rounded-full shrink-0">
-                    12% Ideal
+                  <div className="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl shadow-sm border border-primary/10">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shrink-0">
+                      <img
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo6aKGaGU92q0xYEQ_QqBmxMDrcUuvJUoTh9qV4p8ZbVglihhmVeVSj566VKf2HICoufCLyPKeRPh_WTKzOe5aLZ_5BPVeoTU5V2pyMioOTfcMKRgVbqoFaPc7vSo-S7OCBG326fQeTX0rEqKGKHco6eciD1dgAF3xsadpi_2GYwfTMVIkSHMA2B2EVjIxDXDEDSx70QJI1R6f5NEsK5OM8jmFHHyU6_XCz_XKLMyEhT5us9D7Q5nWV1VOxZr7nVvZjFEnPOMjiwsO"
+                        alt="Tegallalang"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-on-surface">Tegallalang Terraces</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                        <span className="text-xs text-primary font-bold">Ideal Visit (12%)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right map mockup */}
+              <div className="relative bg-[#aad3df] rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 lg:border-8 border-white" style={{ minHeight: '440px' }}>
+                {/* Grid texture background */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundColor: '#e5e7eb',
+                    backgroundImage:
+                      'linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)',
+                    backgroundSize: '40px 40px',
+                  }}
+                >
+                  <svg className="w-full h-full" viewBox="0 0 1000 600" fill="none">
+                    <path
+                      d="M100,300 Q200,150 400,100 T700,120 T900,300 T700,500 T400,550 T100,450 Z"
+                      fill="#f2efe9"
+                      stroke="#99b3cc"
+                      strokeWidth="2"
+                    />
+                    <path d="M450,150 Q500,200 480,250 T400,230 Z" fill="#cfe6d1" />
+                    <path d="M600,350 Q650,400 630,450 T550,430 Z" fill="#cfe6d1" />
+                    <path d="M400,100 L420,550" stroke="#fff" strokeWidth="4" />
+                    <path d="M100,300 L900,320" stroke="#fff" strokeWidth="3" />
+                  </svg>
+                </div>
+
+                {/* Live badge */}
+                <div className="absolute top-4 lg:top-6 left-4 lg:left-6 z-20 flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-lg border border-slate-200">
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-800">
+                    Live Density Updates
                   </span>
                 </div>
-              </div>
-            </div>
 
-            {/* Right - Map Mockup */}
-            <div className="bg-stone-100 rounded-[2rem] p-6 relative overflow-hidden" style={{ minHeight: '420px' }}>
-              <svg
-                viewBox="0 0 400 300"
-                className="w-full h-auto"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* Simplified Bali island shape */}
-                <path
-                  d="M80 180 C90 140, 120 100, 170 80 C200 70, 230 65, 260 70 C290 75, 320 90, 340 110 C355 125, 360 145, 350 165 C340 180, 320 195, 290 200 C260 210, 230 215, 200 210 C170 205, 140 200, 110 195 C95 190, 80 185, 80 180Z"
-                  fill="#e8f5e9"
-                  stroke="#4caf50"
-                  strokeWidth="2"
-                />
-                {/* Destination markers */}
-                {/* Tanah Lot */}
-                <circle cx="130" cy="170" r="8" fill="#ef4444" />
-                <text x="130" y="160" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#374151">Tanah Lot</text>
-                <text x="130" y="193" textAnchor="middle" fontSize="7" fill="#6b7280">87%</text>
-
-                {/* Uluwatu */}
-                <circle cx="220" cy="200" r="8" fill="#ef4444" />
-                <text x="220" y="218" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#374151">Uluwatu</text>
-                <text x="220" y="228" textAnchor="middle" fontSize="7" fill="#6b7280">88%</text>
-
-                {/* Ubud */}
-                <circle cx="240" cy="110" r="8" fill="#f59e0b" />
-                <text x="240" y="100" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#374151">Ubud</text>
-                <text x="240" y="130" textAnchor="middle" fontSize="7" fill="#6b7280">45%</text>
-
-                {/* Kintamani */}
-                <circle cx="270" cy="80" r="8" fill="#22c55e" />
-                <text x="270" y="70" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#374151">Kintamani</text>
-                <text x="270" y="98" textAnchor="middle" fontSize="7" fill="#6b7280">35%</text>
-
-                {/* Bedugul */}
-                <circle cx="190" cy="100" r="8" fill="#22c55e" />
-                <text x="190" y="90" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#374151">Bedugul</text>
-                <text x="190" y="118" textAnchor="middle" fontSize="7" fill="#6b7280">22%</text>
-              </svg>
-
-              {/* Legend */}
-              <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur-sm rounded-xl p-3 flex flex-col gap-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-error" />
-                  <span className="text-[10px] font-medium text-stone-600">Peak (&gt;80%)</span>
+                {/* Zoom controls */}
+                <div className="absolute top-4 lg:top-6 right-4 lg:right-6 flex flex-col gap-1.5 z-20">
+                  <button className="w-10 h-10 bg-white/90 backdrop-blur rounded-xl shadow flex items-center justify-center text-on-surface hover:bg-white transition-colors">
+                    <Icon name="add" />
+                  </button>
+                  <button className="w-10 h-10 bg-white/90 backdrop-blur rounded-xl shadow flex items-center justify-center text-on-surface hover:bg-white transition-colors">
+                    <Icon name="remove" />
+                  </button>
+                  <button className="w-10 h-10 bg-primary text-on-primary rounded-xl shadow flex items-center justify-center hover:opacity-90 transition-opacity mt-1">
+                    <Icon name="my_location" filled />
+                  </button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-amber-500" />
-                  <span className="text-[10px] font-medium text-stone-600">Moderate (30-80%)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-green-500" />
-                  <span className="text-[10px] font-medium text-stone-600">Ideal (&lt;30%)</span>
-                </div>
-              </div>
 
-              {/* Zoom Controls */}
-              <div className="absolute top-6 right-6 flex flex-col gap-1">
-                <button className="w-8 h-8 bg-white rounded-lg shadow flex items-center justify-center text-stone-600 text-lg font-bold">
-                  +
-                </button>
-                <button className="w-8 h-8 bg-white rounded-lg shadow flex items-center justify-center text-stone-600 text-lg font-bold">
-                  &minus;
-                </button>
+                {/* Tanah Lot marker */}
+                <div className="absolute z-20" style={{ top: '32%', left: '30%' }}>
+                  <div className="relative flex flex-col items-center">
+                    <div className="absolute -inset-5 bg-primary/20 rounded-full animate-pulse" />
+                    <div className="w-5 h-5 bg-primary border-[3px] border-white rounded-full relative z-10 shadow-lg" />
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap border border-slate-100 flex flex-col pointer-events-none">
+                      <span className="text-[11px] font-bold text-on-surface">Tanah Lot Temple</span>
+                      <span className="text-[10px] font-medium text-primary flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        Calm · 15% Busy
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ubud marker */}
+                <div className="absolute z-20" style={{ top: '48%', left: '50%' }}>
+                  <div className="relative flex flex-col items-center">
+                    <div className="w-4 h-4 bg-tertiary border-[3px] border-white rounded-full shadow-md" />
+                  </div>
+                </div>
+
+                {/* Uluwatu marker */}
+                <div className="absolute z-20" style={{ bottom: '22%', left: '42%' }}>
+                  <div className="relative flex flex-col items-center">
+                    <div className="absolute -inset-6 bg-error/25 rounded-full animate-pulse" />
+                    <div className="w-5 h-5 bg-error border-[3px] border-white rounded-full relative z-10 shadow-lg" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap border border-slate-100 flex flex-col pointer-events-none">
+                      <span className="text-[11px] font-bold text-on-surface">Uluwatu Temple</span>
+                      <span className="text-[10px] font-medium text-error flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-error" />
+                        Peak Crowds · 88% Busy
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Legend */}
+                <div className="absolute bottom-4 lg:bottom-6 left-4 lg:left-6 bg-white/90 backdrop-blur-md px-4 py-3 rounded-2xl flex flex-col gap-2 border border-white/40 shadow-xl z-20">
+                  {[
+                    { color: 'bg-primary', label: 'CALM' },
+                    { color: 'bg-tertiary', label: 'MODERATE' },
+                    { color: 'bg-error', label: 'BUSY' },
+                  ].map((l) => (
+                    <div key={l.label} className="flex items-center gap-2.5">
+                      <div className={`w-2.5 h-2.5 rounded-full ${l.color}`} />
+                      <span className="text-[10px] font-bold text-on-surface uppercase tracking-tight">{l.label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Active users */}
+                <div className="absolute bottom-4 lg:bottom-6 right-4 lg:right-6 bg-white/90 backdrop-blur-md px-4 py-3 rounded-2xl flex items-center gap-3 border border-white/40 shadow-xl z-20">
+                  <div className="flex -space-x-2.5">
+                    <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 shadow-sm">
+                      JD
+                    </div>
+                    <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-300 flex items-center justify-center text-[9px] font-bold text-slate-700 shadow-sm">
+                      AS
+                    </div>
+                    <div className="w-8 h-8 rounded-full border-2 border-white bg-primary text-white flex items-center justify-center text-[9px] font-bold shadow-sm">
+                      +12
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-bold text-on-surface">1,204 users exploring live</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ===================== CTA SECTION ===================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <div className="bg-primary rounded-[40px] px-8 py-16 lg:px-16 lg:py-20 text-center">
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-on-primary mb-4">
-            Ready for a quieter paradise?
-          </h2>
-          <p className="text-on-primary/70 max-w-lg mx-auto mb-8">
-            Download BaliSense and start exploring Bali with real-time crowd insights. Available on all platforms.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <button className="bg-on-primary text-primary font-bold text-sm px-7 py-3.5 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-              </svg>
-              App Store
-            </button>
-            <button className="bg-on-primary text-primary font-bold text-sm px-7 py-3.5 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3.18 23.04c-.63-.37-.87-1.04-.87-1.82V2.78c0-.78.24-1.45.87-1.82l11.05 11.05L3.18 23.04zM15.36 13.14l2.93 1.7-3.79 3.78-2.93-2.93 3.79-2.55zM15.36 10.86L11.57 8.31l2.93-2.93 3.79 3.79-2.93 1.69zM18.51 15.62l3.05 1.76c.79.46.79 1.22 0 1.68l-3.05 1.76-3.19-3.2 3.19-2z" />
-              </svg>
-              Google Play
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ===================== FOOTER ===================== */}
-      <footer className="border-t border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
-                <Icon name="travel_explore" size="16px" className="text-on-primary" />
-              </div>
-              <span className="text-sm font-extrabold text-on-surface">BaliSense</span>
-            </div>
-            <p className="text-xs text-on-surface-variant">
-              &copy; 2026 BaliSense. All rights reserved.
+        {/* ==================== CTA ==================== */}
+        <section id="forecasts" className="px-4 sm:px-6 lg:px-12 py-16 lg:py-28 text-center">
+          <div className="max-w-4xl mx-auto bg-primary py-14 lg:py-20 px-8 lg:px-16 rounded-[2rem] lg:rounded-[2.5rem] text-on-primary relative overflow-hidden shadow-2xl">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-container/30 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl" />
+            <h2 className="text-3xl lg:text-5xl font-headline font-extrabold mb-4 lg:mb-6 relative z-10">
+              Ready for a quieter paradise?
+            </h2>
+            <p className="text-base lg:text-lg opacity-80 mb-8 lg:mb-10 max-w-xl mx-auto relative z-10">
+              Join over 50,000 travelers who use BaliSense to discover the island's hidden peace.
             </p>
-            <div className="flex items-center gap-6">
-              <a href="#" className="text-xs text-on-surface-variant hover:text-on-surface transition-colors">
-                Privacy
-              </a>
-              <a href="#" className="text-xs text-on-surface-variant hover:text-on-surface transition-colors">
-                Terms
-              </a>
-              <a href="#" className="text-xs text-on-surface-variant hover:text-on-surface transition-colors">
-                Contact
-              </a>
+            <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center relative z-10">
+              <button onClick={() => alert('Segera tersedia di App Store!')} className="bg-white text-primary px-8 py-3.5 lg:py-4 rounded-xl font-headline font-bold text-base hover:bg-surface-container-lowest transition-all shadow-lg">
+                App Store
+              </button>
+              <button onClick={() => alert('Segera tersedia di Google Play!')} className="bg-primary-container border border-white/20 text-white px-8 py-3.5 lg:py-4 rounded-xl font-headline font-bold text-base hover:bg-primary-container/80 transition-all shadow-lg">
+                Google Play
+              </button>
             </div>
+          </div>
+        </section>
+      </main>
+
+      {/* ==================== FOOTER ==================== */}
+      <footer className="w-full py-8 lg:py-10 px-4 sm:px-6 lg:px-12 border-t border-slate-100 bg-slate-50">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex flex-col gap-1">
+            <span className="font-bold text-cyan-900 text-lg font-headline">BaliSense</span>
+            <p className="text-[11px] text-slate-500">
+              © 2024 BaliSense Intelligence. Preserving the island's harmony.
+            </p>
+          </div>
+          <div className="flex gap-8 text-xs text-slate-500">
+            <a className="hover:text-cyan-600 transition-colors" href="#" onClick={(e) => { e.preventDefault(); alert('Kebijakan privasi akan segera tersedia.') }}>Privacy Policy</a>
+            <a className="hover:text-cyan-600 transition-colors" href="#" onClick={(e) => { e.preventDefault(); alert('Ketentuan layanan akan segera tersedia.') }}>Terms of Service</a>
+            <a className="hover:text-cyan-600 transition-colors" href="#" onClick={(e) => { e.preventDefault(); alert('Hubungi kami di support@balisense.id') }}>Contact Support</a>
           </div>
         </div>
       </footer>

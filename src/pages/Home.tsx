@@ -29,7 +29,17 @@ export default function Home() {
             <p className="flex-1 text-sm">
               Gunakan aplikasi untuk akses lebih cepat
             </p>
-            <button className="bg-primary text-on-primary text-xs font-bold px-4 py-2 rounded-full">
+            <button
+              onClick={() => {
+                const deferredPrompt = (window as any).__pwaInstallPrompt
+                if (deferredPrompt) {
+                  deferredPrompt.prompt()
+                } else {
+                  alert('Buka menu browser dan pilih "Tambahkan ke Layar Utama"')
+                }
+              }}
+              className="bg-primary text-on-primary text-xs font-bold px-4 py-2 rounded-full"
+            >
               Pasang
             </button>
             <button onClick={() => setShowInstallBanner(false)}>
@@ -201,14 +211,14 @@ export default function Home() {
               Cek keramaian destinasimu sebelum berangkat hari ini.
             </p>
             <div className="flex gap-3">
-              <button className="bg-primary text-on-primary font-bold px-6 py-3 rounded-full text-sm flex items-center gap-2">
+              <Link to="/app/peta" className="bg-primary text-on-primary font-bold px-6 py-3 rounded-full text-sm flex items-center gap-2">
                 <Icon name="map" size="18px" />
                 Lihat Peta Kepadatan
-              </button>
-              <button className="bg-white/20 backdrop-blur-sm text-white font-bold px-6 py-3 rounded-full text-sm flex items-center gap-2">
+              </Link>
+              <Link to="/app/profil" className="bg-white/20 backdrop-blur-sm text-white font-bold px-6 py-3 rounded-full text-sm flex items-center gap-2">
                 <Icon name="tune" size="18px" />
                 Atur Preferensi
-              </button>
+              </Link>
             </div>
           </div>
         </div>
