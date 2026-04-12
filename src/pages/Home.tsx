@@ -48,6 +48,21 @@ export default function Home() {
           </div>
         )}
 
+        {/* AI Analysis Banner */}
+        <Link
+          to="/app/ai-analysis"
+          className="bg-gradient-to-r from-primary to-primary-container rounded-2xl p-4 flex items-center gap-3 text-white no-underline active:scale-[0.98] transition-transform"
+        >
+          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+            <Icon name="auto_awesome" size="22px" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold">AI Analysis</p>
+            <p className="text-[11px] text-white/80">Tanyakan rekomendasi wisata cerdas</p>
+          </div>
+          <Icon name="arrow_forward" size="20px" />
+        </Link>
+
         {/* Greeting Card */}
         <div className="bg-gradient-to-br from-[#e0f2fe] to-[#f0fdf4] rounded-2xl p-5">
           <h2 className="text-lg font-bold text-on-surface">Halo, Lintang!</h2>

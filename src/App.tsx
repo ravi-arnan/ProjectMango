@@ -6,17 +6,21 @@ import Peta from './pages/Peta'
 import DestinationDetail from './pages/DestinationDetail'
 import Prediksi from './pages/Prediksi'
 import Profil from './pages/Profil'
+import Auth from './pages/Auth'
+import AiAnalysis from './pages/AiAnalysis'
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<Home />} />
           <Route path="peta" element={<Peta />} />
           <Route path="destinasi/:id" element={<DestinationDetail />} />
           <Route path="prediksi" element={<Prediksi />} />
+          <Route path="ai-analysis" element={<AiAnalysis />} />
           <Route path="profil" element={<Profil />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

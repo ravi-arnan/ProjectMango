@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import Icon from './Icon'
 
 const navLinks = [
@@ -50,9 +50,13 @@ export default function SideNav() {
       </nav>
 
       {/* Bottom button */}
-      <button onClick={() => alert('Fitur analisis baru akan segera hadir!')} className="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-xl font-bold">
-        New Analysis
-      </button>
+      <Link
+        to="/app/ai-analysis"
+        className="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-xl font-bold flex items-center justify-center gap-2"
+      >
+        <Icon name="auto_awesome" size="18px" />
+        AI Analysis
+      </Link>
     </aside>
   )
 }

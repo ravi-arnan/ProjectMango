@@ -36,7 +36,7 @@ export default function Landing() {
 
           <div className="flex items-center gap-3">
             <Link
-              to="/app"
+              to="/auth"
               className="bg-primary hover:opacity-90 transition-opacity text-on-primary px-5 py-2 rounded-lg font-headline font-bold text-sm"
             >
               Access App
@@ -87,7 +87,7 @@ export default function Landing() {
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
-                to="/app"
+                to="/auth"
                 className="bg-primary text-on-primary font-bold text-sm px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
               >
                 Add to Home Screen
