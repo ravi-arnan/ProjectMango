@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
+import { useScrollReveal } from '../lib/useScrollReveal'
 
 const navLinks = [
   { label: 'Features', href: '#features' },
@@ -10,9 +11,10 @@ const navLinks = [
 
 export default function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  useScrollReveal()
 
   return (
-    <div className="min-h-screen bg-white text-on-surface font-body">
+    <div className="min-h-screen bg-white text-on-surface font-body overflow-x-hidden">
       {/* ==================== TOP NAV ==================== */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#fff8f5]/80 backdrop-blur-xl border-b border-stone-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 h-14 flex items-center justify-between">
@@ -66,15 +68,17 @@ export default function Landing() {
       <main className="pt-14">
         {/* ==================== HERO ==================== */}
         <section className="relative h-[520px] sm:h-[600px] lg:h-[85vh] min-h-[600px] overflow-hidden mx-3 sm:mx-4 lg:mx-6 mt-3 rounded-2xl lg:rounded-3xl">
+          {/* Slow zoom background */}
           <img
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPkyKpOUGRxjZaYoSPnwTv6kQxiuRodxfFVuy8pf_OspiMe_t_ARtW81u-N0HRKbzRZWPEUaGU4XiIYxxpDWxPE5CYvzeKAjwgL6narP9awa6i2AqpxdKgd9IXw76EGOdb2QtQbSYJWxmkAX_hq56a30lKRNF30uZDX5InyuU8A8vNcwEar1bcUPUBIZNmATetRwRlhNUuEGyZ_-bVLdc3N4BsYh9F7ruytFA4eiCXBjchmVjh9OCMZJGJuLCj7n0wre71c7Eorp81"
             alt="Tanah Lot temple at sunset"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover hero-zoom"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-          <div className="relative z-10 h-full flex flex-col justify-end px-6 sm:px-10 lg:px-14 pb-10 lg:pb-14 max-w-2xl">
+          {/* Hero text with staggered reveal */}
+          <div className="relative z-10 h-full flex flex-col justify-end px-6 sm:px-10 lg:px-14 pb-10 lg:pb-14 max-w-2xl hero-text-reveal">
             <span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white/90 text-[10px] font-bold px-3 py-1 rounded-full w-fit mb-4 uppercase tracking-widest">
               Island Intelligence
             </span>
@@ -88,17 +92,36 @@ export default function Landing() {
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/auth"
-                className="bg-primary text-on-primary font-bold text-sm px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
+                className="bg-primary text-on-primary font-bold text-sm px-6 py-3 rounded-xl hover:opacity-90 transition-all hover:shadow-lg hover:shadow-primary/30 active:scale-95"
               >
                 Add to Home Screen
               </Link>
               <a
                 href="#map"
-                className="bg-white/15 backdrop-blur-sm text-white font-bold text-sm px-6 py-3 rounded-xl hover:bg-white/25 transition-colors border border-white/20"
+                className="bg-white/15 backdrop-blur-sm text-white font-bold text-sm px-6 py-3 rounded-xl hover:bg-white/25 transition-all border border-white/20 active:scale-95"
               >
                 View Live Map
               </a>
             </div>
+          </div>
+
+          {/* Floating stats overlay (desktop) */}
+          <div className="hidden lg:flex absolute bottom-6 right-6 z-20 gap-3">
+            {[
+              { icon: 'groups', value: '50K+', label: 'Pengguna' },
+              { icon: 'place', value: '200+', label: 'Destinasi' },
+              { icon: 'update', value: '5s', label: 'Refresh' },
+            ].map((stat, i) => (
+              <div
+                key={stat.label}
+                className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-3 text-white text-center anim-float"
+                style={{ animationDelay: `${i * 0.5}s` }}
+              >
+                <Icon name={stat.icon} size="20px" className="mb-1 opacity-80" />
+                <p className="text-lg font-extrabold leading-none">{stat.value}</p>
+                <p className="text-[10px] opacity-70 mt-0.5">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -106,7 +129,7 @@ export default function Landing() {
         <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-16 lg:py-24">
           <div className="grid grid-cols-12 gap-4 lg:gap-6">
             {/* Real-time density tracking */}
-            <div className="col-span-12 lg:col-span-7 bg-surface-container-low rounded-[1.5rem] lg:rounded-[2rem] p-7 lg:p-10 flex flex-col justify-between min-h-[320px]">
+            <div className="col-span-12 lg:col-span-7 bg-surface-container-low rounded-[1.5rem] lg:rounded-[2rem] p-7 lg:p-10 flex flex-col justify-between min-h-[320px] animate-on-scroll anim-slide-left">
               <div>
                 <div className="w-11 h-11 bg-primary rounded-xl flex items-center justify-center text-white mb-5">
                   <Icon name="speed" />
@@ -120,29 +143,29 @@ export default function Landing() {
                 </p>
               </div>
               <div className="flex gap-3 mt-6 overflow-x-auto no-scrollbar">
-                <div className="bg-surface-container-lowest p-3.5 rounded-xl min-w-[170px] shadow-sm border border-stone-100">
+                <div className="bg-surface-container-lowest p-3.5 rounded-xl min-w-[170px] shadow-sm border border-stone-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-[11px] font-bold text-on-surface-variant tracking-wide">ULI KITCHEN</span>
                     <span className="bg-error/10 text-error px-2.5 py-0.5 rounded-full text-[10px] font-extrabold">BUSY</span>
                   </div>
                   <div className="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                    <div className="bg-error h-full rounded-full" style={{ width: '85%' }} />
+                    <div className="bg-error h-full rounded-full bar-fill" style={{ width: '85%' }} />
                   </div>
                 </div>
-                <div className="bg-surface-container-lowest p-3.5 rounded-xl min-w-[170px] shadow-sm border border-stone-100">
+                <div className="bg-surface-container-lowest p-3.5 rounded-xl min-w-[170px] shadow-sm border border-stone-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-[11px] font-bold text-on-surface-variant tracking-wide">MELASTI BEACH</span>
                     <span className="bg-primary/10 text-primary px-2.5 py-0.5 rounded-full text-[10px] font-extrabold">CALM</span>
                   </div>
                   <div className="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                    <div className="bg-primary h-full rounded-full" style={{ width: '20%' }} />
+                    <div className="bg-primary h-full rounded-full bar-fill" style={{ width: '20%' }} />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* 7-day crowd forecasts */}
-            <div className="col-span-12 lg:col-span-5 bg-tertiary-container rounded-[1.5rem] lg:rounded-[2rem] p-7 lg:p-10 text-white flex flex-col justify-between min-h-[320px]">
+            <div className="col-span-12 lg:col-span-5 bg-tertiary-container rounded-[1.5rem] lg:rounded-[2rem] p-7 lg:p-10 text-white flex flex-col justify-between min-h-[320px] animate-on-scroll anim-slide-right">
               <div>
                 <div className="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center mb-5">
                   <Icon name="analytics" />
@@ -160,8 +183,11 @@ export default function Landing() {
                   {[38, 55, 42, 80, 62, 48, 30].map((h, i) => (
                     <div
                       key={i}
-                      className={`flex-1 rounded-t-md ${i === 3 ? 'bg-white' : 'bg-white/40'}`}
-                      style={{ height: `${h}%` }}
+                      className={`flex-1 rounded-t-md transition-all duration-500 hover:opacity-100 ${i === 3 ? 'bg-white' : 'bg-white/40 hover:bg-white/70'}`}
+                      style={{
+                        height: `${h}%`,
+                        transitionDelay: `${i * 80}ms`,
+                      }}
                     />
                   ))}
                 </div>
@@ -174,7 +200,7 @@ export default function Landing() {
             </div>
 
             {/* AI-powered recommendations */}
-            <div className="col-span-12 bg-surface-container-highest rounded-[1.5rem] lg:rounded-[2rem] p-7 lg:p-10">
+            <div className="col-span-12 bg-surface-container-highest rounded-[1.5rem] lg:rounded-[2rem] p-7 lg:p-10 animate-on-scroll anim-fade-up">
               <div className="flex flex-col md:flex-row md:items-start gap-6 lg:gap-10">
                 <div className="flex-1">
                   <div className="w-11 h-11 bg-primary-container rounded-xl flex items-center justify-center text-white mb-5">
@@ -192,7 +218,7 @@ export default function Landing() {
                     {['#HiddenGems', '#QuietMorning', '#SurfReport'].map((tag) => (
                       <span
                         key={tag}
-                        className="px-4 py-1.5 bg-surface-container-low text-on-surface-variant text-xs rounded-full font-medium"
+                        className="px-4 py-1.5 bg-surface-container-low text-on-surface-variant text-xs rounded-full font-medium hover:bg-primary/10 hover:text-primary transition-colors cursor-default"
                       >
                         {tag}
                       </span>
@@ -200,14 +226,14 @@ export default function Landing() {
                   </div>
                 </div>
                 <div className="flex gap-3 shrink-0">
-                  <div className="w-[130px] h-[170px] lg:w-[160px] lg:h-[200px] rounded-2xl overflow-hidden">
+                  <div className="w-[130px] h-[170px] lg:w-[160px] lg:h-[200px] rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 anim-float">
                     <img
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgmeM2kxs0PnMzEiCZXeSVytMB3vvx2I9K2zm7YDk-KpNdC9KmoYAcrDGaO_Dn8QL4YqGKgFG9PnWuyLIVztHgPNvs5MqM0otb1bAmyNIMoC2CZ6_JXr7uYfYkY_PrTx3U7MERHLQd6loHnpnkpkme4Vcu3FIkXupKasHJDmudu9JBeEGbSYTh0r-luNn4x9Byu-GeUdpCXcx_WFF4gscGVUZL6wQ2i6UnXR7i5vjwcXR2lS8ZWuT5VotScLdOemLvNnxfnTEshYJY"
                       alt="Tropical breakfast"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="w-[130px] h-[170px] lg:w-[160px] lg:h-[200px] rounded-2xl overflow-hidden">
+                  <div className="w-[130px] h-[170px] lg:w-[160px] lg:h-[200px] rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 anim-float-delay">
                     <img
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzSaLnUuBNhk1IxlNanTZ-nP0p3RHZpBG1bD8kAcB4V0HOU3L3NwGBHwex3p8BVkhiAYcrs8cfOB4vU2nAB5TfqurxCHfttaHL7i-N3DxfJhHpKWkGWKPz5vzGPmATH315rSmeYxifYZFERhGeEWpiaVu9I-xc5oQMoHdxccEZk0XxJminbPuyluuJ6xyBAOLK8gffLEOjvpnzzSE8e6H2oIZCnxKWLHUGpRsN7U_H8oglOgtx6qEa5qJbhIUyTFkIMOaAl1m0FOq_"
                       alt="Waterfall"
@@ -225,14 +251,14 @@ export default function Landing() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
               {/* Left text + cards */}
-              <div>
+              <div className="animate-on-scroll anim-slide-left">
                 <h2 className="text-3xl lg:text-4xl font-headline font-extrabold text-on-surface mb-4">Live Now</h2>
                 <p className="text-on-surface-variant text-sm leading-relaxed mb-8 max-w-md">
                   The island is breathing. Watch live density pulses across Bali's hotspots.
                   Green markers indicate optimal visiting times, while amber and red show growing crowds.
                 </p>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl shadow-sm">
+                  <div className="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                     <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shrink-0">
                       <img
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF4oacVI2oNDBhKrKKx6XnxC3RY1U-Lbid1sQ-Y1zhyENTJw8QKj4z2YBwNP1BcGSV9lMRep8kyxWxdQ5fTGpmZqaYBEvmH6H_wG62x2fVIsjdRTYLGTgBCeC52UV8UoFXxPdV_ttwz9X3ftAJuf6LCf5FwozQ1HNpqVESrZri6ZXPQe8-J91Hyj4P2C_OI1C-xjgaOVTb9Ipcu8254RV8WdXnRA5Qsg-9ejPWngj_3bmWkA88BsCGPQi3yoU30fwTiJx7CofBUBLk"
@@ -243,12 +269,12 @@ export default function Landing() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-on-surface">Uluwatu Temple</p>
                       <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="w-2 h-2 rounded-full bg-error" />
+                        <span className="w-2 h-2 rounded-full bg-error animate-pulse" />
                         <span className="text-xs text-error font-bold">Peak Crowd (88%)</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl shadow-sm border border-primary/10">
+                  <div className="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl shadow-sm border border-primary/10 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                     <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shrink-0">
                       <img
                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo6aKGaGU92q0xYEQ_QqBmxMDrcUuvJUoTh9qV4p8ZbVglihhmVeVSj566VKf2HICoufCLyPKeRPh_WTKzOe5aLZ_5BPVeoTU5V2pyMioOTfcMKRgVbqoFaPc7vSo-S7OCBG326fQeTX0rEqKGKHco6eciD1dgAF3xsadpi_2GYwfTMVIkSHMA2B2EVjIxDXDEDSx70QJI1R6f5NEsK5OM8jmFHHyU6_XCz_XKLMyEhT5us9D7Q5nWV1VOxZr7nVvZjFEnPOMjiwsO"
@@ -268,8 +294,8 @@ export default function Landing() {
               </div>
 
               {/* Right map mockup */}
-              <div className="relative bg-[#aad3df] rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 lg:border-8 border-white" style={{ minHeight: '440px' }}>
-                {/* Grid texture background */}
+              <div className="relative bg-[#aad3df] rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 lg:border-8 border-white animate-on-scroll anim-scale-in" style={{ minHeight: '440px' }}>
+                {/* Grid texture */}
                 <div
                   className="absolute inset-0"
                   style={{
@@ -390,7 +416,9 @@ export default function Landing() {
 
         {/* ==================== CTA ==================== */}
         <section id="forecasts" className="px-4 sm:px-6 lg:px-12 py-16 lg:py-28 text-center">
-          <div className="max-w-4xl mx-auto bg-primary py-14 lg:py-20 px-8 lg:px-16 rounded-[2rem] lg:rounded-[2.5rem] text-on-primary relative overflow-hidden shadow-2xl">
+          <div className="max-w-4xl mx-auto bg-primary py-14 lg:py-20 px-8 lg:px-16 rounded-[2rem] lg:rounded-[2.5rem] text-on-primary relative overflow-hidden shadow-2xl animate-on-scroll anim-scale-in">
+            {/* Animated shimmer overlay */}
+            <div className="absolute inset-0 shimmer-bg pointer-events-none" />
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-container/30 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl" />
             <h2 className="text-3xl lg:text-5xl font-headline font-extrabold mb-4 lg:mb-6 relative z-10">
@@ -400,10 +428,16 @@ export default function Landing() {
               Join over 50,000 travelers who use BaliSense to discover the island's hidden peace.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center relative z-10">
-              <button onClick={() => alert('Segera tersedia di App Store!')} className="bg-white text-primary px-8 py-3.5 lg:py-4 rounded-xl font-headline font-bold text-base hover:bg-surface-container-lowest transition-all shadow-lg">
+              <button
+                onClick={() => alert('Segera tersedia di App Store!')}
+                className="bg-white text-primary px-8 py-3.5 lg:py-4 rounded-xl font-headline font-bold text-base hover:bg-surface-container-lowest transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
+              >
                 App Store
               </button>
-              <button onClick={() => alert('Segera tersedia di Google Play!')} className="bg-primary-container border border-white/20 text-white px-8 py-3.5 lg:py-4 rounded-xl font-headline font-bold text-base hover:bg-primary-container/80 transition-all shadow-lg">
+              <button
+                onClick={() => alert('Segera tersedia di Google Play!')}
+                className="bg-primary-container border border-white/20 text-white px-8 py-3.5 lg:py-4 rounded-xl font-headline font-bold text-base hover:bg-primary-container/80 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
+              >
                 Google Play
               </button>
             </div>
