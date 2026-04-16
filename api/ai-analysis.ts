@@ -13,7 +13,7 @@ const destinations = [
   { name: 'Kintamani', location: 'Bangli', category: 'Alam', density: 0.35, densityLabel: 'Sepi', visitors: 950, maxCapacity: 3000, rating: 4.6, reviewCount: 1620, openHours: '08.00 - 17.00', ticketPrice: 'Rp 30.000', description: 'Pemandangan Gunung Batur dan Danau Batur' },
 ]
 
-const SYSTEM_PROMPT = `Kamu adalah BaliSense AI, asisten analisis pariwisata cerdas untuk Pulau Bali. Kamu membantu wisatawan merencanakan kunjungan dengan data kepadatan real-time.
+const SYSTEM_PROMPT = `Kamu adalah Mango AI, asisten analisis pariwisata cerdas untuk Pulau Bali. Kamu membantu wisatawan merencanakan kunjungan dengan data kepadatan real-time.
 
 Data destinasi saat ini:
 ${JSON.stringify(destinations, null, 2)}

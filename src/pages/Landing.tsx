@@ -18,7 +18,7 @@ export default function Landing() {
       {/* ==================== TOP NAV ==================== */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#fff8f5]/80 backdrop-blur-xl border-b border-stone-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 h-14 flex items-center justify-between">
-          <span className="text-xl font-extrabold text-cyan-900 font-headline tracking-tight">BaliSense</span>
+          <span className="text-xl font-extrabold text-cyan-900 font-headline tracking-tight">Mango</span>
 
           <div className="hidden md:flex items-center gap-8 font-headline font-medium text-sm tracking-tight">
             {navLinks.map((link, i) => (
@@ -211,7 +211,7 @@ export default function Landing() {
                   </h3>
                   <p className="text-on-surface-variant text-sm leading-relaxed mb-5 max-w-md">
                     Tailored suggestions that adapt to your style and the current island vibe.
-                    Whether you seek hidden waterfalls or sunset cocktails, BaliSense guides you
+                    Whether you seek hidden waterfalls or sunset cocktails, Mango guides you
                     to the perfect spot at the perfect time.
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -425,20 +425,27 @@ export default function Landing() {
               Ready for a quieter paradise?
             </h2>
             <p className="text-base lg:text-lg opacity-80 mb-8 lg:mb-10 max-w-xl mx-auto relative z-10">
-              Join over 50,000 travelers who use BaliSense to discover the island's hidden peace.
+              Join over 50,000 travelers who use Mango to discover the island's hidden peace.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center relative z-10">
-              <button
-                onClick={() => alert('Segera tersedia di App Store!')}
+              <Link
+                to="/auth"
                 className="bg-white text-primary px-8 py-3.5 lg:py-4 rounded-xl font-headline font-bold text-base hover:bg-surface-container-lowest transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
               >
-                App Store
-              </button>
+                Mulai Sekarang
+              </Link>
               <button
-                onClick={() => alert('Segera tersedia di Google Play!')}
+                onClick={() => {
+                  const deferredPrompt = (window as any).__pwaInstallPrompt
+                  if (deferredPrompt) {
+                    deferredPrompt.prompt()
+                  } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }
+                }}
                 className="bg-primary-container border border-white/20 text-white px-8 py-3.5 lg:py-4 rounded-xl font-headline font-bold text-base hover:bg-primary-container/80 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
               >
-                Google Play
+                Install PWA
               </button>
             </div>
           </div>
@@ -449,15 +456,15 @@ export default function Landing() {
       <footer className="w-full py-8 lg:py-10 px-4 sm:px-6 lg:px-12 border-t border-slate-100 bg-slate-50">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex flex-col gap-1">
-            <span className="font-bold text-cyan-900 text-lg font-headline">BaliSense</span>
+            <span className="font-bold text-cyan-900 text-lg font-headline">Mango</span>
             <p className="text-[11px] text-slate-500">
-              © 2024 BaliSense Intelligence. Preserving the island's harmony.
+              © 2025 Mango. Smart Tourism Platform Indonesia.
             </p>
           </div>
           <div className="flex gap-8 text-xs text-slate-500">
-            <a className="hover:text-cyan-600 transition-colors" href="#" onClick={(e) => { e.preventDefault(); alert('Kebijakan privasi akan segera tersedia.') }}>Privacy Policy</a>
-            <a className="hover:text-cyan-600 transition-colors" href="#" onClick={(e) => { e.preventDefault(); alert('Ketentuan layanan akan segera tersedia.') }}>Terms of Service</a>
-            <a className="hover:text-cyan-600 transition-colors" href="#" onClick={(e) => { e.preventDefault(); alert('Hubungi kami di support@balisense.id') }}>Contact Support</a>
+            <Link className="hover:text-cyan-600 transition-colors" to="/privacy">Privacy Policy</Link>
+            <Link className="hover:text-cyan-600 transition-colors" to="/terms">Terms of Service</Link>
+            <a className="hover:text-cyan-600 transition-colors" href="mailto:support@mango.id">Contact Support</a>
           </div>
         </div>
       </footer>

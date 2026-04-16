@@ -16,6 +16,8 @@ export default function Auth() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [resetSent, setResetSent] = useState(false);
 
   const resetFields = () => {
     setEmail('');
@@ -62,7 +64,7 @@ export default function Auth() {
         options: { data: { full_name: name } },
       });
       if (authError) throw authError;
-      alert('Akun berhasil dibuat! Silakan cek email untuk verifikasi.');
+      setSuccess('Akun berhasil dibuat! Silakan cek email untuk verifikasi.');
       handleTabSwitch('login');
     } catch (err: any) {
       setError(err.message || 'Gagal mendaftar. Silakan coba lagi.');
@@ -97,10 +99,10 @@ export default function Auth() {
         <div className="flex flex-col items-center gap-1 pt-4 pb-2">
           <div className="flex items-center gap-2">
             <Icon name="travel_explore" filled className="text-primary" size="32px" />
-            <span className="font-headline text-2xl font-bold text-on-surface">BaliSense</span>
+            <span className="font-headline text-2xl font-bold text-on-surface">Mango</span>
           </div>
           <span className="font-body text-xs text-on-surface-variant tracking-widest uppercase">
-            Sensory Sanctuary
+            Smart Tourism Platform
           </span>
         </div>
 
@@ -130,7 +132,12 @@ export default function Auth() {
           </button>
         </div>
 
-        {/* Error Message */}
+        {/* Messages */}
+        {success && (
+          <div className="bg-emerald-50 text-emerald-700 rounded-xl p-3 text-sm font-body">
+            {success}
+          </div>
+        )}
         {error && (
           <div className="bg-error-container text-on-error-container rounded-xl p-3 text-sm font-body">
             {error}
@@ -173,10 +180,26 @@ export default function Auth() {
 
             <button
               type="button"
-              onClick={() => alert('Fitur reset kata sandi akan segera hadir!')}
+              onClick={async () => {
+                if (!email) {
+                  setError('Masukkan email terlebih dahulu untuk reset kata sandi.');
+                  return;
+                }
+                setLoading(true);
+                try {
+                  const { error: resetError } = await supabase.auth.resetPasswordForEmail(email);
+                  if (resetError) throw resetError;
+                  setResetSent(true);
+                  setError('');
+                } catch (err: any) {
+                  setError(err.message || 'Gagal mengirim email reset.');
+                } finally {
+                  setLoading(false);
+                }
+              }}
               className="text-primary text-xs font-body self-end -mt-1"
             >
-              Lupa kata sandi?
+              {resetSent ? 'Email reset terkirim!' : 'Lupa kata sandi?'}
             </button>
 
             <button type="submit" className={buttonClass}>

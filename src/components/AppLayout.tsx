@@ -3,6 +3,7 @@ import BottomNav from './BottomNav'
 import SideNav from './SideNav'
 import MobileHeader from './MobileHeader'
 import DesktopHeader from './DesktopHeader'
+import ToastContainer from './Toast'
 
 export default function AppLayout() {
   return (
@@ -16,6 +17,7 @@ export default function AppLayout() {
         </div>
       </main>
       <BottomNav />
+      <ToastContainer />
     </div>
   )
 }

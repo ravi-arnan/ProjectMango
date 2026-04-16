@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { destinations, getDensityBgColor } from '../data/destinations'
+import { useAuth, getUserDisplayName } from '../context/AuthContext'
+import { showToast } from '../components/Toast'
 
 const categories = ['Semua', 'Pantai', 'Pura', 'Alam', 'Budaya']
 
@@ -9,14 +11,24 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('Semua')
   const [showInstallBanner, setShowInstallBanner] = useState(true)
+  const { user } = useAuth()
+  const displayName = getUserDisplayName(user)
 
   const popularDestinations = destinations.slice(0, 3)
-  const bedugul = destinations.find((d) => d.id === 'bedugul')!
-  const sanur = destinations.find((d) => d.id === 'sanur')!
-  const recommendedMobile = [bedugul, sanur]
 
-  // Desktop recommendations: use 3 destinations
-  const desktopRecommended = [bedugul, sanur, destinations.find((d) => d.id === 'pandawa')!]
+  const getRecommendations = () => {
+    return [...destinations]
+      .filter((d) => d.density < 0.5)
+      .sort((a, b) => {
+        const scoreA = (1 - a.density) * 0.5 + (a.rating / 5) * 0.3 + (1 - a.visitors / a.maxCapacity) * 0.2
+        const scoreB = (1 - b.density) * 0.5 + (b.rating / 5) * 0.3 + (1 - b.visitors / b.maxCapacity) * 0.2
+        return scoreB - scoreA
+      })
+  }
+
+  const recommended = getRecommendations()
+  const recommendedMobile = recommended.slice(0, 2)
+  const desktopRecommended = recommended.slice(0, 3)
 
   return (
     <div>
@@ -35,7 +47,7 @@ export default function Home() {
                 if (deferredPrompt) {
                   deferredPrompt.prompt()
                 } else {
-                  alert('Buka menu browser dan pilih "Tambahkan ke Layar Utama"')
+                  showToast('Buka menu browser dan pilih "Tambahkan ke Layar Utama"', 'info')
                 }
               }}
               className="bg-primary text-on-primary text-xs font-bold px-4 py-2 rounded-full"
@@ -65,7 +77,7 @@ export default function Home() {
 
         {/* Greeting Card */}
         <div className="bg-gradient-to-br from-[#e0f2fe] to-[#f0fdf4] rounded-2xl p-5">
-          <h2 className="text-lg font-bold text-on-surface">Halo, Lintang!</h2>
+          <h2 className="text-lg font-bold text-on-surface">Halo, {displayName}!</h2>
           <p className="text-sm text-on-surface-variant mt-1">
             Cek keramaian destinasimu sebelum berangkat hari ini.
           </p>
@@ -181,23 +193,24 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-bold text-on-surface truncate">{dest.name}</p>
-                    <span
-                      className={`shrink-0 ${getDensityBgColor(dest.density)} text-white text-[10px] font-bold px-2 py-0.5 rounded-full`}
-                    >
+                    <span className={`shrink-0 ${getDensityBgColor(dest.density)} text-white text-[10px] font-bold px-2 py-0.5 rounded-full`}>
                       {Math.round(dest.density * 100)}%
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 mt-1">
-                    <Icon name="location_on" className="text-on-surface-variant" size="14px" />
-                    <span className="text-xs text-on-surface-variant">{dest.region}</span>
-                  </div>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Icon name="schedule" className="text-on-surface-variant" size="14px" />
-                    <span className="text-xs text-on-surface-variant">{dest.openHours}</span>
-                  </div>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Icon name="star" className="text-amber-500" size="14px" />
-                    <span className="text-xs text-on-surface-variant">{dest.rating}</span>
+                  {dest.density < 0.25 && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full mt-1">
+                      <Icon name="diamond" size="10px" />Hidden Gem
+                    </span>
+                  )}
+                  <p className="text-[11px] text-emerald-600 font-medium mt-1">
+                    Sepi saat ini — {Math.round(dest.density * 100)}% kapasitas
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-0.5">
+                      <Icon name="star" className="text-amber-500" size="14px" />
+                      <span className="text-xs text-on-surface-variant">{dest.rating}</span>
+                    </div>
+                    <span className="text-xs text-on-surface-variant">&middot; {dest.region}</span>
                   </div>
                 </div>
               </Link>
@@ -221,7 +234,7 @@ export default function Home() {
               <Icon name="explore" size="16px" />
               Discovery Mode
             </span>
-            <h1 className="text-5xl font-bold text-white mb-2">Halo, Lintang!</h1>
+            <h1 className="text-5xl font-bold text-white mb-2">Halo, {displayName}!</h1>
             <p className="text-white/80 text-lg max-w-xl mb-6">
               Cek keramaian destinasimu sebelum berangkat hari ini.
             </p>
@@ -334,19 +347,13 @@ export default function Home() {
                     alt={dest.name}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
-                  <span
-                    className={`absolute top-3 left-3 ${
-                      dest.density <= 0.3
-                        ? 'bg-primary'
-                        : 'bg-tertiary'
-                    } text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide`}
-                  >
-                    {dest.density <= 0.3 ? 'Hidden Gem' : 'Peaceful'}
+                  <span className={`absolute top-3 left-3 ${dest.density <= 0.25 ? 'bg-primary' : 'bg-tertiary'} text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide`}>
+                    {dest.density <= 0.25 ? 'Hidden Gem' : 'Sepi'}
                   </span>
                 </div>
                 <div className="p-4 flex flex-col flex-1">
                   <h3 className="text-base font-bold text-on-surface">{dest.name}</h3>
-                  <p className="text-xs text-on-surface-variant mt-1">{dest.densityLabel}</p>
+                  <p className="text-xs text-emerald-600 font-medium mt-1">Sepi saat ini — {Math.round(dest.density * 100)}% kapasitas</p>
                   <div className="flex items-center gap-1 mt-2">
                     <Icon name="star" className="text-amber-500" size="16px" />
                     <span className="text-sm font-semibold text-on-surface">{dest.rating}</span>

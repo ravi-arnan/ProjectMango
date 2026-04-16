@@ -76,7 +76,7 @@ export default function AiAnalysis() {
             <Icon name="auto_awesome" size="20px" />
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-sm font-bold text-on-surface">BaliSense AI</h2>
+            <h2 className="text-sm font-bold text-on-surface">Mango AI</h2>
             <p className="text-[11px] text-on-surface-variant">Analisis cerdas destinasi wisata Bali</p>
           </div>
           {messages.length > 0 && (
@@ -97,7 +97,7 @@ export default function AiAnalysis() {
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
                 <Icon name="travel_explore" size="32px" className="text-primary" />
               </div>
-              <h3 className="text-lg font-bold text-on-surface mb-1">Halo! Saya BaliSense AI</h3>
+              <h3 className="text-lg font-bold text-on-surface mb-1">Halo! Saya Mango AI</h3>
               <p className="text-sm text-on-surface-variant mb-6 max-w-sm">
                 Tanyakan apa saja tentang destinasi wisata di Bali — kepadatan, rekomendasi, waktu terbaik berkunjung, dan lainnya.
               </p>

@@ -17,9 +17,9 @@ export default function SideNav() {
           <Icon name="sensors" className="text-white" size="20px" />
         </div>
         <div>
-          <h1 className="text-xl font-black text-cyan-800">BaliSense</h1>
+          <h1 className="text-xl font-black text-cyan-800">Mango</h1>
           <p className="text-[10px] uppercase tracking-widest text-stone-400">
-            Sensory Sanctuary
+            Smart Tourism Platform
           </p>
         </div>
       </div>

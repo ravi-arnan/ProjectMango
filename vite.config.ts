@@ -7,6 +7,9 @@ export default defineConfig({
   server: {
     allowedHosts: true,
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', 'react-leaflet', 'leaflet', '@supabase/supabase-js'],
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -14,9 +17,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/*.png'],
       manifest: {
-        name: 'BaliSense - Smart Tourism Monitor',
-        short_name: 'BaliSense',
-        description: 'Cerdas Memantau Keramaian Wisata di Pulau Dewata',
+        name: 'Mango - Smart Tourism Platform',
+        short_name: 'Mango',
+        description: 'Platform Pariwisata Cerdas Indonesia',
         theme_color: '#00647c',
         background_color: '#fff8f5',
         display: 'standalone',

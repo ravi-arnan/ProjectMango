@@ -4,7 +4,10 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { destinations, type Destination } from '../data/destinations'
 import Icon from '../components/Icon'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useWatchlist } from '../hooks/useWatchlist'
+
+const categories = ['Semua', 'Pantai', 'Pura', 'Alam']
 
 function getDensityHex(density: number): string {
   if (density > 0.8) return '#ba1a1a'
@@ -63,12 +66,14 @@ function ZoomControls() {
 
 function MapEventHandler({
   onMarkerClick,
+  filteredDests,
 }: {
   onMarkerClick: (dest: Destination) => void
+  filteredDests: Destination[]
 }) {
   return (
     <>
-      {destinations.map((dest) => (
+      {filteredDests.map((dest) => (
         <Marker
           key={dest.id}
           position={[dest.lat, dest.lng]}
@@ -94,14 +99,16 @@ const legendItems = [
 ]
 
 export default function Peta() {
-  const [selectedDestination, setSelectedDestination] =
-    useState<Destination | null>(null)
+  const [selectedDestination, setSelectedDestination] = useState<Destination | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [activeCategory, setActiveCategory] = useState('Semua')
+  const { isWatchlisted, toggleWatchlist } = useWatchlist()
+  const navigate = useNavigate()
+
+  const categoryFiltered = activeCategory === 'Semua' ? destinations : destinations.filter((d) => d.category === activeCategory)
 
   const filteredDestinations = searchQuery
-    ? destinations.filter((d) =>
-        d.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    ? categoryFiltered.filter((d) => d.name.toLowerCase().includes(searchQuery.toLowerCase()))
     : null
 
   return (
@@ -163,9 +170,19 @@ export default function Peta() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <MapEventHandler onMarkerClick={setSelectedDestination} />
+          <MapEventHandler onMarkerClick={setSelectedDestination} filteredDests={categoryFiltered} />
           <ZoomControls />
         </MapContainer>
+
+        {/* Category Filter - Mobile */}
+        <div className="absolute top-[68px] left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {categories.map((cat) => (
+            <button key={cat} onClick={() => setActiveCategory(cat)}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold shadow-md backdrop-blur-md ${activeCategory === cat ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest/90 text-on-surface-variant'}`}>
+              {cat}
+            </button>
+          ))}
+        </div>
 
         {/* Floating Legend - Mobile */}
         <div className="absolute bottom-4 right-4 z-20 bg-surface-container-lowest/90 backdrop-blur-md rounded-2xl p-3 shadow-lg">
@@ -253,17 +270,18 @@ export default function Peta() {
               </div>
 
               {/* Buttons */}
-              <div className="flex gap-3">
-                <Link
-                  to={`/app/destinasi/${selectedDestination.id}`}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-primary text-on-primary text-sm font-medium no-underline"
-                >
-                  <Icon name="info" size="18px" />
-                  Lihat Detail
+              <div className="flex gap-2">
+                <Link to={`/app/destinasi/${selectedDestination.id}`}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-primary text-on-primary text-sm font-medium no-underline">
+                  <Icon name="info" size="18px" />Detail
                 </Link>
-                <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-outline text-on-surface text-sm font-medium cursor-pointer bg-transparent">
-                  <Icon name="alt_route" size="18px" />
-                  Cari Alternatif
+                <button onClick={() => navigate(`/app/destinasi/${selectedDestination.id}`)}
+                  className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-outline text-on-surface text-sm font-medium cursor-pointer bg-transparent">
+                  <Icon name="confirmation_number" size="18px" />Pesan
+                </button>
+                <button onClick={() => toggleWatchlist(selectedDestination.id)}
+                  className="w-11 h-11 rounded-full border border-outline flex items-center justify-center cursor-pointer bg-transparent shrink-0">
+                  <Icon name="bookmark" filled={isWatchlisted(selectedDestination.id)} size="20px" className={isWatchlisted(selectedDestination.id) ? 'text-primary' : 'text-on-surface'} />
                 </button>
               </div>
             </div>
@@ -317,6 +335,16 @@ export default function Peta() {
           )}
         </div>
 
+        {/* Category Filter - Desktop */}
+        <div className="absolute top-[76px] left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {categories.map((cat) => (
+            <button key={cat} onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-2 rounded-full text-sm font-bold shadow-md backdrop-blur-md ${activeCategory === cat ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest/90 text-on-surface-variant'}`}>
+              {cat}
+            </button>
+          ))}
+        </div>
+
         {/* Full Map - Desktop */}
         <MapContainer
           center={[-8.4095, 115.1889]}
@@ -329,7 +357,7 @@ export default function Peta() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <MapEventHandler onMarkerClick={setSelectedDestination} />
+          <MapEventHandler onMarkerClick={setSelectedDestination} filteredDests={categoryFiltered} />
           <ZoomControls />
         </MapContainer>
 
@@ -408,14 +436,17 @@ export default function Peta() {
                 </div>
               </div>
 
-              {/* Button */}
-              <Link
-                to={`/app/destinasi/${selectedDestination.id}`}
-                className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-full bg-primary text-on-primary text-sm font-medium no-underline"
-              >
-                <Icon name="analytics" size="18px" />
-                Lihat Detail Analisis
-              </Link>
+              {/* Buttons */}
+              <div className="flex gap-2">
+                <Link to={`/app/destinasi/${selectedDestination.id}`}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-primary text-on-primary text-sm font-medium no-underline">
+                  <Icon name="analytics" size="18px" />Detail
+                </Link>
+                <button onClick={() => toggleWatchlist(selectedDestination.id)}
+                  className={`w-11 h-11 rounded-full border flex items-center justify-center cursor-pointer shrink-0 ${isWatchlisted(selectedDestination.id) ? 'bg-primary/10 border-primary' : 'border-outline bg-transparent'}`}>
+                  <Icon name="bookmark" filled={isWatchlisted(selectedDestination.id)} size="20px" className={isWatchlisted(selectedDestination.id) ? 'text-primary' : 'text-on-surface'} />
+                </button>
+              </div>
             </div>
           </div>
         )}
