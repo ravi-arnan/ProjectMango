@@ -13,7 +13,7 @@ const destinations = [
   { name: 'Kintamani', location: 'Bangli', category: 'Alam', density: 0.35, densityLabel: 'Sepi', visitors: 950, maxCapacity: 3000, rating: 4.6, reviewCount: 1620, openHours: '08.00 - 17.00', ticketPrice: 'Rp 30.000', description: 'Pemandangan Gunung Batur dan Danau Batur' },
 ]
 
-const SYSTEM_PROMPT = `Kamu adalah Mango AI, asisten analisis pariwisata cerdas untuk Pulau Bali. Kamu membantu wisatawan merencanakan kunjungan dengan data kepadatan real-time.
+const DEFAULT_SYSTEM_PROMPT = `Kamu adalah Mango AI, asisten analisis pariwisata cerdas untuk Pulau Bali. Kamu membantu wisatawan merencanakan kunjungan dengan data kepadatan real-time.
 
 Data destinasi saat ini:
 ${JSON.stringify(destinations, null, 2)}
@@ -27,14 +27,58 @@ Panduan:
 - Gunakan emoji secukupnya untuk membuat jawaban lebih menarik
 - Jika ditanya di luar topik pariwisata Bali, arahkan kembali ke topik utama`
 
+interface AiSettings {
+  default_model: string
+  system_prompt: string | null
+  max_tokens: number
+  temperature: number
+}
+
+const DEFAULT_SETTINGS: AiSettings = {
+  default_model: 'gpt-4o-mini',
+  system_prompt: null,
+  max_tokens: 1024,
+  temperature: 0.7,
+}
+
+async function fetchAiSettings(): Promise<AiSettings> {
+  const supabaseUrl = process.env.VITE_SUPABASE_URL
+  const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseAnonKey) return DEFAULT_SETTINGS
+
+  try {
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/ai_agent_settings?id=eq.1&select=default_model,system_prompt,max_tokens,temperature`,
+      {
+        headers: {
+          apikey: supabaseAnonKey,
+          Authorization: `Bearer ${supabaseAnonKey}`,
+        },
+      }
+    )
+    if (!res.ok) return DEFAULT_SETTINGS
+    const rows = (await res.json()) as AiSettings[]
+    const row = rows[0]
+    if (!row) return DEFAULT_SETTINGS
+    return {
+      default_model: row.default_model || DEFAULT_SETTINGS.default_model,
+      system_prompt: row.system_prompt,
+      max_tokens: row.max_tokens || DEFAULT_SETTINGS.max_tokens,
+      temperature: row.temperature ?? DEFAULT_SETTINGS.temperature,
+    }
+  } catch {
+    return DEFAULT_SETTINGS
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) {
-    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured' })
+  const githubToken = process.env.GITHUB_TOKEN
+  if (!githubToken) {
+    return res.status(500).json({ error: 'GITHUB_TOKEN not configured' })
   }
 
   const { messages } = req.body
@@ -42,36 +86,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Messages array is required' })
   }
 
-  // Cap conversation history to last 20 messages
   const trimmedMessages = messages.slice(-20)
+  const settings = await fetchAiSettings()
+  const systemContent = settings.system_prompt?.trim() || DEFAULT_SYSTEM_PROMPT
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://models.inference.ai.azure.com/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        Authorization: `Bearer ${githubToken}`,
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        system: SYSTEM_PROMPT,
-        messages: trimmedMessages.map((m: { role: string; content: string }) => ({
-          role: m.role,
-          content: m.content,
-        })),
+        model: settings.default_model,
+        max_tokens: settings.max_tokens,
+        temperature: settings.temperature,
+        messages: [
+          { role: 'system', content: systemContent },
+          ...trimmedMessages.map((m: { role: string; content: string }) => ({
+            role: m.role,
+            content: m.content,
+          })),
+        ],
       }),
     })
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Anthropic API error:', response.status, errorText)
+      console.error('GitHub Models error:', response.status, errorText)
       return res.status(502).json({ error: 'AI service temporarily unavailable' })
     }
 
     const data = await response.json()
-    const reply = data.content?.[0]?.text || 'Maaf, saya tidak dapat memberikan respons saat ini.'
+    const reply =
+      data.choices?.[0]?.message?.content || 'Maaf, saya tidak dapat memberikan respons saat ini.'
 
     return res.status(200).json({ reply })
   } catch (error) {
