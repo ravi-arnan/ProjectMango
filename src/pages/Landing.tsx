@@ -70,7 +70,7 @@ export default function Landing() {
         <section className="relative h-[520px] sm:h-[600px] lg:h-[85vh] min-h-[600px] overflow-hidden mx-3 sm:mx-4 lg:mx-6 mt-3 rounded-2xl lg:rounded-3xl">
           {/* Slow zoom background */}
           <img
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPkyKpOUGRxjZaYoSPnwTv6kQxiuRodxfFVuy8pf_OspiMe_t_ARtW81u-N0HRKbzRZWPEUaGU4XiIYxxpDWxPE5CYvzeKAjwgL6narP9awa6i2AqpxdKgd9IXw76EGOdb2QtQbSYJWxmkAX_hq56a30lKRNF30uZDX5InyuU8A8vNcwEar1bcUPUBIZNmATetRwRlhNUuEGyZ_-bVLdc3N4BsYh9F7ruytFA4eiCXBjchmVjh9OCMZJGJuLCj7n0wre71c7Eorp81"
+            src="/highcompress_TanahLot.jpg"
             alt="Tanah Lot temple at sunset"
             className="absolute inset-0 w-full h-full object-cover hero-zoom"
           />
@@ -228,15 +228,15 @@ export default function Landing() {
                 <div className="flex gap-3 shrink-0">
                   <div className="w-[130px] h-[170px] lg:w-[160px] lg:h-[200px] rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 anim-float">
                     <img
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgmeM2kxs0PnMzEiCZXeSVytMB3vvx2I9K2zm7YDk-KpNdC9KmoYAcrDGaO_Dn8QL4YqGKgFG9PnWuyLIVztHgPNvs5MqM0otb1bAmyNIMoC2CZ6_JXr7uYfYkY_PrTx3U7MERHLQd6loHnpnkpkme4Vcu3FIkXupKasHJDmudu9JBeEGbSYTh0r-luNn4x9Byu-GeUdpCXcx_WFF4gscGVUZL6wQ2i6UnXR7i5vjwcXR2lS8ZWuT5VotScLdOemLvNnxfnTEshYJY"
-                      alt="Tropical breakfast"
+                      src="/highcompress_PantaiMengening.jpg"
+                      alt="Pantai Mengening"
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="w-[130px] h-[170px] lg:w-[160px] lg:h-[200px] rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 anim-float-delay">
                     <img
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzSaLnUuBNhk1IxlNanTZ-nP0p3RHZpBG1bD8kAcB4V0HOU3L3NwGBHwex3p8BVkhiAYcrs8cfOB4vU2nAB5TfqurxCHfttaHL7i-N3DxfJhHpKWkGWKPz5vzGPmATH315rSmeYxifYZFERhGeEWpiaVu9I-xc5oQMoHdxccEZk0XxJminbPuyluuJ6xyBAOLK8gffLEOjvpnzzSE8e6H2oIZCnxKWLHUGpRsN7U_H8oglOgtx6qEa5qJbhIUyTFkIMOaAl1m0FOq_"
-                      alt="Waterfall"
+                      src="/highcompress_DesaPenglipuran1.jpg"
+                      alt="Desa Penglipuran"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -261,7 +261,7 @@ export default function Landing() {
                   <div className="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                     <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shrink-0">
                       <img
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF4oacVI2oNDBhKrKKx6XnxC3RY1U-Lbid1sQ-Y1zhyENTJw8QKj4z2YBwNP1BcGSV9lMRep8kyxWxdQ5fTGpmZqaYBEvmH6H_wG62x2fVIsjdRTYLGTgBCeC52UV8UoFXxPdV_ttwz9X3ftAJuf6LCf5FwozQ1HNpqVESrZri6ZXPQe8-J91Hyj4P2C_OI1C-xjgaOVTb9Ipcu8254RV8WdXnRA5Qsg-9ejPWngj_3bmWkA88BsCGPQi3yoU30fwTiJx7CofBUBLk"
+                        src="/highcompress_Uluwatu.jpg"
                         alt="Uluwatu"
                         className="w-full h-full object-cover"
                       />
@@ -277,7 +277,7 @@ export default function Landing() {
                   <div className="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-2xl shadow-sm border border-primary/10 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
                     <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shrink-0">
                       <img
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo6aKGaGU92q0xYEQ_QqBmxMDrcUuvJUoTh9qV4p8ZbVglihhmVeVSj566VKf2HICoufCLyPKeRPh_WTKzOe5aLZ_5BPVeoTU5V2pyMioOTfcMKRgVbqoFaPc7vSo-S7OCBG326fQeTX0rEqKGKHco6eciD1dgAF3xsadpi_2GYwfTMVIkSHMA2B2EVjIxDXDEDSx70QJI1R6f5NEsK5OM8jmFHHyU6_XCz_XKLMyEhT5us9D7Q5nWV1VOxZr7nVvZjFEnPOMjiwsO"
+                        src="/highcompress_Tegalalang.jpg"
                         alt="Tegallalang"
                         className="w-full h-full object-cover"
                       />
