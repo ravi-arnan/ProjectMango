@@ -4,6 +4,7 @@ export interface AppNotification {
   title: string
   message: string
   destinationId?: string
+  bookingId?: string
   read: boolean
   createdAt: string
 }

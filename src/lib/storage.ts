@@ -3,6 +3,8 @@ export const STORAGE_KEYS = {
   BOOKINGS: 'mango_bookings',
   NOTIFICATIONS: 'mango_notifications',
   NOTIFICATION_PREFS: 'mango_notification_prefs',
+  FIRED_REMINDERS: 'mango_fired_reminders',
+  LAST_MOOD: 'mango_last_mood',
   REVIEWS: 'mango_reviews',
   SETTINGS: 'mango_settings',
   AVATAR: 'mango_avatar',

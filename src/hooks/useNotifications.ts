@@ -3,6 +3,27 @@ import { getStorageItem, setStorageItem, STORAGE_KEYS } from '../lib/storage'
 import { generateId } from '../lib/utils'
 import { destinations } from '../data/destinations'
 import type { AppNotification, NotificationPrefs } from '../types/notification'
+import type { Booking } from '../types/booking'
+
+type ReminderKind = 'day_before' | 'day_of'
+
+function daysBetween(from: Date, to: Date): number {
+  const startOfDay = (d: Date) => Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())
+  return Math.round((startOfDay(to) - startOfDay(from)) / 86400000)
+}
+
+function reminderCopy(booking: Booking, kind: ReminderKind) {
+  if (kind === 'day_before') {
+    return {
+      title: `Besok kunjungan ke ${booking.destinationName}`,
+      message: `Siapkan tiket & cek prakiraan kepadatan. Kode tiket: ${booking.ticketCode}`,
+    }
+  }
+  return {
+    title: `Hari ini kunjungan ke ${booking.destinationName}`,
+    message: 'Selamat berkunjung! Cek kepadatan terkini sebelum berangkat.',
+  }
+}
 
 const DEFAULT_PREFS: NotificationPrefs = {
   crowdAlerts: true,
@@ -129,6 +150,51 @@ export function useNotifications() {
 
     return () => clearInterval(interval)
   }, [prefs.crowdAlerts, addNotification])
+
+  useEffect(() => {
+    if (!prefs.bookingReminders) return
+
+    const runBookingReminderScheduler = () => {
+      const bookings = getStorageItem<Booking[]>(STORAGE_KEYS.BOOKINGS, [])
+      const fired = getStorageItem<string[]>(STORAGE_KEYS.FIRED_REMINDERS, [])
+      const firedSet = new Set(fired)
+      const now = new Date()
+      let changed = false
+
+      for (const booking of bookings) {
+        if (booking.status !== 'confirmed') continue
+        const bookingDate = new Date(`${booking.date}T00:00:00`)
+        const diff = daysBetween(now, bookingDate)
+
+        const kinds: ReminderKind[] = []
+        if (diff === 1) kinds.push('day_before')
+        if (diff === 0) kinds.push('day_of')
+
+        for (const kind of kinds) {
+          const key = `${booking.id}:${kind}`
+          if (firedSet.has(key)) continue
+          const copy = reminderCopy(booking, kind)
+          addNotification({
+            type: 'booking_reminder',
+            title: copy.title,
+            message: copy.message,
+            destinationId: booking.destinationId,
+            bookingId: booking.id,
+          })
+          firedSet.add(key)
+          changed = true
+        }
+      }
+
+      if (changed) {
+        setStorageItem(STORAGE_KEYS.FIRED_REMINDERS, Array.from(firedSet))
+      }
+    }
+
+    runBookingReminderScheduler()
+    const interval = setInterval(runBookingReminderScheduler, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [prefs.bookingReminders, addNotification])
 
   return {
     notifications,
