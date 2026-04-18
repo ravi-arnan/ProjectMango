@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 import AppLayout from './components/AppLayout'
 import Landing from './pages/Landing'
 import Auth from './pages/Auth'
@@ -13,6 +14,7 @@ const DestinationDetail = lazy(() => import('./pages/DestinationDetail'))
 const Prediksi = lazy(() => import('./pages/Prediksi'))
 const Profil = lazy(() => import('./pages/Profil'))
 const AiAnalysis = lazy(() => import('./pages/AiAnalysis'))
+const Admin = lazy(() => import('./pages/Admin'))
 
 function PageLoader() {
   return (
@@ -39,6 +41,7 @@ export default function App() {
               <Route path="prediksi" element={<Prediksi />} />
               <Route path="ai-analysis" element={<AiAnalysis />} />
               <Route path="profil" element={<Profil />} />
+              <Route path="admin" element={<AdminRoute><Admin /></AdminRoute>} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

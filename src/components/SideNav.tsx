@@ -1,5 +1,6 @@
 import { NavLink, Link } from 'react-router-dom'
 import Icon from './Icon'
+import { useAuth } from '../context/AuthContext'
 
 const navLinks = [
   { to: '/app', icon: 'home', label: 'Home' },
@@ -9,6 +10,11 @@ const navLinks = [
 ]
 
 export default function SideNav() {
+  const { isAdmin } = useAuth()
+  const links = isAdmin
+    ? [...navLinks, { to: '/app/admin', icon: 'admin_panel_settings', label: 'Admin' }]
+    : navLinks
+
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 w-64 h-screen bg-white border-r border-stone-100 p-6 flex-col">
       {/* Brand header */}
@@ -26,7 +32,7 @@ export default function SideNav() {
 
       {/* Nav links */}
       <nav className="flex flex-col gap-1 flex-1">
-        {navLinks.map((link) => (
+        {links.map((link) => (
           <NavLink
             key={link.to}
             to={link.to}

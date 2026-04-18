@@ -6,6 +6,7 @@ interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
+  isAdmin: boolean
   signOut: () => Promise<void>
 }
 
@@ -13,6 +14,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   loading: true,
+  isAdmin: false,
   signOut: async () => {},
 })
 
@@ -49,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     let subscription: { unsubscribe: () => void } | null = null
@@ -75,14 +78,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription?.unsubscribe()
   }, [])
 
+  useEffect(() => {
+    if (!user || user.is_anonymous) {
+      setIsAdmin(false)
+      return
+    }
+    let cancelled = false
+    supabase
+      .from('admins')
+      .select('user_id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled) setIsAdmin(!!data)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [user])
+
   const signOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
     setSession(null)
+    setIsAdmin(false)
   }
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, isAdmin, signOut }}>
       {children}
     </AuthContext.Provider>
   )
