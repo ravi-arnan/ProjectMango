@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { supabase } from '../lib/supabase';
 import Icon from '../components/Icon';
 
 type Tab = 'login' | 'signup';
+
+const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -18,6 +21,23 @@ export default function Auth() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [resetSent, setResetSent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
+
+  const captchaRequired = Boolean(turnstileSiteKey);
+
+  const resetCaptcha = () => {
+    setCaptchaToken(null);
+    turnstileRef.current?.reset();
+  };
+
+  const ensureCaptcha = (): boolean => {
+    if (captchaRequired && !captchaToken) {
+      setError('Silakan selesaikan verifikasi captcha terlebih dahulu.');
+      return false;
+    }
+    return true;
+  };
 
   const resetFields = () => {
     setEmail('');
@@ -37,13 +57,19 @@ export default function Auth() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (!ensureCaptcha()) return;
     setLoading(true);
     try {
-      const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+        options: captchaToken ? { captchaToken } : undefined,
+      });
       if (authError) throw authError;
       navigate('/app');
     } catch (err: any) {
       setError(err.message || 'Gagal masuk. Silakan coba lagi.');
+      resetCaptcha();
     } finally {
       setLoading(false);
     }
@@ -56,18 +82,23 @@ export default function Auth() {
       setError('Kata sandi tidak cocok.');
       return;
     }
+    if (!ensureCaptcha()) return;
     setLoading(true);
     try {
       const { error: authError } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name } },
+        options: {
+          data: { full_name: name },
+          ...(captchaToken ? { captchaToken } : {}),
+        },
       });
       if (authError) throw authError;
       setSuccess('Akun berhasil dibuat! Silakan cek email untuk verifikasi.');
       handleTabSwitch('login');
     } catch (err: any) {
       setError(err.message || 'Gagal mendaftar. Silakan coba lagi.');
+      resetCaptcha();
     } finally {
       setLoading(false);
     }
@@ -75,13 +106,17 @@ export default function Auth() {
 
   const handleGuestLogin = async () => {
     setError('');
+    if (!ensureCaptcha()) return;
     setLoading(true);
     try {
-      const { error: authError } = await supabase.auth.signInAnonymously();
+      const { error: authError } = await supabase.auth.signInAnonymously({
+        options: captchaToken ? { captchaToken } : undefined,
+      });
       if (authError) throw authError;
       navigate('/app');
-    } catch {
-      navigate('/app');
+    } catch (err: any) {
+      setError(err.message || 'Gagal masuk sebagai tamu. Silakan coba lagi.');
+      resetCaptcha();
     } finally {
       setLoading(false);
     }
@@ -141,6 +176,20 @@ export default function Auth() {
         {error && (
           <div className="bg-error-container text-on-error-container rounded-xl p-3 text-sm font-body">
             {error}
+          </div>
+        )}
+
+        {/* Captcha */}
+        {captchaRequired && (
+          <div className="flex justify-center">
+            <Turnstile
+              ref={turnstileRef}
+              siteKey={turnstileSiteKey!}
+              onSuccess={setCaptchaToken}
+              onExpire={() => setCaptchaToken(null)}
+              onError={() => setCaptchaToken(null)}
+              options={{ theme: 'light', size: 'flexible' }}
+            />
           </div>
         )}
 
