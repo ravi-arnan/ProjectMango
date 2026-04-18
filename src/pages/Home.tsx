@@ -4,6 +4,8 @@ import Icon from '../components/Icon'
 import { destinations, getDensityBgColor } from '../data/destinations'
 import { useAuth, getUserDisplayName } from '../context/AuthContext'
 import { showToast } from '../components/Toast'
+import { filterByMood, getMoodMeta, MOODS, type Mood } from '../lib/moodMapping'
+import { getStorageItem, setStorageItem, STORAGE_KEYS } from '../lib/storage'
 
 const categories = ['Semua', 'Pantai', 'Pura', 'Alam', 'Budaya']
 
@@ -11,6 +13,9 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('Semua')
   const [showInstallBanner, setShowInstallBanner] = useState(true)
+  const [selectedMood, setSelectedMood] = useState<Mood | null>(() =>
+    getStorageItem<Mood | null>(STORAGE_KEYS.LAST_MOOD, null)
+  )
   const { user } = useAuth()
   const displayName = getUserDisplayName(user)
 
@@ -26,9 +31,21 @@ export default function Home() {
       })
   }
 
-  const recommended = getRecommendations()
-  const recommendedMobile = recommended.slice(0, 2)
+  const recommended = selectedMood
+    ? filterByMood(destinations, selectedMood)
+    : getRecommendations()
+  const recommendedMobile = recommended.slice(0, 4)
   const desktopRecommended = recommended.slice(0, 3)
+
+  const handleMoodSelect = (mood: Mood) => {
+    const next = selectedMood === mood ? null : mood
+    setSelectedMood(next)
+    setStorageItem(STORAGE_KEYS.LAST_MOOD, next)
+  }
+
+  const recommendationSubtitle = selectedMood
+    ? getMoodMeta(selectedMood).description
+    : 'Berdasarkan lokasi dan preferensimu'
 
   return (
     <div>
@@ -176,9 +193,39 @@ export default function Home() {
         <div>
           <h3 className="text-base font-bold text-on-surface">Rekomendasi untuk Kamu</h3>
           <p className="text-xs text-on-surface-variant mt-0.5 mb-3">
-            Berdasarkan lokasi dan preferensimu
+            {selectedMood ? 'Bagaimana perasaanmu hari ini?' : 'Berdasarkan lokasi dan preferensimu'}
           </p>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar mb-3">
+            {MOODS.map((mood) => {
+              const meta = getMoodMeta(mood)
+              const active = selectedMood === mood
+              return (
+                <button
+                  key={mood}
+                  onClick={() => handleMoodSelect(mood)}
+                  className={`shrink-0 flex items-center gap-1.5 rounded-full text-xs font-bold px-3.5 py-2 transition-colors ${
+                    active
+                      ? 'bg-primary text-on-primary'
+                      : 'bg-surface-container text-on-surface-variant'
+                  }`}
+                >
+                  <span className="text-sm leading-none">{meta.emoji}</span>
+                  {meta.label}
+                </button>
+              )
+            })}
+          </div>
+          {selectedMood && (
+            <p className="text-[11px] text-on-surface-variant mb-3">
+              {recommendationSubtitle}
+            </p>
+          )}
           <div className="flex flex-col gap-3">
+            {recommendedMobile.length === 0 && (
+              <p className="text-sm text-on-surface-variant text-center py-6">
+                Tidak ada destinasi yang cocok. Coba mood lain.
+              </p>
+            )}
             {recommendedMobile.map((dest) => (
               <Link
                 key={dest.id}
@@ -333,8 +380,33 @@ export default function Home() {
         <div>
           <h2 className="text-xl font-bold text-on-surface mb-1">Rekomendasi untuk Kamu</h2>
           <p className="text-sm text-on-surface-variant mb-4">
-            Berdasarkan lokasi dan preferensimu
+            {recommendationSubtitle}
           </p>
+          <div className="flex gap-2 mb-6 flex-wrap">
+            {MOODS.map((mood) => {
+              const meta = getMoodMeta(mood)
+              const active = selectedMood === mood
+              return (
+                <button
+                  key={mood}
+                  onClick={() => handleMoodSelect(mood)}
+                  className={`flex items-center gap-2 rounded-full text-sm font-bold px-5 py-2.5 transition-colors ${
+                    active
+                      ? 'bg-primary text-on-primary'
+                      : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
+                  }`}
+                >
+                  <span className="text-base leading-none">{meta.emoji}</span>
+                  {meta.label}
+                </button>
+              )
+            })}
+          </div>
+          {desktopRecommended.length === 0 ? (
+            <p className="text-sm text-on-surface-variant text-center py-10 bg-surface-container-low rounded-2xl">
+              Tidak ada destinasi yang cocok dengan mood ini. Coba pilih mood lain.
+            </p>
+          ) : (
           <div className="grid md:grid-cols-3 gap-4">
             {desktopRecommended.map((dest) => (
               <div
@@ -374,6 +446,7 @@ export default function Home() {
               </div>
             ))}
           </div>
+          )}
         </div>
       </div>
     </div>
