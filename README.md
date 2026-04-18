@@ -1,8 +1,8 @@
-# BaliSense
+# Mango
 
 **Cerdas Memantau Keramaian Wisata di Pulau Dewata.**
 
-BaliSense is a Progressive Web App (PWA) that helps travelers and local authorities monitor real-time crowd density at tourist destinations across Bali. By providing live occupancy data, AI-driven predictions, and smart recommendations, it promotes sustainable tourism and helps visitors avoid overcrowded hotspots.
+Mango is a Progressive Web App (PWA) that helps travelers and local authorities monitor real-time crowd density at tourist destinations across Bali. By providing live occupancy data, AI-driven predictions, and smart recommendations, it promotes sustainable tourism and helps visitors avoid overcrowded hotspots.
 
 > Built for the AI Impact Challenge by Tim Inovasi Digital.
 
