@@ -69,9 +69,15 @@ export default function Landing() {
         {/* ==================== HERO ==================== */}
         <section className="relative h-[520px] sm:h-[600px] lg:h-[85vh] min-h-[600px] overflow-hidden mx-3 sm:mx-4 lg:mx-6 mt-3 rounded-2xl lg:rounded-3xl">
           {/* Slow zoom background */}
-          <img
-            src="/highcompress_TanahLot.jpg"
-            alt="Tanah Lot temple at sunset"
+          <video
+            src="/DanauBratan.mp4"
+            poster="/highcompress_TanahLot.jpg"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            aria-label="Pemandangan Danau Bratan, Bali"
             className="absolute inset-0 w-full h-full object-cover hero-zoom"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />

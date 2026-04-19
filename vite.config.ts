@@ -16,6 +16,10 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/*.png'],
+      workbox: {
+        globIgnores: ['**/*.mp4'],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+      },
       manifest: {
         name: 'Mango - Smart Tourism Platform',
         short_name: 'Mango',
