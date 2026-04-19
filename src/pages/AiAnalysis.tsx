@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from 'react'
 import Icon from '../components/Icon'
 import { destinations } from '../data/destinations'
+import { supabase } from '../lib/supabase'
 
 interface Message {
   role: 'user' | 'assistant'
   content: string
 }
 
-const suggestedPrompts = [
+const DEFAULT_SUGGESTED_PROMPTS = [
   'Destinasi mana yang paling sepi saat ini?',
   'Rekomendasi wisata untuk keluarga?',
   'Kapan waktu terbaik ke Tanah Lot?',
@@ -16,16 +17,40 @@ const suggestedPrompts = [
   'Rencana itinerary 3 hari di Bali',
 ]
 
+const DEFAULT_GREETING =
+  'Tanyakan apa saja tentang destinasi wisata di Bali — kepadatan, rekomendasi, waktu terbaik berkunjung, dan lainnya.'
+
 export default function AiAnalysis() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>(DEFAULT_SUGGESTED_PROMPTS)
+  const [greeting, setGreeting] = useState<string>(DEFAULT_GREETING)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  useEffect(() => {
+    let cancelled = false
+    supabase
+      .from('ai_agent_settings')
+      .select('greeting_message, suggested_prompts')
+      .eq('id', 1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled || !data) return
+        if (data.greeting_message) setGreeting(data.greeting_message)
+        if (data.suggested_prompts && data.suggested_prompts.length > 0) {
+          setSuggestedPrompts(data.suggested_prompts)
+        }
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   async function sendMessage(text: string) {
     if (!text.trim() || isLoading) return
@@ -37,18 +62,25 @@ export default function AiAnalysis() {
     setIsLoading(true)
 
     try {
+      const { data: { session } } = await supabase.auth.getSession()
       const res = await fetch('/api/ai-analysis', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
         body: JSON.stringify({ messages: updatedMessages }),
       })
 
+      const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`)
+        setMessages([
+          ...updatedMessages,
+          { role: 'assistant', content: data.error || 'Maaf, terjadi kesalahan. Coba lagi nanti.' },
+        ])
+      } else {
+        setMessages([...updatedMessages, { role: 'assistant', content: data.reply }])
       }
-
-      const data = await res.json()
-      setMessages([...updatedMessages, { role: 'assistant', content: data.reply }])
     } catch {
       setMessages([
         ...updatedMessages,
@@ -99,7 +131,7 @@ export default function AiAnalysis() {
               </div>
               <h3 className="text-lg font-bold text-on-surface mb-1">Halo! Saya Mango AI</h3>
               <p className="text-sm text-on-surface-variant mb-6 max-w-sm">
-                Tanyakan apa saja tentang destinasi wisata di Bali — kepadatan, rekomendasi, waktu terbaik berkunjung, dan lainnya.
+                {greeting}
               </p>
               <div className="flex flex-wrap gap-2 justify-center max-w-md">
                 {suggestedPrompts.map((prompt) => (

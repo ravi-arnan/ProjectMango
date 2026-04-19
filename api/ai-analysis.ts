@@ -27,11 +27,31 @@ Panduan:
 - Gunakan emoji secukupnya untuk membuat jawaban lebih menarik
 - Jika ditanya di luar topik pariwisata Bali, arahkan kembali ke topik utama`
 
+const DEFAULT_FALLBACK =
+  'Maaf, saya tidak bisa memberikan respons saat ini. Coba tanyakan lagi dengan kata lain ya.'
+const DEFAULT_REFUSAL =
+  'Maaf, saya tidak bisa membantu dengan topik itu. Tanyakan seputar wisata Bali ya.'
+
+type Persona = 'informatif' | 'formal' | 'santai' | 'profesional'
+
+const PERSONA_HINT: Record<Persona, string> = {
+  informatif: '',
+  formal: 'Gunakan bahasa formal dan sopan.',
+  santai: 'Gunakan bahasa santai dan akrab, boleh pakai emoji.',
+  profesional: 'Jawab dengan nada profesional, ringkas, dan data-driven.',
+}
+
 interface AiSettings {
   default_model: string
   system_prompt: string | null
   max_tokens: number
   temperature: number
+  persona: Persona
+  content_filter_enabled: boolean
+  blocked_keywords: string[]
+  refusal_message: string
+  fallback_message: string
+  allow_anonymous_chat: boolean
 }
 
 const DEFAULT_SETTINGS: AiSettings = {
@@ -39,6 +59,12 @@ const DEFAULT_SETTINGS: AiSettings = {
   system_prompt: null,
   max_tokens: 1024,
   temperature: 0.7,
+  persona: 'informatif',
+  content_filter_enabled: true,
+  blocked_keywords: [],
+  refusal_message: DEFAULT_REFUSAL,
+  fallback_message: DEFAULT_FALLBACK,
+  allow_anonymous_chat: true,
 }
 
 async function fetchAiSettings(): Promise<AiSettings> {
@@ -48,7 +74,7 @@ async function fetchAiSettings(): Promise<AiSettings> {
 
   try {
     const res = await fetch(
-      `${supabaseUrl}/rest/v1/ai_agent_settings?id=eq.1&select=default_model,system_prompt,max_tokens,temperature`,
+      `${supabaseUrl}/rest/v1/ai_agent_settings?id=eq.1&select=default_model,system_prompt,max_tokens,temperature,persona,content_filter_enabled,blocked_keywords,refusal_message,fallback_message,allow_anonymous_chat`,
       {
         headers: {
           apikey: supabaseAnonKey,
@@ -57,18 +83,60 @@ async function fetchAiSettings(): Promise<AiSettings> {
       }
     )
     if (!res.ok) return DEFAULT_SETTINGS
-    const rows = (await res.json()) as AiSettings[]
+    const rows = (await res.json()) as Partial<AiSettings>[]
     const row = rows[0]
     if (!row) return DEFAULT_SETTINGS
     return {
       default_model: row.default_model || DEFAULT_SETTINGS.default_model,
-      system_prompt: row.system_prompt,
+      system_prompt: row.system_prompt ?? null,
       max_tokens: row.max_tokens || DEFAULT_SETTINGS.max_tokens,
       temperature: row.temperature ?? DEFAULT_SETTINGS.temperature,
+      persona: (row.persona as Persona) || DEFAULT_SETTINGS.persona,
+      content_filter_enabled: row.content_filter_enabled ?? DEFAULT_SETTINGS.content_filter_enabled,
+      blocked_keywords: row.blocked_keywords ?? DEFAULT_SETTINGS.blocked_keywords,
+      refusal_message: row.refusal_message || DEFAULT_SETTINGS.refusal_message,
+      fallback_message: row.fallback_message || DEFAULT_SETTINGS.fallback_message,
+      allow_anonymous_chat: row.allow_anonymous_chat ?? DEFAULT_SETTINGS.allow_anonymous_chat,
     }
   } catch {
     return DEFAULT_SETTINGS
   }
+}
+
+async function getUserFromToken(
+  token: string | undefined
+): Promise<{ is_anonymous?: boolean } | null> {
+  if (!token) return null
+  const supabaseUrl = process.env.VITE_SUPABASE_URL
+  const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseAnonKey) return null
+  try {
+    const res = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      headers: {
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (!res.ok) return null
+    return (await res.json()) as { is_anonymous?: boolean }
+  } catch {
+    return null
+  }
+}
+
+function escapeRegex(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function isBlocked(message: string, keywords: string[]): boolean {
+  if (keywords.length === 0) return false
+  const lower = message.toLowerCase()
+  return keywords.some((kw) => {
+    const trimmed = kw.trim()
+    if (!trimmed) return false
+    const pattern = new RegExp(`\\b${escapeRegex(trimmed.toLowerCase())}\\b`)
+    return pattern.test(lower)
+  })
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -88,7 +156,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const trimmedMessages = messages.slice(-20)
   const settings = await fetchAiSettings()
-  const systemContent = settings.system_prompt?.trim() || DEFAULT_SYSTEM_PROMPT
+
+  // 1. Guest gate
+  if (!settings.allow_anonymous_chat) {
+    const authHeader = req.headers.authorization
+    const accessToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+    const user = await getUserFromToken(accessToken)
+    if (!user || user.is_anonymous) {
+      return res.status(403).json({ error: settings.refusal_message })
+    }
+  }
+
+  // 2. Content filter on latest user message
+  if (settings.content_filter_enabled && settings.blocked_keywords.length > 0) {
+    const lastUserMessage = [...trimmedMessages]
+      .reverse()
+      .find((m: { role: string }) => m.role === 'user')?.content ?? ''
+    if (isBlocked(lastUserMessage, settings.blocked_keywords)) {
+      return res.status(200).json({ reply: settings.refusal_message })
+    }
+  }
+
+  // 3. Build system prompt with persona hint appended
+  const baseSystem = settings.system_prompt?.trim() || DEFAULT_SYSTEM_PROMPT
+  const personaHint = PERSONA_HINT[settings.persona] || ''
+  const systemContent = personaHint ? `${baseSystem}\n\n${personaHint}` : baseSystem
 
   try {
     const response = await fetch('https://models.inference.ai.azure.com/chat/completions', {
@@ -118,8 +210,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const data = await response.json()
-    const reply =
-      data.choices?.[0]?.message?.content || 'Maaf, saya tidak dapat memberikan respons saat ini.'
+    const reply = data.choices?.[0]?.message?.content || settings.fallback_message
 
     return res.status(200).json({ reply })
   } catch (error) {
