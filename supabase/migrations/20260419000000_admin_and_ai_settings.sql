@@ -1,6 +1,6 @@
 -- =====================================================
--- ProjectMango – initial schema for admin + AI settings
--- Jalankan di Supabase SQL Editor. Script idempotent.
+-- ProjectMango — admin role + AI settings (DDL only)
+-- Jalankan pertama kali, idempotent.
 -- =====================================================
 
 -- 1. Tabel admin (role model sederhana)
@@ -19,7 +19,7 @@ create policy "users can read own admin row"
   using (user_id = auth.uid());
 
 -- INSERT/UPDATE/DELETE: tidak ada policy → default deny.
--- Menambah admin hanya bisa via Service Role (Supabase dashboard / SQL editor).
+-- Menambah admin hanya bisa via Service Role (SQL editor / Supabase dashboard).
 
 -- Helper untuk dipakai policy lain.
 create or replace function public.is_admin(uid uuid)
@@ -41,9 +41,6 @@ create table if not exists public.ai_agent_settings (
   updated_at timestamptz not null default now(),
   updated_by uuid references auth.users(id)
 );
-
--- Seed single row (idempotent).
-insert into public.ai_agent_settings (id) values (1) on conflict (id) do nothing;
 
 alter table public.ai_agent_settings enable row level security;
 
@@ -77,12 +74,3 @@ drop trigger if exists ai_agent_settings_touch on public.ai_agent_settings;
 create trigger ai_agent_settings_touch
   before update on public.ai_agent_settings
   for each row execute function public.touch_ai_agent_settings();
-
--- =====================================================
--- Bootstrap admin pertama (jalankan MANUAL setelah daftar)
--- =====================================================
--- 1. Daftar akun di app lewat /auth (email + password).
--- 2. Ambil UUID-mu:
---      select id, email from auth.users where email = 'EMAIL_KAMU';
--- 3. Masukkan sebagai admin:
---      insert into public.admins (user_id) values ('UUID_DARI_STEP_2');
