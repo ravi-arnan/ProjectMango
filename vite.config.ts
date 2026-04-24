@@ -6,6 +6,12 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   server: {
     allowedHosts: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'react-leaflet', 'leaflet', '@supabase/supabase-js'],

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import Icon from '../components/Icon'
 import { destinations } from '../data/destinations'
 import { supabase } from '../lib/supabase'
@@ -153,14 +154,34 @@ export default function AiAnalysis() {
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[85%] lg:max-w-[70%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                  msg.role === 'user'
+                className={`max-w-[85%] lg:max-w-[70%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === 'user'
                     ? 'bg-primary text-on-primary rounded-br-md'
                     : 'bg-surface-container-low text-on-surface rounded-bl-md'
-                }`}
+                  }`}
               >
                 {msg.role === 'assistant' ? (
-                  <div className="whitespace-pre-wrap">{msg.content}</div>
+                  <div className="prose prose-sm max-w-none prose-a:text-primary prose-a:underline prose-a:underline-offset-2 prose-strong:text-on-surface prose-ul:pl-4 prose-ol:pl-4 prose-li:my-0.5">
+                    <ReactMarkdown
+                      components={{
+                        a: ({ href, children }) => (
+                          <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2 hover:opacity-75 transition-opacity">
+                            {children}
+                          </a>
+                        ),
+                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-0.5">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-0.5">{children}</ol>,
+                        li: ({ children }) => <li className="text-sm">{children}</li>,
+                        strong: ({ children }) => <strong className="font-semibold text-on-surface">{children}</strong>,
+                        h1: ({ children }) => <h1 className="text-base font-bold text-on-surface mb-1 mt-2">{children}</h1>,
+                        h2: ({ children }) => <h2 className="text-sm font-bold text-on-surface mb-1 mt-2">{children}</h2>,
+                        h3: ({ children }) => <h3 className="text-sm font-semibold text-on-surface mb-1 mt-1.5">{children}</h3>,
+                        hr: () => <hr className="my-2 border-stone-200" />,
+                      }}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
+                  </div>
                 ) : (
                   msg.content
                 )}
@@ -214,14 +235,14 @@ export default function AiAnalysis() {
             {destinations.map((dest) => {
               const color =
                 dest.density > 0.8 ? 'bg-error' :
-                dest.density > 0.6 ? 'bg-tertiary' :
-                dest.density > 0.3 ? 'bg-amber-500' :
-                'bg-emerald-500'
+                  dest.density > 0.6 ? 'bg-tertiary' :
+                    dest.density > 0.3 ? 'bg-amber-500' :
+                      'bg-emerald-500'
               const textColor =
                 dest.density > 0.8 ? 'text-error' :
-                dest.density > 0.6 ? 'text-tertiary' :
-                dest.density > 0.3 ? 'text-amber-600' :
-                'text-emerald-600'
+                  dest.density > 0.6 ? 'text-tertiary' :
+                    dest.density > 0.3 ? 'text-amber-600' :
+                      'text-emerald-600'
 
               return (
                 <div key={dest.id} className="flex items-center gap-3">
