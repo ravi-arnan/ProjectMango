@@ -4,6 +4,7 @@ export type Mood = 'tenang' | 'petualang' | 'romantis' | 'edukatif' | 'seru'
 
 interface MoodConfig {
   emoji: string
+  icon: string
   label: string
   description: string
   filter: (d: Destination) => boolean
@@ -13,6 +14,7 @@ interface MoodConfig {
 const MOOD_MAP: Record<Mood, MoodConfig> = {
   tenang: {
     emoji: '😌',
+    icon: 'self_improvement',
     label: 'Tenang',
     description: 'Destinasi sepi dengan rating tinggi',
     filter: (d) => d.density < 0.5,
@@ -20,6 +22,7 @@ const MOOD_MAP: Record<Mood, MoodConfig> = {
   },
   petualang: {
     emoji: '🏔️',
+    icon: 'hiking',
     label: 'Petualang',
     description: 'Alam & lokasi menantang',
     filter: (d) => d.category === 'Alam',
@@ -27,6 +30,7 @@ const MOOD_MAP: Record<Mood, MoodConfig> = {
   },
   romantis: {
     emoji: '💕',
+    icon: 'favorite',
     label: 'Romantis',
     description: 'Pantai & pura berkelas',
     filter: (d) =>
@@ -35,6 +39,7 @@ const MOOD_MAP: Record<Mood, MoodConfig> = {
   },
   edukatif: {
     emoji: '📚',
+    icon: 'menu_book',
     label: 'Edukatif',
     description: 'Budaya & desa wisata',
     filter: (d) => d.category === 'Pura' || d.category === 'Desa Wisata',
@@ -42,6 +47,7 @@ const MOOD_MAP: Record<Mood, MoodConfig> = {
   },
   seru: {
     emoji: '🎉',
+    icon: 'celebration',
     label: 'Seru',
     description: 'Spot ramai & populer',
     filter: (d) => d.density > 0.6 && d.rating >= 4.2,
@@ -52,8 +58,8 @@ const MOOD_MAP: Record<Mood, MoodConfig> = {
 export const MOODS: Mood[] = ['tenang', 'petualang', 'romantis', 'edukatif', 'seru']
 
 export function getMoodMeta(mood: Mood) {
-  const { emoji, label, description } = MOOD_MAP[mood]
-  return { emoji, label, description }
+  const { emoji, icon, label, description } = MOOD_MAP[mood]
+  return { emoji, icon, label, description }
 }
 
 export function filterByMood(destinations: Destination[], mood: Mood): Destination[] {
