@@ -399,13 +399,13 @@ export default function Landing() {
               {t('landing.destinations.subtitle')}
             </p>
           </div>
-          <div className="h-[420px] lg:h-[520px] w-full">
+          <div className="h-[480px] lg:h-[600px] w-full">
             <CircularGallery
               items={galleryItems}
-              bend={2.5}
+              bend={1.6}
               textColor="#ffffff"
               borderRadius={0.06}
-              font="bold 24px Plus Jakarta Sans"
+              font="bold 22px Plus Jakarta Sans"
             />
           </div>
         </section>
