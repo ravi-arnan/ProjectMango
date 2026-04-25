@@ -252,7 +252,7 @@ export default function Home() {
                       : 'bg-surface-container text-on-surface-variant'
                   }`}
                 >
-                  <span className="text-sm leading-none">{meta.emoji}</span>
+                  <Icon name={meta.icon} size="16px" />
                   {meta.label}
                 </motion.button>
               )
@@ -521,7 +521,7 @@ export default function Home() {
                       : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
                   }`}
                 >
-                  <span className="text-base leading-none">{meta.emoji}</span>
+                  <Icon name={meta.icon} size="18px" />
                   {meta.label}
                 </motion.button>
               )

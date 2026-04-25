@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import Icon from '../components/Icon'
 import { destinations } from '../data/destinations'
 import { supabase } from '../lib/supabase'
+import MarkdownMessage from '../components/MarkdownMessage'
 import BlurText from '../components/reactbits/BlurText'
 import ShinyText from '../components/reactbits/ShinyText'
 import GradientText from '../components/reactbits/GradientText'
@@ -228,7 +229,7 @@ export default function AiAnalysis() {
                       : 'bg-surface-container-low text-on-surface rounded-bl-md border border-stone-100/60'
                   }`}
                 >
-                  {msg.role === 'assistant' ? <div className="whitespace-pre-wrap">{msg.content}</div> : msg.content}
+                  {msg.role === 'assistant' ? <MarkdownMessage content={msg.content} /> : msg.content}
                 </div>
               </motion.div>
             ))}
