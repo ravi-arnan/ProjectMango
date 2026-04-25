@@ -98,6 +98,17 @@ h1, h2, h3, h4 {
 
 .glass-nav { backdrop-filter: blur(12px); }
 
+@keyframes sb-bottom {
+  0% { transform: translate(0%, 0%); opacity: 1; }
+  100% { transform: translate(-100%, 0%); opacity: 0; }
+}
+@keyframes sb-top {
+  0% { transform: translate(0%, 0%); opacity: 1; }
+  100% { transform: translate(100%, 0%); opacity: 0; }
+}
+.animate-sb-bottom { animation: sb-bottom linear infinite alternate; }
+.animate-sb-top { animation: sb-top linear infinite alternate; }
+
 /* ===== Landing page animations ===== */
 
 @keyframes fade-up {

@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import Icon from './Icon'
 import { useAuth, getUserInitials } from '../context/AuthContext'
 import { useNotifications } from '../hooks/useNotifications'
 import NotificationPanel from './NotificationPanel'
 
 export default function DesktopHeader() {
+  const { t } = useTranslation()
   const [query, setQuery] = useState('')
   const [notifOpen, setNotifOpen] = useState(false)
   const navigate = useNavigate()
@@ -21,7 +23,7 @@ export default function DesktopHeader() {
           </span>
           <input
             type="text"
-            placeholder="Cari destinasi tenang di Bali..."
+            placeholder={t('home.searchPlaceholder')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') navigate('/app') }}

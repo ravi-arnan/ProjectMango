@@ -1,0 +1,318 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next",
+    "viewAll": "View all",
+    "viewMore": "View more",
+    "search": "Search",
+    "filter": "Filter",
+    "settings": "Settings",
+    "language": "Language",
+    "logout": "Sign out",
+    "details": "Details",
+    "share": "Share",
+    "or": "or",
+    "yes": "Yes",
+    "no": "No",
+    "today": "Today",
+    "all": "All",
+    "categories": {
+      "all": "All",
+      "beach": "Beach",
+      "temple": "Temple",
+      "nature": "Nature",
+      "culture": "Culture"
+    },
+    "density": {
+      "veryBusy": "Very Busy",
+      "busy": "Busy",
+      "moderate": "Moderate",
+      "calm": "Calm",
+      "ideal": "Ideal",
+      "hiddenGem": "Hidden Gem",
+      "capacity": "{{percent}}% capacity"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "map": "Map",
+    "predictions": "Forecasts",
+    "profile": "Profile",
+    "aiAnalysis": "AI Analysis"
+  },
+  "auth": {
+    "brand": "Mango",
+    "subtitle": "SMART TOURISM PLATFORM",
+    "tabs": {
+      "login": "Sign In",
+      "signup": "Sign Up"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "fullName": "Full Name"
+    },
+    "actions": {
+      "login": "Sign In",
+      "signup": "Sign Up",
+      "guest": "Continue as Guest",
+      "forgotPassword": "Forgot password?",
+      "resetSent": "Reset email sent!"
+    },
+    "errors": {
+      "captchaRequired": "Please complete the captcha verification first.",
+      "loginFailed": "Sign in failed. Please try again.",
+      "signupFailed": "Sign up failed. Please try again.",
+      "guestFailed": "Guest sign in failed. Please try again.",
+      "passwordMismatch": "Passwords don't match.",
+      "emailFirst": "Enter your email first to reset password.",
+      "resetFailed": "Failed to send reset email."
+    },
+    "messages": {
+      "signupSuccess": "Account created! Check your email to verify."
+    },
+    "legal": "By signing in, you agree to our Terms of Service and Privacy Policy."
+  },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "destinations": "Destinations",
+      "map": "Map",
+      "accessApp": "Access App"
+    },
+    "hero": {
+      "eyebrow": "Island Intelligence",
+      "title1": "Travel Smarter,",
+      "title2": "Avoid the Crowds",
+      "subtitle": "Experience Bali's serenity exactly how it was meant to be. Our AI-driven forecasts help you find the quietest moments at the island's most iconic destinations.",
+      "ctaPrimary": "Add to Home Screen",
+      "ctaSecondary": "View Live Map",
+      "stats": {
+        "users": "Users",
+        "destinations": "Destinations",
+        "refresh": "Refresh"
+      }
+    },
+    "features": {
+      "eyebrow": "What Makes Us Different",
+      "title": "Built for the way Bali moves",
+      "density": {
+        "title": "Real-time density tracking",
+        "desc": "Using anonymized satellite data and ground sensors, we provide live occupancy updates for over 200 locations across Bali."
+      },
+      "forecast": {
+        "title": "7-day crowd forecasts",
+        "desc": "Plan your itinerary with precision. Our machine learning models predict peaks based on tourism trends, local ceremonies, and flight data."
+      },
+      "ai": {
+        "title": "AI-powered recommendations",
+        "desc": "Tailored suggestions that adapt to your style and the current island vibe. Mango guides you to the perfect spot at the perfect time."
+      }
+    },
+    "destinations": {
+      "eyebrow": "Across Bali",
+      "title1": "200+ destinations,",
+      "title2": "one peaceful island.",
+      "subtitle": "Drag, scroll, or swipe to explore Bali's most iconic spots. Live data refreshes every five seconds."
+    },
+    "live": {
+      "eyebrow": "Real-time",
+      "title": "Live Now",
+      "desc": "The island is breathing. Watch live density pulses across Bali's hotspots. Green markers indicate optimal visiting times, while amber and red show growing crowds.",
+      "openMap": "Open Full Map",
+      "usersExploring": "users exploring live"
+    },
+    "scrollText": "Mango is built by Bali, for Bali — quiet mornings at Tegallalang, sunsets at Tanah Lot, and every peaceful corner in between.",
+    "cta": {
+      "title": "Ready for a quieter paradise?",
+      "subtitle": "Join over {{count}} travelers who use Mango to discover the island's hidden peace.",
+      "rating": "Loved by 50,000+ travelers",
+      "primary": "Get Started",
+      "secondary": "Install PWA",
+      "trust": {
+        "offline": "Works Offline",
+        "noLogin": "No Login Required",
+        "free": "100% Free"
+      }
+    },
+    "footer": {
+      "tagline": "Smart tourism platform helping travelers discover Bali's quietest moments and authorities manage sustainable visitation.",
+      "product": "Product",
+      "company": "Company",
+      "stayLoop": "Stay in the loop",
+      "newsletterDesc": "Monthly digest of Bali's quietest spots, seasonal forecasts, and product updates.",
+      "subscribe": "Subscribe",
+      "madeIn": "Made in Bali · Indonesia",
+      "rights": "© 2025 Mango. Smart Tourism Platform Indonesia. All rights reserved.",
+      "links": {
+        "features": "Features",
+        "destinations": "Destinations",
+        "liveMap": "Live Map",
+        "getStarted": "Get Started",
+        "about": "About",
+        "partners": "Partners",
+        "press": "Press Kit",
+        "careers": "Careers",
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "cookies": "Cookies",
+        "support": "Support"
+      }
+    }
+  },
+  "home": {
+    "installBanner": "Use the app for faster access",
+    "install": "Install",
+    "installHint": "Open browser menu and select \"Add to Home Screen\"",
+    "ai": {
+      "title": "AI Analysis",
+      "desc": "Ask for smart travel recommendations"
+    },
+    "greeting": "Hello, {{name}}!",
+    "greetingDesc": "Check destination crowds before you head out today.",
+    "discoveryMode": "Discovery Mode",
+    "ctaMap": "View Density Map",
+    "ctaPrefs": "Set Preferences",
+    "searchPlaceholder": "Search calm spots in Bali...",
+    "popular": "Popular Destinations",
+    "recommendations": {
+      "title": "Recommended for You",
+      "subtitleMood": "How are you feeling today?",
+      "subtitleDefault": "Based on your location and preferences",
+      "empty": "No matching destinations. Try another mood.",
+      "emptyDesktop": "No destinations match this mood. Try selecting another.",
+      "calmNow": "Calm now — {{percent}}% capacity",
+      "detailRoute": "Details & Route"
+    },
+    "badges": {
+      "veryBusy": "{{count}} Very Busy",
+      "busy": "{{count}} Busy",
+      "calm": "{{count}} Calm"
+    }
+  },
+  "peta": {
+    "title": "Density Map",
+    "subtitle": "Monitor Bali destination crowds in real-time",
+    "search": "Search destinations...",
+    "filter": "Category Filter",
+    "legend": {
+      "title": "Density Level",
+      "calm": "Calm (0-30%)",
+      "moderate": "Moderate (30-60%)",
+      "busy": "Busy (60-80%)",
+      "veryBusy": "Very Busy (>80%)"
+    },
+    "stats": {
+      "tracked": "Locations Tracked",
+      "active": "Active Users",
+      "calmSpots": "Calm Spots"
+    },
+    "popup": {
+      "viewDetails": "View Details",
+      "currentDensity": "Current Density",
+      "visitors": "{{count}} visitors"
+    }
+  },
+  "prediksi": {
+    "title": "Crowd Forecasts",
+    "subtitle": "Plan your visit 7 days ahead with AI",
+    "selectDest": "Select Destination",
+    "selectDestPlaceholder": "Choose a destination to view forecasts",
+    "forecast": {
+      "title": "7-Day Forecast",
+      "subtitle": "Based on historical trends and AI",
+      "today": "Today",
+      "bestDay": "Best Day",
+      "worstDay": "Busiest Day",
+      "recommended": "Recommended",
+      "avoid": "Avoid"
+    },
+    "hourly": {
+      "title": "Hourly Forecast",
+      "subtitle": "Pick the best time to visit",
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening",
+      "night": "Night"
+    },
+    "ai": {
+      "title": "AI Insights",
+      "thinking": "AI is analyzing...",
+      "weatherImpact": "Weather Impact",
+      "eventImpact": "Local Events",
+      "trendInsight": "Tourist Trends"
+    }
+  },
+  "profil": {
+    "title": "My Profile",
+    "subtitle": "Manage your profile, preferences, and account settings",
+    "guest": "Guest",
+    "memberSince": "Member since {{date}}",
+    "stats": {
+      "visited": "Visited",
+      "saved": "Saved",
+      "reviews": "Reviews"
+    },
+    "sections": {
+      "account": "Account",
+      "preferences": "Preferences",
+      "support": "Support",
+      "accountSettings": "Account Settings"
+    },
+    "items": {
+      "editProfile": "Edit Profile",
+      "language": "Language",
+      "appearance": "Appearance",
+      "privacy": "Privacy & Security",
+      "help": "Help & Support",
+      "about": "About Mango",
+      "logout": "Sign Out"
+    },
+    "modals": {
+      "language": "Language",
+      "appearance": "Appearance",
+      "privacy": "Privacy & Security",
+      "help": "Help & Support",
+      "about": "About Mango",
+      "edit": "Edit Profile"
+    },
+    "prefs": {
+      "crowdAlerts": "Crowd alerts",
+      "crowdAlertsDesc": "Get notified when your favorite destinations get calm",
+      "bookingReminders": "Booking reminders",
+      "bookingRemindersDesc": "Remind a day before your scheduled visit",
+      "recommendations": "Recommendations",
+      "recommendationsDesc": "Destination suggestions based on your preferences"
+    },
+    "appearance": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
+  "ai": {
+    "title": "AI Travel Analysis",
+    "subtitle": "Smart assistant for your Bali journey",
+    "placeholder": "Ask anything about Bali...",
+    "send": "Send",
+    "thinking": "AI is thinking...",
+    "examples": {
+      "title": "Try asking:",
+      "q1": "Quietest beaches tomorrow morning?",
+      "q2": "3-day itinerary in Ubud?",
+      "q3": "Best sunset spots without crowds?",
+      "q4": "Local restaurants near Tanah Lot?"
+    },
+    "newChat": "New Chat",
+    "history": "History",
+    "disclaimer": "AI can make mistakes. Verify important info."
+  }
+}

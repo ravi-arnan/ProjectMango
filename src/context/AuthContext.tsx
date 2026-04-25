@@ -22,9 +22,9 @@ export function useAuth() {
   return useContext(AuthContext)
 }
 
-export function getUserDisplayName(user: User | null): string {
+export function getUserDisplayName(user: User | null, guestLabel = 'Tamu'): string {
   if (!user) return 'Traveler'
-  if (user.is_anonymous) return 'Tamu'
+  if (user.is_anonymous) return guestLabel
   return user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Traveler'
 }
 
@@ -41,9 +41,9 @@ export function getUserInitials(user: User | null): string {
   return (user.email?.slice(0, 2) || 'U').toUpperCase()
 }
 
-export function getUserFullName(user: User | null): string {
+export function getUserFullName(user: User | null, guestLabel = 'Tamu'): string {
   if (!user) return 'Traveler'
-  if (user.is_anonymous) return 'Tamu'
+  if (user.is_anonymous) return guestLabel
   return user.user_metadata?.full_name || user.email || 'Traveler'
 }
 

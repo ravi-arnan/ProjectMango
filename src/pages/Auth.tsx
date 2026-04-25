@@ -1,8 +1,15 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
+import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../lib/supabase';
 import Icon from '../components/Icon';
+import BlurText from '../components/reactbits/BlurText';
+import GradientText from '../components/reactbits/GradientText';
+import ShinyText from '../components/reactbits/ShinyText';
+import Magnet from '../components/reactbits/Magnet';
+import StarBorder from '../components/reactbits/StarBorder';
 
 type Tab = 'login' | 'signup';
 
@@ -10,6 +17,7 @@ const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | und
 
 export default function Auth() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<Tab>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,7 +41,7 @@ export default function Auth() {
 
   const ensureCaptcha = (): boolean => {
     if (captchaRequired && !captchaToken) {
-      setError('Silakan selesaikan verifikasi captcha terlebih dahulu.');
+      setError(t('auth.errors.captchaRequired'));
       return false;
     }
     return true;
@@ -68,7 +76,7 @@ export default function Auth() {
       if (authError) throw authError;
       navigate('/app');
     } catch (err: any) {
-      setError(err.message || 'Gagal masuk. Silakan coba lagi.');
+      setError(err.message || t('auth.errors.loginFailed'));
       resetCaptcha();
     } finally {
       setLoading(false);
@@ -79,7 +87,7 @@ export default function Auth() {
     e.preventDefault();
     setError('');
     if (password !== confirmPassword) {
-      setError('Kata sandi tidak cocok.');
+      setError(t('auth.errors.passwordMismatch'));
       return;
     }
     if (!ensureCaptcha()) return;
@@ -94,10 +102,10 @@ export default function Auth() {
         },
       });
       if (authError) throw authError;
-      setSuccess('Akun berhasil dibuat! Silakan cek email untuk verifikasi.');
+      setSuccess(t('auth.messages.signupSuccess'));
       handleTabSwitch('login');
     } catch (err: any) {
-      setError(err.message || 'Gagal mendaftar. Silakan coba lagi.');
+      setError(err.message || t('auth.errors.signupFailed'));
       resetCaptcha();
     } finally {
       setLoading(false);
@@ -115,69 +123,128 @@ export default function Auth() {
       if (authError) throw authError;
       navigate('/app');
     } catch (err: any) {
-      setError(err.message || 'Gagal masuk sebagai tamu. Silakan coba lagi.');
+      setError(err.message || t('auth.errors.guestFailed'));
       resetCaptcha();
     } finally {
       setLoading(false);
     }
   };
 
-  const inputGroupClass = 'bg-surface-container-low rounded-xl px-4 py-3 flex items-center gap-3';
-  const inputClass = 'bg-transparent flex-1 text-sm outline-none placeholder:text-on-surface-variant/50 text-on-surface font-body';
-  const buttonClass = `w-full bg-primary text-on-primary rounded-xl py-3 font-bold font-headline text-sm tracking-wide transition-opacity ${loading ? 'opacity-70 pointer-events-none' : ''}`;
-  const guestButtonClass = `w-full border border-outline-variant text-on-surface rounded-xl py-3 font-headline text-sm tracking-wide flex items-center justify-center gap-2 transition-opacity ${loading ? 'opacity-70 pointer-events-none' : ''}`;
+  const inputGroupClass =
+    'bg-white/70 border border-white/60 rounded-xl px-4 py-3 flex items-center gap-3 focus-within:border-primary/60 focus-within:bg-white transition-colors';
+  const inputClass =
+    'bg-transparent flex-1 text-sm outline-none placeholder:text-on-surface-variant/60 text-on-surface font-body';
+  const guestButtonClass = `w-full bg-white/60 hover:bg-white/85 border border-white/70 text-on-surface rounded-xl py-3 font-headline text-sm tracking-wide flex items-center justify-center gap-2 transition-colors ${
+    loading ? 'opacity-70 pointer-events-none' : ''
+  }`;
 
   return (
-    <div className="min-h-dvh bg-gradient-to-b from-surface to-surface-container-low flex items-center justify-center p-4 md:p-6">
-      <div className="w-full max-w-[420px] md:bg-surface-container-lowest md:shadow-xl md:rounded-[2rem] md:p-8 p-2 flex flex-col gap-6">
+    <div className="relative min-h-dvh overflow-hidden flex items-center justify-center p-4 md:p-6">
+      {/* Video background */}
+      <video
+        src="/TanahLot.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover bg-on-surface"
+      />
+      {/* Gradient + tint overlays */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/40 to-primary/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-on-surface/30 pointer-events-none" />
+
+      {/* Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 24, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        whileHover={{ scale: 1.005 }}
+        className="group relative w-full max-w-[440px] bg-white/70 hover:bg-white/95 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-[2rem] p-6 md:p-8 flex flex-col gap-6 transition-colors duration-500"
+      >
         {/* Branding */}
-        <div className="flex flex-col items-center gap-1 pt-4 pb-2">
+        <div className="flex flex-col items-center gap-2 pt-2">
           <div className="flex items-center gap-2">
             <Icon name="travel_explore" filled className="text-primary" size="32px" />
-            <span className="font-headline text-2xl font-bold text-on-surface">Mango</span>
+            <BlurText
+              text={t('auth.brand')}
+              as="span"
+              animateBy="letters"
+              direction="top"
+              delay={60}
+              className="font-headline text-[28px] font-extrabold !flex !flex-row text-on-surface"
+            />
           </div>
-          <span className="font-body text-xs text-on-surface-variant tracking-widest uppercase">
-            Smart Tourism Platform
-          </span>
+          <GradientText
+            colors={['#00647c', '#007f9d', '#6cd3f7', '#007f9d', '#00647c']}
+            animationSpeed={5}
+            className="!font-body !text-[10px] !tracking-[0.25em] !uppercase !font-bold"
+          >
+            <ShinyText
+              text={t('auth.subtitle')}
+              color="#00647c"
+              shineColor="#6cd3f7"
+              speed={3}
+            />
+          </GradientText>
         </div>
 
         {/* Tab Toggle */}
-        <div className="bg-surface-container-low rounded-xl p-1 flex">
+        <div className="relative bg-surface-container-low/80 rounded-xl p-1 flex">
+          <motion.div
+            layout
+            transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+            className="absolute top-1 bottom-1 w-[calc(50%-4px)] bg-primary rounded-lg shadow-md shadow-primary/20"
+            style={{ left: activeTab === 'login' ? '4px' : 'calc(50% + 0px)' }}
+          />
           <button
             type="button"
             onClick={() => handleTabSwitch('login')}
-            className={`flex-1 py-2.5 text-sm font-headline font-semibold rounded-xl transition-colors ${
-              activeTab === 'login'
-                ? 'bg-primary text-on-primary'
-                : 'text-on-surface-variant'
+            className={`relative z-10 flex-1 py-2.5 text-sm font-headline font-semibold rounded-lg transition-colors ${
+              activeTab === 'login' ? 'text-on-primary' : 'text-on-surface-variant'
             }`}
           >
-            Masuk
+            {t('auth.tabs.login')}
           </button>
           <button
             type="button"
             onClick={() => handleTabSwitch('signup')}
-            className={`flex-1 py-2.5 text-sm font-headline font-semibold rounded-xl transition-colors ${
-              activeTab === 'signup'
-                ? 'bg-primary text-on-primary'
-                : 'text-on-surface-variant'
+            className={`relative z-10 flex-1 py-2.5 text-sm font-headline font-semibold rounded-lg transition-colors ${
+              activeTab === 'signup' ? 'text-on-primary' : 'text-on-surface-variant'
             }`}
           >
-            Daftar
+            {t('auth.tabs.signup')}
           </button>
         </div>
 
         {/* Messages */}
-        {success && (
-          <div className="bg-emerald-50 text-emerald-700 rounded-xl p-3 text-sm font-body">
-            {success}
-          </div>
-        )}
-        {error && (
-          <div className="bg-error-container text-on-error-container rounded-xl p-3 text-sm font-body">
-            {error}
-          </div>
-        )}
+        <AnimatePresence mode="popLayout">
+          {success && (
+            <motion.div
+              key="success"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="bg-emerald-50/95 text-emerald-700 rounded-xl p-3 text-sm font-body border border-emerald-200/60 flex items-start gap-2"
+            >
+              <Icon name="check_circle" filled size="18px" className="mt-0.5 shrink-0" />
+              <span>{success}</span>
+            </motion.div>
+          )}
+          {error && (
+            <motion.div
+              key="error"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="bg-error-container/95 text-on-error-container rounded-xl p-3 text-sm font-body border border-error/20 flex items-start gap-2"
+            >
+              <Icon name="error" filled size="18px" className="mt-0.5 shrink-0" />
+              <span>{error}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Captcha */}
         {captchaRequired && (
@@ -193,170 +260,226 @@ export default function Auth() {
           </div>
         )}
 
-        {/* Login Form */}
-        {activeTab === 'login' && (
-          <form onSubmit={handleLogin} className="flex flex-col gap-4">
-            <div className={inputGroupClass}>
-              <Icon name="mail" className="text-on-surface-variant" size="20px" />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className={inputClass}
-              />
-            </div>
-
-            <div className={inputGroupClass}>
-              <Icon name="lock" className="text-on-surface-variant" size="20px" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Kata sandi"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className={inputClass}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-on-surface-variant"
-              >
-                <Icon name={showPassword ? 'visibility_off' : 'visibility'} size="20px" />
-              </button>
-            </div>
-
-            <button
-              type="button"
-              onClick={async () => {
-                if (!email) {
-                  setError('Masukkan email terlebih dahulu untuk reset kata sandi.');
-                  return;
-                }
-                setLoading(true);
-                try {
-                  const { error: resetError } = await supabase.auth.resetPasswordForEmail(email);
-                  if (resetError) throw resetError;
-                  setResetSent(true);
-                  setError('');
-                } catch (err: any) {
-                  setError(err.message || 'Gagal mengirim email reset.');
-                } finally {
-                  setLoading(false);
-                }
-              }}
-              className="text-primary text-xs font-body self-end -mt-1"
+        {/* Forms */}
+        <AnimatePresence mode="wait">
+          {activeTab === 'login' ? (
+            <motion.form
+              key="login"
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 12 }}
+              transition={{ duration: 0.25 }}
+              onSubmit={handleLogin}
+              className="flex flex-col gap-4"
             >
-              {resetSent ? 'Email reset terkirim!' : 'Lupa kata sandi?'}
-            </button>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className={inputGroupClass}
+              >
+                <Icon name="mail" className="text-on-surface-variant" size="20px" />
+                <input
+                  type="email"
+                  placeholder={t('auth.fields.email')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className={inputClass}
+                />
+              </motion.div>
 
-            <button type="submit" className={buttonClass}>
-              {loading ? 'Memproses...' : 'Masuk'}
-            </button>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.12 }}
+                className={inputGroupClass}
+              >
+                <Icon name="lock" className="text-on-surface-variant" size="20px" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder={t('auth.fields.password')}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-on-surface-variant hover:text-primary transition-colors"
+                >
+                  <Icon name={showPassword ? 'visibility_off' : 'visibility'} size="20px" />
+                </button>
+              </motion.div>
 
-            {/* Divider */}
-            <div className="flex items-center gap-3 my-1">
-              <div className="flex-1 h-px bg-outline-variant/40" />
-              <span className="text-xs text-on-surface-variant/60 font-body">atau</span>
-              <div className="flex-1 h-px bg-outline-variant/40" />
-            </div>
-
-            <button type="button" onClick={handleGuestLogin} className={guestButtonClass}>
-              <Icon name="person_outline" size="20px" />
-              Masuk sebagai Tamu
-            </button>
-          </form>
-        )}
-
-        {/* Sign Up Form */}
-        {activeTab === 'signup' && (
-          <form onSubmit={handleSignup} className="flex flex-col gap-4">
-            <div className={inputGroupClass}>
-              <Icon name="person" className="text-on-surface-variant" size="20px" />
-              <input
-                type="text"
-                placeholder="Nama Lengkap"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className={inputClass}
-              />
-            </div>
-
-            <div className={inputGroupClass}>
-              <Icon name="mail" className="text-on-surface-variant" size="20px" />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className={inputClass}
-              />
-            </div>
-
-            <div className={inputGroupClass}>
-              <Icon name="lock" className="text-on-surface-variant" size="20px" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Kata sandi"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className={inputClass}
-              />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-on-surface-variant"
+                onClick={async () => {
+                  if (!email) {
+                    setError(t('auth.errors.emailFirst'));
+                    return;
+                  }
+                  setLoading(true);
+                  try {
+                    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email);
+                    if (resetError) throw resetError;
+                    setResetSent(true);
+                    setError('');
+                  } catch (err: any) {
+                    setError(err.message || t('auth.errors.resetFailed'));
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                className="text-primary text-xs font-body font-semibold self-end -mt-1 hover:underline"
               >
-                <Icon name={showPassword ? 'visibility_off' : 'visibility'} size="20px" />
+                {resetSent ? t('auth.actions.resetSent') : t('auth.actions.forgotPassword')}
               </button>
-            </div>
 
-            <div className={inputGroupClass}>
-              <Icon name="lock" className="text-on-surface-variant" size="20px" />
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                placeholder="Konfirmasi Kata Sandi"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                className={inputClass}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="text-on-surface-variant"
+              <Magnet padding={50} magnetStrength={5} wrapperClassName="!block w-full">
+                <StarBorder
+                  type="submit"
+                  color="#6cd3f7"
+                  speed="3.5s"
+                  className="!w-full !block"
+                  innerClassName={`bg-primary text-on-primary py-3.5 font-bold font-headline text-sm tracking-wide cursor-pointer hover:bg-primary-container transition-colors ${
+                    loading ? 'opacity-70 pointer-events-none' : ''
+                  }`}
+                  disabled={loading}
+                >
+                  {loading ? t('common.processing') : t('auth.actions.login')}
+                </StarBorder>
+              </Magnet>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 my-1">
+                <div className="flex-1 h-px bg-outline-variant/40" />
+                <span className="text-xs text-on-surface-variant/60 font-body">{t('common.or')}</span>
+                <div className="flex-1 h-px bg-outline-variant/40" />
+              </div>
+
+              <button type="button" onClick={handleGuestLogin} className={guestButtonClass}>
+                <Icon name="person_outline" size="20px" />
+                {t('auth.actions.guest')}
+              </button>
+            </motion.form>
+          ) : (
+            <motion.form
+              key="signup"
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -12 }}
+              transition={{ duration: 0.25 }}
+              onSubmit={handleSignup}
+              className="flex flex-col gap-4"
+            >
+              {[
+                { icon: 'person', type: 'text', placeholder: t('auth.fields.fullName'), value: name, setter: setName },
+                { icon: 'mail', type: 'email', placeholder: t('auth.fields.email'), value: email, setter: setEmail },
+              ].map((field, i) => (
+                <motion.div
+                  key={field.placeholder}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 + i * 0.07 }}
+                  className={inputGroupClass}
+                >
+                  <Icon name={field.icon} className="text-on-surface-variant" size="20px" />
+                  <input
+                    type={field.type}
+                    placeholder={field.placeholder}
+                    value={field.value}
+                    onChange={(e) => field.setter(e.target.value)}
+                    required
+                    className={inputClass}
+                  />
+                </motion.div>
+              ))}
+
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.19 }}
+                className={inputGroupClass}
               >
-                <Icon name={showConfirmPassword ? 'visibility_off' : 'visibility'} size="20px" />
+                <Icon name="lock" className="text-on-surface-variant" size="20px" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder={t('auth.fields.password')}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-on-surface-variant hover:text-primary transition-colors"
+                >
+                  <Icon name={showPassword ? 'visibility_off' : 'visibility'} size="20px" />
+                </button>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.26 }}
+                className={inputGroupClass}
+              >
+                <Icon name="lock" className="text-on-surface-variant" size="20px" />
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder={t('auth.fields.confirmPassword')}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="text-on-surface-variant hover:text-primary transition-colors"
+                >
+                  <Icon name={showConfirmPassword ? 'visibility_off' : 'visibility'} size="20px" />
+                </button>
+              </motion.div>
+
+              <Magnet padding={50} magnetStrength={5} wrapperClassName="!block w-full">
+                <StarBorder
+                  type="submit"
+                  color="#6cd3f7"
+                  speed="3.5s"
+                  className="!w-full !block"
+                  innerClassName={`bg-primary text-on-primary py-3.5 font-bold font-headline text-sm tracking-wide cursor-pointer hover:bg-primary-container transition-colors ${
+                    loading ? 'opacity-70 pointer-events-none' : ''
+                  }`}
+                  disabled={loading}
+                >
+                  {loading ? t('common.processing') : t('auth.actions.signup')}
+                </StarBorder>
+              </Magnet>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 my-1">
+                <div className="flex-1 h-px bg-outline-variant/40" />
+                <span className="text-xs text-on-surface-variant/60 font-body">{t('common.or')}</span>
+                <div className="flex-1 h-px bg-outline-variant/40" />
+              </div>
+
+              <button type="button" onClick={handleGuestLogin} className={guestButtonClass}>
+                <Icon name="person_outline" size="20px" />
+                {t('auth.actions.guest')}
               </button>
-            </div>
-
-            <button type="submit" className={buttonClass}>
-              {loading ? 'Memproses...' : 'Daftar'}
-            </button>
-
-            {/* Divider */}
-            <div className="flex items-center gap-3 my-1">
-              <div className="flex-1 h-px bg-outline-variant/40" />
-              <span className="text-xs text-on-surface-variant/60 font-body">atau</span>
-              <div className="flex-1 h-px bg-outline-variant/40" />
-            </div>
-
-            <button type="button" onClick={handleGuestLogin} className={guestButtonClass}>
-              <Icon name="person_outline" size="20px" />
-              Masuk sebagai Tamu
-            </button>
-          </form>
-        )}
+            </motion.form>
+          )}
+        </AnimatePresence>
 
         {/* Bottom legal text */}
-        <p className="text-[11px] text-on-surface-variant/60 text-center font-body pb-4">
-          Dengan masuk, Anda menyetujui Ketentuan Layanan dan Kebijakan Privasi kami.
+        <p className="text-[11px] text-on-surface-variant/70 text-center font-body">
+          {t('auth.legal')}
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }

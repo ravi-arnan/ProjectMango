@@ -1,0 +1,318 @@
+{
+  "common": {
+    "loading": "Memuat...",
+    "processing": "Memproses...",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "close": "Tutup",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "back": "Kembali",
+    "next": "Lanjut",
+    "viewAll": "Lihat semua",
+    "viewMore": "Lihat selengkapnya",
+    "search": "Cari",
+    "filter": "Filter",
+    "settings": "Pengaturan",
+    "language": "Bahasa",
+    "logout": "Keluar",
+    "details": "Detail",
+    "share": "Bagikan",
+    "or": "atau",
+    "yes": "Ya",
+    "no": "Tidak",
+    "today": "Hari ini",
+    "all": "Semua",
+    "categories": {
+      "all": "Semua",
+      "beach": "Pantai",
+      "temple": "Pura",
+      "nature": "Alam",
+      "culture": "Budaya"
+    },
+    "density": {
+      "veryBusy": "Sangat Ramai",
+      "busy": "Ramai",
+      "moderate": "Sedang",
+      "calm": "Sepi",
+      "ideal": "Ideal",
+      "hiddenGem": "Hidden Gem",
+      "capacity": "{{percent}}% kapasitas"
+    }
+  },
+  "nav": {
+    "home": "Beranda",
+    "map": "Peta",
+    "predictions": "Prediksi",
+    "profile": "Profil",
+    "aiAnalysis": "AI Analysis"
+  },
+  "auth": {
+    "brand": "Mango",
+    "subtitle": "SMART TOURISM PLATFORM",
+    "tabs": {
+      "login": "Masuk",
+      "signup": "Daftar"
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Kata sandi",
+      "confirmPassword": "Konfirmasi Kata Sandi",
+      "fullName": "Nama Lengkap"
+    },
+    "actions": {
+      "login": "Masuk",
+      "signup": "Daftar",
+      "guest": "Masuk sebagai Tamu",
+      "forgotPassword": "Lupa kata sandi?",
+      "resetSent": "Email reset terkirim!"
+    },
+    "errors": {
+      "captchaRequired": "Silakan selesaikan verifikasi captcha terlebih dahulu.",
+      "loginFailed": "Gagal masuk. Silakan coba lagi.",
+      "signupFailed": "Gagal mendaftar. Silakan coba lagi.",
+      "guestFailed": "Gagal masuk sebagai tamu. Silakan coba lagi.",
+      "passwordMismatch": "Kata sandi tidak cocok.",
+      "emailFirst": "Masukkan email terlebih dahulu untuk reset kata sandi.",
+      "resetFailed": "Gagal mengirim email reset."
+    },
+    "messages": {
+      "signupSuccess": "Akun berhasil dibuat! Silakan cek email untuk verifikasi."
+    },
+    "legal": "Dengan masuk, Anda menyetujui Ketentuan Layanan dan Kebijakan Privasi kami."
+  },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "destinations": "Destinations",
+      "map": "Map",
+      "accessApp": "Buka Aplikasi"
+    },
+    "hero": {
+      "eyebrow": "Island Intelligence",
+      "title1": "Travel Smarter,",
+      "title2": "Avoid the Crowds",
+      "subtitle": "Rasakan ketenangan Bali sebagaimana mestinya. Prediksi berbasis AI membantu Anda menemukan momen paling tenang di destinasi paling ikonik.",
+      "ctaPrimary": "Tambahkan ke Layar Utama",
+      "ctaSecondary": "Lihat Peta Langsung",
+      "stats": {
+        "users": "Pengguna",
+        "destinations": "Destinasi",
+        "refresh": "Refresh"
+      }
+    },
+    "features": {
+      "eyebrow": "Apa Yang Membuat Kami Berbeda",
+      "title": "Dibangun untuk irama Bali",
+      "density": {
+        "title": "Pelacakan kepadatan real-time",
+        "desc": "Dengan data satelit anonim dan sensor di lapangan, kami menyediakan update okupansi langsung untuk lebih dari 200 lokasi di Bali."
+      },
+      "forecast": {
+        "title": "Prediksi keramaian 7 hari",
+        "desc": "Rencanakan perjalanan Anda dengan presisi. Model machine learning kami memprediksi puncak berdasarkan tren wisata, upacara lokal, dan data penerbangan."
+      },
+      "ai": {
+        "title": "Rekomendasi bertenaga AI",
+        "desc": "Saran yang menyesuaikan gaya Anda dan vibe pulau saat ini. Mango memandu Anda ke spot yang tepat di waktu yang tepat."
+      }
+    },
+    "destinations": {
+      "eyebrow": "Across Bali",
+      "title1": "200+ destinasi,",
+      "title2": "satu pulau yang tenang.",
+      "subtitle": "Drag, scroll, atau swipe untuk menjelajahi spot ikonik Bali. Data live diperbarui setiap lima detik."
+    },
+    "live": {
+      "eyebrow": "Real-time",
+      "title": "Live Now",
+      "desc": "Pulau ini berdetak. Lihat denyut kepadatan langsung di hotspot Bali. Penanda hijau menunjukkan waktu kunjungan optimal, kuning dan merah menunjukkan kerumunan tumbuh.",
+      "openMap": "Open Full Map",
+      "usersExploring": "pengguna menjelajah live"
+    },
+    "scrollText": "Mango dibangun oleh Bali, untuk Bali — pagi tenang di Tegallalang, sunset di Tanah Lot, dan setiap sudut tenang di antaranya.",
+    "cta": {
+      "title": "Siap untuk surga yang lebih tenang?",
+      "subtitle": "Bergabung dengan {{count}} traveler yang menggunakan Mango untuk menemukan ketenangan tersembunyi pulau ini.",
+      "rating": "Disukai oleh 50.000+ traveler",
+      "primary": "Mulai Sekarang",
+      "secondary": "Install PWA",
+      "trust": {
+        "offline": "Bekerja Offline",
+        "noLogin": "Tanpa Login",
+        "free": "100% Gratis"
+      }
+    },
+    "footer": {
+      "tagline": "Platform pariwisata cerdas yang membantu traveler menemukan momen tenang Bali dan otoritas mengelola kunjungan berkelanjutan.",
+      "product": "Produk",
+      "company": "Perusahaan",
+      "stayLoop": "Tetap Terhubung",
+      "newsletterDesc": "Ringkasan bulanan tentang spot tenang Bali, prediksi musiman, dan update produk.",
+      "subscribe": "Berlangganan",
+      "madeIn": "Dibuat di Bali · Indonesia",
+      "rights": "© 2025 Mango. Smart Tourism Platform Indonesia. Hak cipta dilindungi.",
+      "links": {
+        "features": "Features",
+        "destinations": "Destinations",
+        "liveMap": "Peta Live",
+        "getStarted": "Mulai",
+        "about": "Tentang",
+        "partners": "Mitra",
+        "press": "Press Kit",
+        "careers": "Karir",
+        "privacy": "Privasi",
+        "terms": "Ketentuan",
+        "cookies": "Cookies",
+        "support": "Dukungan"
+      }
+    }
+  },
+  "home": {
+    "installBanner": "Gunakan aplikasi untuk akses lebih cepat",
+    "install": "Pasang",
+    "installHint": "Buka menu browser dan pilih \"Tambahkan ke Layar Utama\"",
+    "ai": {
+      "title": "AI Analysis",
+      "desc": "Tanyakan rekomendasi wisata cerdas"
+    },
+    "greeting": "Halo, {{name}}!",
+    "greetingDesc": "Cek keramaian destinasimu sebelum berangkat hari ini.",
+    "discoveryMode": "Discovery Mode",
+    "ctaMap": "Lihat Peta Kepadatan",
+    "ctaPrefs": "Atur Preferensi",
+    "searchPlaceholder": "Cari destinasi tenang di Bali...",
+    "popular": "Destinasi Populer",
+    "recommendations": {
+      "title": "Rekomendasi untuk Kamu",
+      "subtitleMood": "Bagaimana perasaanmu hari ini?",
+      "subtitleDefault": "Berdasarkan lokasi dan preferensimu",
+      "empty": "Tidak ada destinasi yang cocok. Coba mood lain.",
+      "emptyDesktop": "Tidak ada destinasi yang cocok dengan mood ini. Coba pilih mood lain.",
+      "calmNow": "Sepi saat ini — {{percent}}% kapasitas",
+      "detailRoute": "Detail & Rute"
+    },
+    "badges": {
+      "veryBusy": "{{count}} Sangat Ramai",
+      "busy": "{{count}} Ramai",
+      "calm": "{{count}} Sepi"
+    }
+  },
+  "peta": {
+    "title": "Peta Kepadatan",
+    "subtitle": "Pantau keramaian destinasi Bali secara real-time",
+    "search": "Cari destinasi...",
+    "filter": "Filter Kategori",
+    "legend": {
+      "title": "Tingkat Kepadatan",
+      "calm": "Sepi (0-30%)",
+      "moderate": "Sedang (30-60%)",
+      "busy": "Ramai (60-80%)",
+      "veryBusy": "Sangat Ramai (>80%)"
+    },
+    "stats": {
+      "tracked": "Lokasi Dilacak",
+      "active": "Pengguna Aktif",
+      "calmSpots": "Spot Tenang"
+    },
+    "popup": {
+      "viewDetails": "Lihat Detail",
+      "currentDensity": "Kepadatan Saat Ini",
+      "visitors": "{{count}} pengunjung"
+    }
+  },
+  "prediksi": {
+    "title": "Prediksi Keramaian",
+    "subtitle": "Rencanakan kunjunganmu 7 hari ke depan dengan AI",
+    "selectDest": "Pilih Destinasi",
+    "selectDestPlaceholder": "Pilih destinasi untuk melihat prediksi",
+    "forecast": {
+      "title": "Prediksi 7 Hari",
+      "subtitle": "Berdasarkan tren historis dan AI",
+      "today": "Hari Ini",
+      "bestDay": "Hari Terbaik",
+      "worstDay": "Hari Tersibuk",
+      "recommended": "Direkomendasikan",
+      "avoid": "Hindari"
+    },
+    "hourly": {
+      "title": "Prediksi Per Jam",
+      "subtitle": "Pilih waktu terbaik untuk berkunjung",
+      "morning": "Pagi",
+      "afternoon": "Siang",
+      "evening": "Sore",
+      "night": "Malam"
+    },
+    "ai": {
+      "title": "Insight AI",
+      "thinking": "AI sedang menganalisis...",
+      "weatherImpact": "Pengaruh Cuaca",
+      "eventImpact": "Acara Lokal",
+      "trendInsight": "Tren Wisatawan"
+    }
+  },
+  "profil": {
+    "title": "Profil Saya",
+    "subtitle": "Kelola profil, preferensi, dan pengaturan akunmu",
+    "guest": "Tamu",
+    "memberSince": "Anggota sejak {{date}}",
+    "stats": {
+      "visited": "Dikunjungi",
+      "saved": "Disimpan",
+      "reviews": "Ulasan"
+    },
+    "sections": {
+      "account": "Akun",
+      "preferences": "Preferensi",
+      "support": "Dukungan",
+      "accountSettings": "Pengaturan Akun"
+    },
+    "items": {
+      "editProfile": "Edit Profil",
+      "language": "Bahasa",
+      "appearance": "Tampilan",
+      "privacy": "Privasi & Keamanan",
+      "help": "Bantuan & Dukungan",
+      "about": "Tentang Mango",
+      "logout": "Keluar"
+    },
+    "modals": {
+      "language": "Bahasa",
+      "appearance": "Tampilan",
+      "privacy": "Privasi & Keamanan",
+      "help": "Bantuan & Dukungan",
+      "about": "Tentang Mango",
+      "edit": "Edit Profil"
+    },
+    "prefs": {
+      "crowdAlerts": "Notifikasi keramaian",
+      "crowdAlertsDesc": "Terima pemberitahuan saat destinasi favorit mulai sepi",
+      "bookingReminders": "Pengingat booking",
+      "bookingRemindersDesc": "Ingatkan sehari sebelum jadwal kunjungan",
+      "recommendations": "Rekomendasi",
+      "recommendationsDesc": "Saran destinasi berdasarkan preferensi Anda"
+    },
+    "appearance": {
+      "light": "Terang",
+      "dark": "Gelap",
+      "system": "Sistem"
+    }
+  },
+  "ai": {
+    "title": "AI Travel Analysis",
+    "subtitle": "Asisten cerdas untuk perjalananmu di Bali",
+    "placeholder": "Tanyakan apapun tentang Bali...",
+    "send": "Kirim",
+    "thinking": "AI sedang berpikir...",
+    "examples": {
+      "title": "Coba tanyakan:",
+      "q1": "Pantai paling sepi besok pagi?",
+      "q2": "Itinerary 3 hari di Ubud?",
+      "q3": "Spot sunset terbaik tanpa kerumunan?",
+      "q4": "Restoran lokal di sekitar Tanah Lot?"
+    },
+    "newChat": "Chat Baru",
+    "history": "Riwayat",
+    "disclaimer": "AI dapat membuat kesalahan. Verifikasi info penting."
+  }
+}
