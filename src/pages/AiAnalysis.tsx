@@ -53,18 +53,17 @@ export default function AiAnalysis() {
 
   useEffect(() => {
     let cancelled = false
-    supabase
-      .from('ai_agent_settings')
-      .select('greeting_message, suggested_prompts')
-      .eq('id', 1)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (cancelled || !data) return
-        if (data.greeting_message) setGreeting(data.greeting_message)
-        if (data.suggested_prompts && data.suggested_prompts.length > 0) {
-          setSuggestedPrompts(data.suggested_prompts)
-        }
-      })
+    // Use the security-definer RPC so anonymous + authenticated users can read
+    // public-safe settings without being able to read api_key.
+    supabase.rpc('get_public_ai_settings').then(({ data }) => {
+      if (cancelled || !data) return
+      const row = Array.isArray(data) ? data[0] : data
+      if (!row) return
+      if (row.greeting_message) setGreeting(row.greeting_message)
+      if (row.suggested_prompts && row.suggested_prompts.length > 0) {
+        setSuggestedPrompts(row.suggested_prompts)
+      }
+    })
     return () => {
       cancelled = true
     }

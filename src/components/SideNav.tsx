@@ -19,7 +19,11 @@ export default function SideNav() {
     { to: '/app/profil', icon: 'person', label: t('nav.profile') },
   ]
   const links = isAdmin
-    ? [...navLinks, { to: '/app/admin', icon: 'admin_panel_settings', label: 'Admin' }]
+    ? [
+        ...navLinks,
+        { to: '/app/admin', icon: 'admin_panel_settings', label: 'Admin' },
+        { to: '/app/ai-agent', icon: 'smart_toy', label: 'AI Agent' },
+      ]
     : navLinks
 
   return (

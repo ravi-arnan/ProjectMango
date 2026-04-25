@@ -113,6 +113,7 @@ const PERSONA_HINT: Record<Persona, string> = {
 }
 
 interface AiSettings {
+  api_key: string | null
   default_model: string
   system_prompt: string | null
   max_tokens: number
@@ -126,6 +127,7 @@ interface AiSettings {
 }
 
 const DEFAULT_SETTINGS: AiSettings = {
+  api_key: null,
   default_model: 'gpt-4o-mini',
   system_prompt: null,
   max_tokens: 1024,
@@ -140,16 +142,20 @@ const DEFAULT_SETTINGS: AiSettings = {
 
 async function fetchAiSettings(): Promise<AiSettings> {
   const supabaseUrl = process.env.VITE_SUPABASE_URL
-  const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
-  if (!supabaseUrl || !supabaseAnonKey) return DEFAULT_SETTINGS
+  // Service role bypasses RLS so we can read api_key. Falls back to anon key
+  // for local dev where the service role might not be configured (in which
+  // case api_key reads will return empty and we use GITHUB_TOKEN env fallback).
+  const supabaseKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseKey) return DEFAULT_SETTINGS
 
   try {
     const res = await fetch(
-      `${supabaseUrl}/rest/v1/ai_agent_settings?id=eq.1&select=default_model,system_prompt,max_tokens,temperature,persona,content_filter_enabled,blocked_keywords,refusal_message,fallback_message,allow_anonymous_chat`,
+      `${supabaseUrl}/rest/v1/ai_agent_settings?id=eq.1&select=api_key,default_model,system_prompt,max_tokens,temperature,persona,content_filter_enabled,blocked_keywords,refusal_message,fallback_message,allow_anonymous_chat`,
       {
         headers: {
-          apikey: supabaseAnonKey,
-          Authorization: `Bearer ${supabaseAnonKey}`,
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
         },
       }
     )
@@ -158,6 +164,7 @@ async function fetchAiSettings(): Promise<AiSettings> {
     const row = rows[0]
     if (!row) return DEFAULT_SETTINGS
     return {
+      api_key: row.api_key ?? null,
       default_model: row.default_model || DEFAULT_SETTINGS.default_model,
       system_prompt: row.system_prompt ?? null,
       max_tokens: row.max_tokens || DEFAULT_SETTINGS.max_tokens,
@@ -215,11 +222,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const githubToken = process.env.GITHUB_TOKEN
-  if (!githubToken) {
-    return res.status(500).json({ error: 'GITHUB_TOKEN not configured' })
-  }
-
   const { messages } = req.body
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: 'Messages array is required' })
@@ -227,6 +229,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const trimmedMessages = messages.slice(-20)
   const settings = await fetchAiSettings()
+
+  // API key resolution: DB value wins, env var as fallback for migration safety
+  const apiKey = settings.api_key?.trim() || process.env.GITHUB_TOKEN
+  if (!apiKey) {
+    return res.status(503).json({ error: 'AI not configured. Set API key in /app/ai-agent.' })
+  }
 
   // 1. Guest gate
   if (!settings.allow_anonymous_chat) {
@@ -258,7 +266,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${githubToken}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         model: settings.default_model,
