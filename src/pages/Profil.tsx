@@ -640,8 +640,8 @@ export default function Profil() {
           </p>
           <p className="text-[10px] text-on-surface-variant/60">
             {lang === 'en'
-              ? 'Built for the Microsoft AI Impact Challenge 2025'
-              : 'Dikembangkan untuk Microsoft AI Impact Challenge 2025'}
+              ? 'Built for the Microsoft AI Impact Challenge 2026'
+              : 'Dikembangkan untuk Microsoft AI Impact Challenge 2026'}
           </p>
         </div>
       </SettingsModal>

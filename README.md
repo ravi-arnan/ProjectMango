@@ -4,7 +4,7 @@
 
 Mango is a Progressive Web App (PWA) that helps travelers and local authorities monitor real-time crowd density at tourist destinations across Bali. By providing live occupancy data, AI-driven predictions, and smart recommendations, it promotes sustainable tourism and helps visitors avoid overcrowded hotspots.
 
-> Built for the AI Impact Challenge by Tim Inovasi Digital.
+> Built for the Microsoft AI Impact Challenge 2026.
 
 ---
 
@@ -156,4 +156,4 @@ Density levels are color-coded:
 
 ## License
 
-This project was built for the AI Impact Challenge. All rights reserved.
+This project was built for the Microsoft AI Impact Challenge 2026. All rights reserved.

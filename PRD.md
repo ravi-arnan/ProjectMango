@@ -2,7 +2,7 @@
 
 > **Status:** Living document · written retroactively after MVP build · v0.1
 > **Last updated:** 2026-04-25
-> **Owner:** Tim Inovasi Digital · for the Microsoft AI Impact Challenge 2025
+> **Built for:** Microsoft AI Impact Challenge 2026
 
 ---
 
@@ -145,7 +145,7 @@ Multiplied across 50,000 daily users, Mango becomes a **distributed crowd-manage
 ### Business / impact KPIs
 - Active users in peak Bali season (Jul–Aug): 50,000+ MAU.
 - Authority partnerships: at least 1 regency tourism office actively using the dashboard.
-- Press / awards: featured in Microsoft AI Impact Challenge final round.
+- Press / awards: featured in Microsoft AI Impact Challenge 2026 final round.
 
 ---
 
