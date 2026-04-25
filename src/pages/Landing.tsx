@@ -484,7 +484,7 @@ export default function Landing() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true, margin: '-100px' }}
                 transition={{ duration: 0.7 }}
-                className="relative rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 lg:border-8 border-white"
+                className="relative isolate rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 lg:border-8 border-white"
                 style={{ minHeight: '500px', height: '500px' }}
               >
                 <LiveMapPreview />

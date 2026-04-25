@@ -59,7 +59,7 @@ const buildIcon = (d: Density): L.DivIcon => {
 
 export default function LiveMapPreview() {
   return (
-    <div className="absolute inset-0">
+    <div className="absolute inset-0 isolate">
       <style>{`
         @keyframes lmp-pulse {
           0%, 100% { transform: scale(1); opacity: 0.35; }
