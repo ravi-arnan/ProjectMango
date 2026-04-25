@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react'
 import { getStorageItem, setStorageItem, STORAGE_KEYS } from '../lib/storage'
 import { generateId } from '../lib/utils'
 import { destinations } from '../data/destinations'
@@ -86,7 +86,21 @@ function loadNotifications(): AppNotification[] {
   return stored
 }
 
-export function useNotifications() {
+interface NotificationContextValue {
+  notifications: AppNotification[]
+  prefs: NotificationPrefs
+  unreadCount: number
+  markAsRead: (id: string) => void
+  markAllAsRead: () => void
+  clearAll: () => void
+  deleteNotification: (id: string) => void
+  addNotification: (notif: Omit<AppNotification, 'id' | 'read' | 'createdAt'>) => void
+  updatePrefs: (update: Partial<NotificationPrefs>) => void
+}
+
+const NotificationContext = createContext<NotificationContextValue | null>(null)
+
+export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<AppNotification[]>(loadNotifications)
   const [prefs, setPrefs] = useState<NotificationPrefs>(() =>
     getStorageItem<NotificationPrefs>(STORAGE_KEYS.NOTIFICATION_PREFS, DEFAULT_PREFS)
@@ -113,6 +127,11 @@ export function useNotifications() {
     persistNotifications([])
   }, [persistNotifications])
 
+  const deleteNotification = useCallback((id: string) => {
+    const updated = notifsRef.current.filter((n) => n.id !== id)
+    persistNotifications(updated)
+  }, [persistNotifications])
+
   const addNotification = useCallback((notif: Omit<AppNotification, 'id' | 'read' | 'createdAt'>) => {
     const newNotif: AppNotification = {
       ...notif,
@@ -134,6 +153,7 @@ export function useNotifications() {
 
   const unreadCount = notifications.filter((n) => !n.read).length
 
+  // Crowd alert scheduler
   useEffect(() => {
     const interval = setInterval(() => {
       if (!prefs.crowdAlerts) return
@@ -151,6 +171,7 @@ export function useNotifications() {
     return () => clearInterval(interval)
   }, [prefs.crowdAlerts, addNotification])
 
+  // Booking reminder scheduler
   useEffect(() => {
     if (!prefs.bookingReminders) return
 
@@ -196,14 +217,29 @@ export function useNotifications() {
     return () => clearInterval(interval)
   }, [prefs.bookingReminders, addNotification])
 
-  return {
+  const value: NotificationContextValue = {
     notifications,
     prefs,
     unreadCount,
     markAsRead,
     markAllAsRead,
     clearAll,
+    deleteNotification,
     addNotification,
     updatePrefs,
   }
+
+  return (
+    <NotificationContext.Provider value={value}>
+      {children}
+    </NotificationContext.Provider>
+  )
+}
+
+export function useNotifications() {
+  const ctx = useContext(NotificationContext)
+  if (!ctx) {
+    throw new Error('useNotifications must be used within a NotificationProvider')
+  }
+  return ctx
 }

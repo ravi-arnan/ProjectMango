@@ -340,7 +340,7 @@ export default function Peta() {
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="absolute top-8 left-8 z-30 max-w-md"
+          className="absolute top-10 left-8 z-30 max-w-md"
         >
           <SpotlightCard
             spotlightColor="rgba(0, 100, 124, 0.15)"
@@ -384,7 +384,7 @@ export default function Peta() {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="absolute top-8 right-8 z-20 w-[420px]"
+          className="absolute top-10 right-8 z-20 w-[420px]"
         >
           <div className="bg-white/95 backdrop-blur-md rounded-full flex items-center gap-3 px-5 py-3 shadow-xl border border-white/60 focus-within:border-primary/40 transition-colors">
             <Icon name="search" className="text-on-surface-variant" size="22px" />

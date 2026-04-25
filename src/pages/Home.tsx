@@ -15,7 +15,7 @@ import SpotlightCard from '../components/reactbits/SpotlightCard'
 import GlareHover from '../components/reactbits/GlareHover'
 import CountUp from '../components/reactbits/CountUp'
 
-const categoryValues = ['Semua', 'Pantai', 'Pura', 'Alam', 'Budaya'] as const
+const categoryValues = ['Semua', 'Pantai', 'Pura', 'Alam', 'Desa Wisata'] as const
 
 const HERO_IMAGE = '/highcompress_Tegalalang.jpg'
 
@@ -30,7 +30,12 @@ export default function Home() {
   const { user } = useAuth()
   const displayName = getUserDisplayName(user, t('profil.guest'))
 
-  const popularDestinations = destinations.slice(0, 3)
+  const categoryFiltered =
+    activeCategory === 'Semua'
+      ? destinations
+      : destinations.filter((d) => d.category === activeCategory)
+
+  const popularDestinations = categoryFiltered.slice(0, 3)
 
   const getRecommendations = () => {
     return [...destinations]
@@ -63,7 +68,7 @@ export default function Home() {
     Pantai: t('common.categories.beach'),
     Pura: t('common.categories.temple'),
     Alam: t('common.categories.nature'),
-    Budaya: t('common.categories.culture'),
+    'Desa Wisata': t('common.categories.culture'),
   }
 
   return (
@@ -187,6 +192,12 @@ export default function Home() {
               {t('common.viewAll')}
             </Link>
           </div>
+          {popularDestinations.length === 0 ? (
+            <div className="py-8 text-center">
+              <Icon name="search_off" size="36px" className="text-on-surface-variant mx-auto mb-2" />
+              <p className="text-xs text-on-surface-variant">{t('home.noResults', { defaultValue: 'Tidak ada destinasi untuk kategori ini' })}</p>
+            </div>
+          ) : (
           <div className="flex gap-3 overflow-x-auto no-scrollbar">
             {popularDestinations.map((dest, i) => (
               <motion.div
@@ -226,6 +237,7 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+          )}
         </div>
 
         {/* Rekomendasi untuk Kamu */}
@@ -410,14 +422,21 @@ export default function Home() {
               </Link>
             </Magnet>
           </div>
+          {popularDestinations.length === 0 ? (
+            <div className="col-span-12 py-16 text-center">
+              <Icon name="search_off" size="48px" className="text-on-surface-variant mx-auto mb-3" />
+              <p className="text-sm text-on-surface-variant">{t('home.noResults', { defaultValue: 'Tidak ada destinasi untuk kategori ini' })}</p>
+            </div>
+          ) : (
           <div className="grid grid-cols-12 gap-4">
             {/* Large card */}
+            {popularDestinations[0] && (
             <motion.div
               initial={{ opacity: 0, scale: 0.97 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="col-span-8 h-[400px]"
+              className={popularDestinations.length === 1 ? 'col-span-12 h-[400px]' : 'col-span-8 h-[400px]'}
             >
               <Link
                 to={`/app/destinasi/${popularDestinations[0].id}`}
@@ -452,8 +471,10 @@ export default function Home() {
                 </GlareHover>
               </Link>
             </motion.div>
+            )}
 
             {/* Small card */}
+            {popularDestinations[1] && (
             <motion.div
               initial={{ opacity: 0, scale: 0.97 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -494,7 +515,9 @@ export default function Home() {
                 </GlareHover>
               </Link>
             </motion.div>
+            )}
           </div>
+          )}
         </div>
 
         {/* Rekomendasi */}

@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function NotificationPanel({ isOpen, onClose }: Props) {
-  const { notifications, markAsRead, markAllAsRead, clearAll, unreadCount } = useNotifications()
+  const { notifications, markAsRead, markAllAsRead, clearAll, deleteNotification, unreadCount } = useNotifications()
 
   if (!isOpen) return null
 
@@ -57,7 +57,7 @@ export default function NotificationPanel({ isOpen, onClose }: Props) {
               <button
                 key={notif.id}
                 onClick={() => markAsRead(notif.id)}
-                className={`w-full flex items-start gap-3 px-5 py-3.5 text-left transition-colors hover:bg-stone-50 ${
+                className={`w-full flex items-start gap-3 px-5 py-3.5 text-left transition-colors hover:bg-stone-50 group ${
                   !notif.read ? 'bg-primary/3' : ''
                 }`}
               >
@@ -71,7 +71,19 @@ export default function NotificationPanel({ isOpen, onClose }: Props) {
                     <p className={`text-xs font-semibold truncate ${!notif.read ? 'text-on-surface' : 'text-on-surface-variant'}`}>
                       {notif.title}
                     </p>
-                    {!notif.read && <span className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1" />}
+                    <div className="flex items-center gap-1 shrink-0">
+                      {!notif.read && <span className="w-2 h-2 rounded-full bg-primary mt-1" />}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          deleteNotification(notif.id)
+                        }}
+                        className="p-0.5 hover:bg-stone-200 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                        title="Hapus"
+                      >
+                        <Icon name="close" size="14px" className="text-on-surface-variant" />
+                      </button>
+                    </div>
                   </div>
                   <p className="text-[11px] text-on-surface-variant leading-relaxed mt-0.5 line-clamp-2">
                     {notif.message}
