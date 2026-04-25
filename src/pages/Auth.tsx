@@ -147,7 +147,7 @@ export default function Auth() {
         loop
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover bg-on-surface"
       />

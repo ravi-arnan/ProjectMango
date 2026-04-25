@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 
 export default defineConfig({
   server: {
@@ -19,6 +20,12 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    ViteImageOptimizer({
+      jpg: { quality: 75 },
+      jpeg: { quality: 75 },
+      png: { quality: 80 },
+      webp: { quality: 75 },
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/*.png'],

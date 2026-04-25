@@ -131,7 +131,7 @@ export default function Landing() {
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             aria-label="Pemandangan Danau Bratan, Bali"
             className="absolute inset-0 w-full h-full object-cover bg-on-surface"
           />
