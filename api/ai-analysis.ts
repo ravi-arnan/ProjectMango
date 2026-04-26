@@ -4,6 +4,7 @@ import {
   DEFAULT_FALLBACK_MESSAGE,
   DEFAULT_REFUSAL_MESSAGE,
 } from '../src/data/aiDefaults'
+import { chatCompletionsUrl, DEFAULT_PROVIDER_ID } from '../src/data/aiProviders'
 
 const destinations = [
   { name: 'Tanah Lot', location: 'Tabanan', category: 'Pura', density: 0.87, densityLabel: 'Sangat Ramai', visitors: 1248, maxCapacity: 1500, rating: 4.5, reviewCount: 1284, openHours: '06.00 - 19.00', ticketPrice: 'Rp 60.000', description: 'Situs Budaya & Keindahan Pesisir' },
@@ -44,6 +45,7 @@ const PERSONA_HINT: Record<Persona, string> = {
 
 interface AiSettings {
   api_key: string | null
+  api_provider: string
   default_model: string
   system_prompt: string | null
   max_tokens: number
@@ -58,6 +60,7 @@ interface AiSettings {
 
 const DEFAULT_SETTINGS: AiSettings = {
   api_key: null,
+  api_provider: DEFAULT_PROVIDER_ID,
   default_model: 'gpt-4o-mini',
   system_prompt: null,
   max_tokens: 1024,
@@ -81,7 +84,7 @@ async function fetchAiSettings(): Promise<AiSettings> {
 
   try {
     const res = await fetch(
-      `${supabaseUrl}/rest/v1/ai_agent_settings?id=eq.1&select=api_key,default_model,system_prompt,max_tokens,temperature,persona,content_filter_enabled,blocked_keywords,refusal_message,fallback_message,allow_anonymous_chat`,
+      `${supabaseUrl}/rest/v1/ai_agent_settings?id=eq.1&select=api_key,api_provider,default_model,system_prompt,max_tokens,temperature,persona,content_filter_enabled,blocked_keywords,refusal_message,fallback_message,allow_anonymous_chat`,
       {
         headers: {
           apikey: supabaseKey,
@@ -95,6 +98,7 @@ async function fetchAiSettings(): Promise<AiSettings> {
     if (!row) return DEFAULT_SETTINGS
     return {
       api_key: row.api_key ?? null,
+      api_provider: row.api_provider || DEFAULT_SETTINGS.api_provider,
       default_model: row.default_model || DEFAULT_SETTINGS.default_model,
       system_prompt: row.system_prompt ?? null,
       max_tokens: row.max_tokens || DEFAULT_SETTINGS.max_tokens,
@@ -192,7 +196,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const systemContent = personaHint ? `${baseSystem}\n\n${personaHint}` : baseSystem
 
   try {
-    const response = await fetch('https://models.inference.ai.azure.com/chat/completions', {
+    const response = await fetch(chatCompletionsUrl(settings.api_provider), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -214,7 +218,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('GitHub Models error:', response.status, errorText)
+      console.error(`${settings.api_provider} error:`, response.status, errorText)
       return res.status(502).json({ error: 'AI service temporarily unavailable' })
     }
 

@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { chatCompletionsUrl, getProvider } from '../src/data/aiProviders'
 
 async function isAdmin(token: string | undefined): Promise<boolean> {
   if (!token) return false
@@ -59,16 +60,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(403).json({ ok: false, error: 'Admin only' })
   }
 
-  const { apiKey, model } = req.body ?? {}
+  const { apiKey, model, provider } = req.body ?? {}
   if (!apiKey || typeof apiKey !== 'string') {
     return res.status(400).json({ ok: false, error: 'apiKey required' })
   }
   if (!model || typeof model !== 'string') {
     return res.status(400).json({ ok: false, error: 'model required' })
   }
+  const providerId = typeof provider === 'string' ? provider : 'github-models'
+  const endpoint = chatCompletionsUrl(providerId)
+  const providerLabel = getProvider(providerId).label
 
   try {
-    const response = await fetch('https://models.inference.ai.azure.com/chat/completions', {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -88,7 +92,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const errorText = await response.text()
       return res.status(200).json({
         ok: false,
-        error: `Provider returned ${response.status}: ${errorText.slice(0, 200)}`,
+        error: `${providerLabel} returned ${response.status}: ${errorText.slice(0, 200)}`,
       })
     }
     const data = await response.json()

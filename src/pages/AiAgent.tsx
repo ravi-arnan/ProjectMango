@@ -6,7 +6,7 @@ import Icon from '../components/Icon'
 import TagInput from '../components/admin/TagInput'
 import { supabase } from '../lib/supabase'
 import { showToast } from '../components/Toast'
-import { AI_MODELS, DEFAULT_MODEL_ID } from '../data/aiModels'
+import { AI_PROVIDERS, DEFAULT_PROVIDER_ID, getProvider, getDefaultModel } from '../data/aiProviders'
 import {
   DEFAULT_SYSTEM_PROMPT,
   DEFAULT_GREETING_MESSAGE,
@@ -42,8 +42,8 @@ interface AiSettings {
 
 const DEFAULT_SETTINGS: AiSettings = {
   api_key: '',
-  api_provider: 'github-models',
-  default_model: DEFAULT_MODEL_ID,
+  api_provider: DEFAULT_PROVIDER_ID,
+  default_model: getDefaultModel(DEFAULT_PROVIDER_ID),
   system_prompt: DEFAULT_SYSTEM_PROMPT,
   greeting_message: DEFAULT_GREETING_MESSAGE,
   fallback_message: DEFAULT_FALLBACK_MESSAGE,
@@ -56,8 +56,6 @@ const DEFAULT_SETTINGS: AiSettings = {
   refusal_message: DEFAULT_REFUSAL_MESSAGE,
   allow_anonymous_chat: true,
 }
-
-const PROVIDERS = [{ id: 'github-models', label: 'GitHub Models', endpoint: 'https://models.inference.ai.azure.com' }]
 
 const PERSONA_OPTIONS: { id: Persona; labelKey: string; hintKey: string }[] = [
   { id: 'informatif', labelKey: 'Informatif', hintKey: 'Netral, padat, data-driven' },
@@ -101,10 +99,11 @@ export default function AiAgent() {
         if (error) {
           setError(error.message)
         } else if (data) {
+          const loadedProvider = data.api_provider ?? DEFAULT_PROVIDER_ID
           setSettings({
             api_key: data.api_key ?? '',
-            api_provider: data.api_provider ?? 'github-models',
-            default_model: data.default_model ?? DEFAULT_MODEL_ID,
+            api_provider: loadedProvider,
+            default_model: data.default_model ?? getDefaultModel(loadedProvider),
             system_prompt: data.system_prompt?.trim() || DEFAULT_SYSTEM_PROMPT,
             greeting_message: data.greeting_message?.trim() || DEFAULT_GREETING_MESSAGE,
             fallback_message: data.fallback_message?.trim() || DEFAULT_FALLBACK_MESSAGE,
@@ -190,6 +189,7 @@ export default function AiAgent() {
         body: JSON.stringify({
           apiKey: settings.api_key.trim(),
           model: settings.default_model,
+          provider: settings.api_provider,
         }),
       })
       const data = await res.json().catch(() => ({}))
@@ -277,16 +277,26 @@ export default function AiAgent() {
             </span>
             <span className="text-xs text-on-surface-variant -mt-1">
               {lang === 'en'
-                ? 'AI inference service. More providers coming soon.'
-                : 'Layanan inferensi AI. Provider tambahan akan datang.'}
+                ? 'AI inference service. Switching here changes the API endpoint and the model list below.'
+                : 'Layanan inferensi AI. Mengubah ini mengganti endpoint API dan daftar model di bawah.'}
             </span>
             <select
               value={settings.api_provider}
-              onChange={(e) => patch('api_provider', e.target.value)}
-              disabled
-              className="bg-surface-container-low rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-70"
+              onChange={(e) => {
+                const next = e.target.value
+                const nextProvider = getProvider(next)
+                const stillValid = nextProvider.models.some((m) => m.id === settings.default_model)
+                setSettings((prev) => ({
+                  ...prev,
+                  api_provider: next,
+                  default_model: stillValid ? prev.default_model : getDefaultModel(next),
+                }))
+                setKeyEdited(true)
+                setTestStatus('idle')
+              }}
+              className="bg-surface-container-low rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             >
-              {PROVIDERS.map((p) => (
+              {AI_PROVIDERS.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.label}
                 </option>
@@ -326,8 +336,16 @@ export default function AiAgent() {
             </div>
             <span className="text-xs text-on-surface-variant -mt-1">
               {lang === 'en'
-                ? 'Bearer token for the GitHub Models API. Stored encrypted at rest, only readable by admins.'
-                : 'Bearer token untuk GitHub Models API. Hanya admin yang bisa baca.'}
+                ? `Bearer token for ${getProvider(settings.api_provider).label}. Stored encrypted at rest, only readable by admins. `
+                : `Bearer token untuk ${getProvider(settings.api_provider).label}. Hanya admin yang bisa baca. `}
+              <a
+                href={getProvider(settings.api_provider).keyHelpUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary font-semibold hover:underline"
+              >
+                {lang === 'en' ? 'Get a key →' : 'Dapatkan key →'}
+              </a>
             </span>
             <div className="flex items-center gap-2">
               <input
@@ -338,7 +356,7 @@ export default function AiAgent() {
                   setKeyEdited(true)
                   setTestStatus('idle')
                 }}
-                placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                placeholder={getProvider(settings.api_provider).keyPlaceholder}
                 className="flex-1 bg-surface-container-low rounded-xl px-4 py-3 text-sm font-mono outline-none focus:ring-2 focus:ring-primary/30"
               />
               <button
@@ -401,11 +419,18 @@ export default function AiAgent() {
               onChange={(e) => patch('default_model', e.target.value)}
               className="bg-surface-container-low rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             >
-              {AI_MODELS.map((m) => (
+              {getProvider(settings.api_provider).models.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.label} — {m.description}
                 </option>
               ))}
+              {!getProvider(settings.api_provider).models.some(
+                (m) => m.id === settings.default_model
+              ) && (
+                <option value={settings.default_model}>
+                  {settings.default_model} {lang === 'en' ? '(custom)' : '(custom)'}
+                </option>
+              )}
             </select>
           </label>
 
