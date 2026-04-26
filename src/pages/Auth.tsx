@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { motion, AnimatePresence } from 'motion/react';
@@ -154,6 +154,26 @@ export default function Auth() {
       {/* Gradient + tint overlays */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/40 to-primary/40 pointer-events-none" />
       <div className="absolute inset-0 bg-on-surface/30 pointer-events-none" />
+
+      {/* Back to landing */}
+      <motion.div
+        initial={{ opacity: 0, x: -12 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="absolute top-4 left-4 md:top-6 md:left-6 z-20"
+      >
+        <Link
+          to="/"
+          className="group inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-colors shadow-lg"
+        >
+          <Icon
+            name="arrow_back"
+            size="18px"
+            className="transition-transform group-hover:-translate-x-0.5"
+          />
+          <span className="hidden sm:inline">{t('common.back')}</span>
+        </Link>
+      </motion.div>
 
       {/* Card */}
       <motion.div
