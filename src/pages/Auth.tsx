@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { motion, AnimatePresence } from 'motion/react';
@@ -213,9 +213,10 @@ export default function Auth() {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="absolute top-4 left-4 md:top-6 md:left-6 z-20"
       >
-        <Link
-          to="/"
-          className="group inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-colors shadow-lg"
+        <button
+          type="button"
+          onClick={() => navigate('/', { replace: true })}
+          className="group inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-colors shadow-lg cursor-pointer"
         >
           <Icon
             name="arrow_back"
@@ -223,7 +224,7 @@ export default function Auth() {
             className="transition-transform group-hover:-translate-x-0.5"
           />
           <span className="hidden sm:inline">{t('common.back')}</span>
-        </Link>
+        </button>
       </motion.div>
 
       {/* Card */}
