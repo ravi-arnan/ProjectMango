@@ -39,6 +39,7 @@ export default function Profil() {
   const displayName = getUserFullName(user, t('profil.guest'))
   const initials = getUserInitials(user)
   const isGuest = user?.is_anonymous
+  const canHaveBookings = !isAdmin && !isGuest
   const upcomingBookings = getUpcomingBookings()
   const watchlistedDests = destinations.filter((d) => watchlist.includes(d.id))
 
@@ -136,7 +137,7 @@ export default function Profil() {
           <span className="bg-surface-container-high rounded-full px-4 py-2 text-xs font-semibold text-on-surface">
             <CountUp to={watchlist.length} duration={1.2} /> {t('profil.stats.saved')}
           </span>
-          {!isAdmin && (
+          {canHaveBookings && (
             <span className="bg-surface-container-high rounded-full px-4 py-2 text-xs font-semibold text-on-surface">
               <CountUp to={bookings.length} duration={1.2} /> {lang === 'en' ? 'Bookings' : 'Booking'}
             </span>
@@ -147,7 +148,7 @@ export default function Profil() {
         </div>
 
         {/* Upcoming Bookings */}
-        {!isAdmin && upcomingBookings.length > 0 && (
+        {canHaveBookings && upcomingBookings.length > 0 && (
           <div>
             <h3 className="text-base font-bold text-on-surface mb-3">
               {lang === 'en' ? 'Upcoming Bookings' : 'Booking Mendatang'}
@@ -343,7 +344,7 @@ export default function Profil() {
             </div>
           </SpotlightCard>
 
-          <div className={`col-span-5 grid gap-4 ${isAdmin ? 'grid-cols-1' : 'grid-cols-2'}`}>
+          <div className={`col-span-5 grid gap-4 ${canHaveBookings ? 'grid-cols-2' : 'grid-cols-1'}`}>
             <SpotlightCard
               spotlightColor="rgba(0, 100, 124, 0.18)"
               className="bg-surface-container-low rounded-[2rem] p-6 flex flex-col justify-between"
@@ -358,7 +359,7 @@ export default function Profil() {
                 {lang === 'en' ? 'in watchlist' : 'di watchlist'}
               </p>
             </SpotlightCard>
-            {!isAdmin && (
+            {canHaveBookings && (
               <SpotlightCard
                 spotlightColor="rgba(163, 103, 0, 0.18)"
                 className="bg-surface-container-low rounded-[2rem] p-6 flex flex-col justify-between"
@@ -378,7 +379,7 @@ export default function Profil() {
         </div>
 
         {/* Booking History */}
-        {!isAdmin && bookings.length > 0 && (
+        {canHaveBookings && bookings.length > 0 && (
           <SpotlightCard
             spotlightColor="rgba(0, 100, 124, 0.15)"
             className="bg-surface-container-low/50 rounded-[2.5rem] p-8"
