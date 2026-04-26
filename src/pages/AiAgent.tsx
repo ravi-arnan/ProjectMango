@@ -7,6 +7,14 @@ import TagInput from '../components/admin/TagInput'
 import { supabase } from '../lib/supabase'
 import { showToast } from '../components/Toast'
 import { AI_MODELS, DEFAULT_MODEL_ID } from '../data/aiModels'
+import {
+  DEFAULT_SYSTEM_PROMPT,
+  DEFAULT_GREETING_MESSAGE,
+  DEFAULT_FALLBACK_MESSAGE,
+  DEFAULT_REFUSAL_MESSAGE,
+  DEFAULT_SUGGESTED_PROMPTS,
+  DEFAULT_BLOCKED_KEYWORDS,
+} from '../data/aiDefaults'
 import { useAuth } from '../context/AuthContext'
 import BlurText from '../components/reactbits/BlurText'
 import ShinyText from '../components/reactbits/ShinyText'
@@ -36,16 +44,16 @@ const DEFAULT_SETTINGS: AiSettings = {
   api_key: '',
   api_provider: 'github-models',
   default_model: DEFAULT_MODEL_ID,
-  system_prompt: '',
-  greeting_message: '',
-  fallback_message: '',
-  suggested_prompts: [],
+  system_prompt: DEFAULT_SYSTEM_PROMPT,
+  greeting_message: DEFAULT_GREETING_MESSAGE,
+  fallback_message: DEFAULT_FALLBACK_MESSAGE,
+  suggested_prompts: DEFAULT_SUGGESTED_PROMPTS,
   persona: 'informatif',
   max_tokens: 1024,
   temperature: 0.7,
   content_filter_enabled: true,
-  blocked_keywords: [],
-  refusal_message: '',
+  blocked_keywords: DEFAULT_BLOCKED_KEYWORDS,
+  refusal_message: DEFAULT_REFUSAL_MESSAGE,
   allow_anonymous_chat: true,
 }
 
@@ -97,16 +105,22 @@ export default function AiAgent() {
             api_key: data.api_key ?? '',
             api_provider: data.api_provider ?? 'github-models',
             default_model: data.default_model ?? DEFAULT_MODEL_ID,
-            system_prompt: data.system_prompt ?? '',
-            greeting_message: data.greeting_message ?? '',
-            fallback_message: data.fallback_message ?? '',
-            suggested_prompts: data.suggested_prompts ?? [],
+            system_prompt: data.system_prompt?.trim() || DEFAULT_SYSTEM_PROMPT,
+            greeting_message: data.greeting_message?.trim() || DEFAULT_GREETING_MESSAGE,
+            fallback_message: data.fallback_message?.trim() || DEFAULT_FALLBACK_MESSAGE,
+            suggested_prompts:
+              data.suggested_prompts && data.suggested_prompts.length > 0
+                ? data.suggested_prompts
+                : DEFAULT_SUGGESTED_PROMPTS,
             persona: (data.persona ?? 'informatif') as Persona,
             max_tokens: data.max_tokens ?? 1024,
             temperature: data.temperature ?? 0.7,
             content_filter_enabled: data.content_filter_enabled ?? true,
-            blocked_keywords: data.blocked_keywords ?? [],
-            refusal_message: data.refusal_message ?? '',
+            blocked_keywords:
+              data.blocked_keywords && data.blocked_keywords.length > 0
+                ? data.blocked_keywords
+                : DEFAULT_BLOCKED_KEYWORDS,
+            refusal_message: data.refusal_message?.trim() || DEFAULT_REFUSAL_MESSAGE,
             allow_anonymous_chat: data.allow_anonymous_chat ?? true,
           })
           setUpdatedAt(data.updated_at ?? null)
@@ -448,11 +462,24 @@ export default function AiAgent() {
           </div>
 
           <label className="flex flex-col gap-2">
-            <span className="text-sm font-semibold text-on-surface">
-              {lang === 'en' ? 'System prompt (optional)' : 'System prompt (opsional)'}
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-on-surface">
+                {lang === 'en' ? 'System prompt' : 'System prompt'}
+              </span>
+              {settings.system_prompt !== DEFAULT_SYSTEM_PROMPT && (
+                <button
+                  type="button"
+                  onClick={() => patch('system_prompt', DEFAULT_SYSTEM_PROMPT)}
+                  className="text-[11px] font-bold text-primary hover:underline"
+                >
+                  {lang === 'en' ? '↺ Reset to default' : '↺ Reset ke default'}
+                </button>
+              )}
+            </div>
             <span className="text-xs text-on-surface-variant -mt-1">
-              {lang === 'en' ? 'Leave empty to use the built-in Mango AI prompt.' : 'Kosongkan untuk pakai prompt bawaan Mango AI.'}
+              {lang === 'en'
+                ? 'The base prompt that defines Mango AI personality and rules. Pre-filled with the recommended default — edit to customize.'
+                : 'Prompt dasar yang mendefinisikan kepribadian dan aturan Mango AI. Sudah terisi dengan default rekomendasi — edit untuk kustomisasi.'}
             </span>
             <textarea
               value={settings.system_prompt}
@@ -553,9 +580,20 @@ export default function AiAgent() {
           </label>
 
           <label className="flex flex-col gap-2">
-            <span className="text-sm font-semibold text-on-surface">{lang === 'en' ? 'Blocked keywords' : 'Blocked keywords'}</span>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-on-surface">{lang === 'en' ? 'Blocked keywords' : 'Blocked keywords'}</span>
+              {JSON.stringify(settings.blocked_keywords) !== JSON.stringify(DEFAULT_BLOCKED_KEYWORDS) && (
+                <button
+                  type="button"
+                  onClick={() => patch('blocked_keywords', DEFAULT_BLOCKED_KEYWORDS)}
+                  className="text-[11px] font-bold text-primary hover:underline"
+                >
+                  {lang === 'en' ? '↺ Reset to default' : '↺ Reset ke default'}
+                </button>
+              )}
+            </div>
             <span className="text-xs text-on-surface-variant -mt-1">
-              {lang === 'en' ? 'Words that trigger refusal (case-insensitive, word-boundary match).' : 'Kata yang akan memicu refusal (case-insensitive, word-boundary match).'}
+              {lang === 'en' ? 'Words that trigger refusal (case-insensitive, word-boundary match). Pre-filled with conservative starter list.' : 'Kata yang akan memicu refusal (case-insensitive, word-boundary match). Sudah terisi dengan starter list konservatif.'}
             </span>
             <TagInput
               value={settings.blocked_keywords}
@@ -565,7 +603,18 @@ export default function AiAgent() {
           </label>
 
           <label className="flex flex-col gap-2">
-            <span className="text-sm font-semibold text-on-surface">{lang === 'en' ? 'Refusal message' : 'Refusal message'}</span>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-on-surface">{lang === 'en' ? 'Refusal message' : 'Refusal message'}</span>
+              {settings.refusal_message !== DEFAULT_REFUSAL_MESSAGE && (
+                <button
+                  type="button"
+                  onClick={() => patch('refusal_message', DEFAULT_REFUSAL_MESSAGE)}
+                  className="text-[11px] font-bold text-primary hover:underline"
+                >
+                  {lang === 'en' ? '↺ Reset to default' : '↺ Reset ke default'}
+                </button>
+              )}
+            </div>
             <textarea
               value={settings.refusal_message}
               onChange={(e) => patch('refusal_message', e.target.value)}
