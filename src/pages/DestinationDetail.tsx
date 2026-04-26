@@ -4,7 +4,10 @@ import { destinations, getDensityTextColor, getDensityBgColor } from '../data/de
 import Icon from '../components/Icon'
 import BookingModal from '../components/BookingModal'
 import ReviewModal from '../components/ReviewModal'
+import GuestGateModal from '../components/GuestGateModal'
 import { useWatchlist } from '../hooks/useWatchlist'
+import { useAuth } from '../context/AuthContext'
+import { useTranslation } from 'react-i18next'
 import { generateHourlyPrediction, generateWeeklyPrediction, generateWeatherData, getBestVisitTime, estimateWaitTime } from '../lib/predictions'
 import { showToast } from '../components/Toast'
 
@@ -17,9 +20,22 @@ function getDensityBadgeLabel(density: number): string {
 
 export default function DestinationDetail() {
   const { id } = useParams<{ id: string }>()
+  const { user } = useAuth()
+  const { i18n } = useTranslation()
+  const lang = i18n.language
+  const isGuest = !user || user.is_anonymous
   const [bookingOpen, setBookingOpen] = useState(false)
   const [reviewOpen, setReviewOpen] = useState(false)
+  const [guestGateOpen, setGuestGateOpen] = useState(false)
   const { isWatchlisted, toggleWatchlist } = useWatchlist()
+
+  const handleBookClick = () => {
+    if (isGuest) {
+      setGuestGateOpen(true)
+    } else {
+      setBookingOpen(true)
+    }
+  }
 
   const destination = destinations.find((d) => d.id === id)
   if (!destination) {
@@ -246,7 +262,7 @@ export default function DestinationDetail() {
           {watched ? 'Tersimpan' : 'Watchlist'}
         </button>
       </div>
-      <button onClick={() => setBookingOpen(true)} className="px-5 py-2.5 bg-primary text-on-primary rounded-full font-semibold text-sm shadow-md">
+      <button onClick={handleBookClick} className="px-5 py-2.5 bg-primary text-on-primary rounded-full font-semibold text-sm shadow-md">
         Pesan Tiket
       </button>
     </div>
@@ -311,7 +327,7 @@ export default function DestinationDetail() {
         </div>
       </div>
       <div className="flex gap-2 mt-5">
-        <button onClick={() => setBookingOpen(true)}
+        <button onClick={handleBookClick}
           className="flex-1 py-3 bg-primary text-on-primary rounded-full font-semibold text-sm shadow-md">
           Pesan Tiket
         </button>
@@ -410,6 +426,11 @@ export default function DestinationDetail() {
       </div>
 
       <BookingModal destination={destination} isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
+      <GuestGateModal
+        isOpen={guestGateOpen}
+        onClose={() => setGuestGateOpen(false)}
+        action={lang === 'en' ? 'book a ticket' : 'memesan tiket'}
+      />
       <ReviewModal destinationId={destination.id} destinationName={destination.name} isOpen={reviewOpen} onClose={() => setReviewOpen(false)} />
     </>
   )
