@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../context/AuthContext';
 import Icon from '../components/Icon';
 import BlurText from '../components/reactbits/BlurText';
 import GradientText from '../components/reactbits/GradientText';
@@ -18,6 +19,7 @@ const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | und
 export default function Auth() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,6 +35,15 @@ export default function Auth() {
   const turnstileRef = useRef<TurnstileInstance | null>(null);
 
   const captchaRequired = Boolean(turnstileSiteKey);
+
+  // If a session lands here (e.g. after email verification redirects to
+  // /auth#access_token=…), the supabase client picks up the hash and sets
+  // a session. Bounce the user into the app once that happens.
+  useEffect(() => {
+    if (!authLoading && user && !user.is_anonymous) {
+      navigate('/app', { replace: true });
+    }
+  }, [authLoading, user, navigate]);
 
   const resetCaptcha = () => {
     setCaptchaToken(null);
@@ -98,6 +109,7 @@ export default function Auth() {
         password,
         options: {
           data: { full_name: name },
+          emailRedirectTo: `${window.location.origin}/auth`,
           ...(captchaToken ? { captchaToken } : {}),
         },
       });
@@ -342,7 +354,9 @@ export default function Auth() {
                   }
                   setLoading(true);
                   try {
-                    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email);
+                    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+                      redirectTo: `${window.location.origin}/auth`,
+                    });
                     if (resetError) throw resetError;
                     setResetSent(true);
                     setError('');
