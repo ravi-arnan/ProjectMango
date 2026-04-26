@@ -38,13 +38,15 @@ export default function Auth() {
 
   const captchaRequired = Boolean(turnstileSiteKey);
 
-  // If a session lands here (e.g. after email verification redirects to
-  // /auth#access_token=…), the supabase client picks up the hash and sets
-  // a session. Bounce the user into the app once that happens.
+  // Only auto-bounce when we just landed here from an email-verification
+  // link (Supabase appends #access_token=… on the redirect). Without this
+  // guard the effect re-fires on every auth-state change and can race with
+  // explicit user navigation (e.g. clicking the Back button).
   useEffect(() => {
-    if (!authLoading && user && !user.is_anonymous) {
-      navigate('/app', { replace: true });
-    }
+    if (typeof window === 'undefined') return;
+    if (!window.location.hash.includes('access_token')) return;
+    if (authLoading || !user || user.is_anonymous) return;
+    navigate('/app', { replace: true });
   }, [authLoading, user, navigate]);
 
   const resetCaptcha = () => {
