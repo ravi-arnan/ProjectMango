@@ -12,19 +12,20 @@ export default function SideNav() {
   const initials = getUserInitials(user)
   const displayName = getUserFullName(user, t('profil.guest'))
 
-  const navLinks = [
+  const userLinks = [
     { to: '/app', icon: 'home', label: t('nav.home') },
     { to: '/app/peta', icon: 'map', label: t('nav.map') },
     { to: '/app/prediksi', icon: 'online_prediction', label: t('nav.predictions') },
     { to: '/app/profil', icon: 'person', label: t('nav.profile') },
   ]
-  const links = isAdmin
-    ? [
-        ...navLinks,
-        { to: '/app/admin', icon: 'admin_panel_settings', label: 'Admin' },
-        { to: '/app/ai-agent', icon: 'smart_toy', label: 'AI Agent' },
-      ]
-    : navLinks
+  const adminLinks = [
+    { to: '/app/admin', icon: 'admin_panel_settings', label: 'Admin' },
+    { to: '/app/ai-agent', icon: 'smart_toy', label: 'AI Agent' },
+    { to: '/app/user-management', icon: 'manage_accounts', label: 'User Management' },
+    { to: '/app/audit-logs', icon: 'receipt_long', label: 'Audit Logs' },
+    { to: '/app/profil', icon: 'person', label: t('nav.profile') },
+  ]
+  const links = isAdmin ? adminLinks : userLinks
 
   return (
     <aside className="hidden lg:flex fixed left-0 top-0 w-64 h-screen bg-gradient-to-b from-white via-white to-surface-container-low/30 border-r border-stone-100 p-6 flex-col z-30">

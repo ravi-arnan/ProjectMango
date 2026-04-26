@@ -18,6 +18,8 @@ const Profil = lazy(() => import('./pages/Profil'))
 const AiAnalysis = lazy(() => import('./pages/AiAnalysis'))
 const Admin = lazy(() => import('./pages/Admin'))
 const AiAgent = lazy(() => import('./pages/AiAgent'))
+const UserManagement = lazy(() => import('./pages/UserManagement'))
+const AuditLogs = lazy(() => import('./pages/AuditLogs'))
 
 function PageLoader() {
   return (
@@ -48,6 +50,8 @@ export default function App() {
               <Route path="profil" element={<Profil />} />
               <Route path="admin" element={<AdminRoute><Admin /></AdminRoute>} />
               <Route path="ai-agent" element={<AdminRoute><AiAgent /></AdminRoute>} />
+              <Route path="user-management" element={<AdminRoute><UserManagement /></AdminRoute>} />
+              <Route path="audit-logs" element={<AdminRoute><AuditLogs /></AdminRoute>} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

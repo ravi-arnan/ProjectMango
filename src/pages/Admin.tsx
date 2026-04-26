@@ -20,6 +20,26 @@ export default function Admin() {
           : 'Atur provider, API key, model, system prompt, dan safeguard.',
       cta: lang === 'en' ? 'Manage AI Agent' : 'Kelola AI Agent',
     },
+    {
+      to: '/app/user-management',
+      icon: 'manage_accounts',
+      title: lang === 'en' ? 'User Management' : 'Manajemen User',
+      desc:
+        lang === 'en'
+          ? 'Browse users, grant or revoke admin role, suspend abusive accounts.'
+          : 'Kelola user, beri atau cabut role admin, suspend akun bermasalah.',
+      cta: lang === 'en' ? 'Manage Users' : 'Kelola User',
+    },
+    {
+      to: '/app/audit-logs',
+      icon: 'receipt_long',
+      title: lang === 'en' ? 'Audit Logs' : 'Audit Logs',
+      desc:
+        lang === 'en'
+          ? 'Trail of every admin action — settings, role grants, AI key rotations.'
+          : 'Jejak semua aksi admin — setting, pemberian role, rotasi API key.',
+      cta: lang === 'en' ? 'View Logs' : 'Lihat Logs',
+    },
   ]
 
   return (
