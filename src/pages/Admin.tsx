@@ -26,8 +26,8 @@ export default function Admin() {
       title: lang === 'en' ? 'User Management' : 'Manajemen User',
       desc:
         lang === 'en'
-          ? 'Browse users, grant or revoke admin role, suspend abusive accounts.'
-          : 'Kelola user, beri atau cabut role admin, suspend akun bermasalah.',
+          ? 'Browse users and grant or revoke the admin role.'
+          : 'Lihat user terdaftar dan beri atau cabut role admin.',
       cta: lang === 'en' ? 'Manage Users' : 'Kelola User',
     },
     {
@@ -100,22 +100,6 @@ export default function Admin() {
           </motion.div>
         ))}
       </div>
-
-      {/* Placeholder for future tools */}
-      <SpotlightCard
-        spotlightColor="rgba(0, 100, 124, 0.08)"
-        className="bg-surface-container-low/40 rounded-3xl p-6 border border-dashed border-stone-300 text-center"
-      >
-        <Icon name="construction" className="text-on-surface-variant/50 mb-2" size="24px" />
-        <p className="text-sm font-semibold text-on-surface-variant">
-          {lang === 'en' ? 'More admin tools coming soon' : 'Tools admin lainnya akan datang'}
-        </p>
-        <p className="text-xs text-on-surface-variant/70 mt-1">
-          {lang === 'en'
-            ? 'Audit logs, user management, and content moderation are on the roadmap.'
-            : 'Audit log, manajemen user, dan moderasi konten dalam pengembangan.'}
-        </p>
-      </SpotlightCard>
 
     </div>
   )

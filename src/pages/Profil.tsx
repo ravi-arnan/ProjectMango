@@ -27,7 +27,7 @@ export default function Profil() {
   const navigate = useNavigate()
   const { t, i18n } = useTranslation()
   const lang = i18n.language
-  const { user, signOut } = useAuth()
+  const { user, signOut, isAdmin } = useAuth()
   const { bookings, cancelBooking, getUpcomingBookings } = useBookings()
   const { watchlist } = useWatchlist()
   const { prefs, updatePrefs } = useNotifications()
@@ -136,16 +136,18 @@ export default function Profil() {
           <span className="bg-surface-container-high rounded-full px-4 py-2 text-xs font-semibold text-on-surface">
             <CountUp to={watchlist.length} duration={1.2} /> {t('profil.stats.saved')}
           </span>
-          <span className="bg-surface-container-high rounded-full px-4 py-2 text-xs font-semibold text-on-surface">
-            <CountUp to={bookings.length} duration={1.2} /> {lang === 'en' ? 'Bookings' : 'Booking'}
-          </span>
+          {!isAdmin && (
+            <span className="bg-surface-container-high rounded-full px-4 py-2 text-xs font-semibold text-on-surface">
+              <CountUp to={bookings.length} duration={1.2} /> {lang === 'en' ? 'Bookings' : 'Booking'}
+            </span>
+          )}
           <span className="bg-surface-container-high rounded-full px-4 py-2 text-xs font-semibold text-on-surface">
             {t('profil.memberSince', { date: '2025' })}
           </span>
         </div>
 
         {/* Upcoming Bookings */}
-        {upcomingBookings.length > 0 && (
+        {!isAdmin && upcomingBookings.length > 0 && (
           <div>
             <h3 className="text-base font-bold text-on-surface mb-3">
               {lang === 'en' ? 'Upcoming Bookings' : 'Booking Mendatang'}
@@ -341,7 +343,7 @@ export default function Profil() {
             </div>
           </SpotlightCard>
 
-          <div className="col-span-5 grid grid-cols-2 gap-4">
+          <div className={`col-span-5 grid gap-4 ${isAdmin ? 'grid-cols-1' : 'grid-cols-2'}`}>
             <SpotlightCard
               spotlightColor="rgba(0, 100, 124, 0.18)"
               className="bg-surface-container-low rounded-[2rem] p-6 flex flex-col justify-between"
@@ -356,25 +358,27 @@ export default function Profil() {
                 {lang === 'en' ? 'in watchlist' : 'di watchlist'}
               </p>
             </SpotlightCard>
-            <SpotlightCard
-              spotlightColor="rgba(163, 103, 0, 0.18)"
-              className="bg-surface-container-low rounded-[2rem] p-6 flex flex-col justify-between"
-            >
-              <div>
-                <p className="text-sm text-on-surface-variant font-medium">{lang === 'en' ? 'Bookings' : 'Booking'}</p>
-                <p className="text-4xl font-extrabold text-on-surface mt-1 font-headline">
-                  <CountUp to={bookings.length} duration={1.4} />
+            {!isAdmin && (
+              <SpotlightCard
+                spotlightColor="rgba(163, 103, 0, 0.18)"
+                className="bg-surface-container-low rounded-[2rem] p-6 flex flex-col justify-between"
+              >
+                <div>
+                  <p className="text-sm text-on-surface-variant font-medium">{lang === 'en' ? 'Bookings' : 'Booking'}</p>
+                  <p className="text-4xl font-extrabold text-on-surface mt-1 font-headline">
+                    <CountUp to={bookings.length} duration={1.4} />
+                  </p>
+                </div>
+                <p className="text-xs text-on-surface-variant mt-4">
+                  <CountUp to={upcomingBookings.length} duration={1.2} /> {lang === 'en' ? 'upcoming' : 'mendatang'}
                 </p>
-              </div>
-              <p className="text-xs text-on-surface-variant mt-4">
-                <CountUp to={upcomingBookings.length} duration={1.2} /> {lang === 'en' ? 'upcoming' : 'mendatang'}
-              </p>
-            </SpotlightCard>
+              </SpotlightCard>
+            )}
           </div>
         </div>
 
         {/* Booking History */}
-        {bookings.length > 0 && (
+        {!isAdmin && bookings.length > 0 && (
           <SpotlightCard
             spotlightColor="rgba(0, 100, 124, 0.15)"
             className="bg-surface-container-low/50 rounded-[2.5rem] p-8"
