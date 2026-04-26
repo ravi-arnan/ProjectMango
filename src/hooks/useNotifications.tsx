@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react'
-import { getStorageItem, setStorageItem, STORAGE_KEYS } from '../lib/storage'
+import { bookingsKey, getStorageItem, setStorageItem, STORAGE_KEYS } from '../lib/storage'
 import { generateId } from '../lib/utils'
 import { destinations } from '../data/destinations'
 import type { AppNotification, NotificationPrefs } from '../types/notification'
 import type { Booking } from '../types/booking'
+import { useAuth } from '../context/AuthContext'
 
 type ReminderKind = 'day_before' | 'day_of'
 
@@ -101,6 +102,8 @@ interface NotificationContextValue {
 const NotificationContext = createContext<NotificationContextValue | null>(null)
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth()
+  const userId = user && !user.is_anonymous ? user.id : null
   const [notifications, setNotifications] = useState<AppNotification[]>(loadNotifications)
   const [prefs, setPrefs] = useState<NotificationPrefs>(() =>
     getStorageItem<NotificationPrefs>(STORAGE_KEYS.NOTIFICATION_PREFS, DEFAULT_PREFS)
@@ -174,9 +177,11 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   // Booking reminder scheduler
   useEffect(() => {
     if (!prefs.bookingReminders) return
+    const userBookingsKey = bookingsKey(userId)
+    if (!userBookingsKey) return // no signed-in user → nothing to schedule
 
     const runBookingReminderScheduler = () => {
-      const bookings = getStorageItem<Booking[]>(STORAGE_KEYS.BOOKINGS, [])
+      const bookings = getStorageItem<Booking[]>(userBookingsKey, [])
       const fired = getStorageItem<string[]>(STORAGE_KEYS.FIRED_REMINDERS, [])
       const firedSet = new Set(fired)
       const now = new Date()
@@ -215,7 +220,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     runBookingReminderScheduler()
     const interval = setInterval(runBookingReminderScheduler, 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, [prefs.bookingReminders, addNotification])
+  }, [prefs.bookingReminders, addNotification, userId])
 
   const value: NotificationContextValue = {
     notifications,

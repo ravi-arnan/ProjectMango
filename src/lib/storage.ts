@@ -1,6 +1,6 @@
 export const STORAGE_KEYS = {
   WATCHLIST: 'mango_watchlist',
-  BOOKINGS: 'mango_bookings',
+  BOOKINGS: 'mango_bookings', // legacy global key — kept only for cleanup, do not write
   NOTIFICATIONS: 'mango_notifications',
   NOTIFICATION_PREFS: 'mango_notification_prefs',
   FIRED_REMINDERS: 'mango_fired_reminders',
@@ -9,6 +9,12 @@ export const STORAGE_KEYS = {
   SETTINGS: 'mango_settings',
   AVATAR: 'mango_avatar',
 } as const
+
+// Per-user bookings key. Returns null when there's no signed-in user
+// (guests cannot have bookings; see Profil.tsx canHaveBookings gate).
+export function bookingsKey(userId: string | null | undefined): string | null {
+  return userId ? `mango_bookings:${userId}` : null
+}
 
 export function getStorageItem<T>(key: string, defaultValue: T): T {
   try {

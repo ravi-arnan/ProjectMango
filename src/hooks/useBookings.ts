@@ -1,39 +1,58 @@
-import { useState, useCallback } from 'react'
-import { getStorageItem, setStorageItem, STORAGE_KEYS } from '../lib/storage'
+import { useState, useCallback, useEffect } from 'react'
+import { bookingsKey, getStorageItem, setStorageItem } from '../lib/storage'
 import { generateId, generateTicketCode } from '../lib/utils'
 import type { Booking } from '../types/booking'
+import { useAuth } from '../context/AuthContext'
 
 export function useBookings() {
+  const { user } = useAuth()
+  const userId = user && !user.is_anonymous ? user.id : null
+  const storageKey = bookingsKey(userId)
+
   const [bookings, setBookings] = useState<Booking[]>(() =>
-    getStorageItem<Booking[]>(STORAGE_KEYS.BOOKINGS, [])
+    storageKey ? getStorageItem<Booking[]>(storageKey, []) : []
   )
 
-  const persist = useCallback((updated: Booking[]) => {
-    setBookings(updated)
-    setStorageItem(STORAGE_KEYS.BOOKINGS, updated)
-  }, [])
+  // Reload list whenever the active user changes (login, logout, switch).
+  useEffect(() => {
+    setBookings(storageKey ? getStorageItem<Booking[]>(storageKey, []) : [])
+  }, [storageKey])
 
-  const createBooking = useCallback((data: {
-    destinationId: string
-    destinationName: string
-    date: string
-    visitors: number
-    totalPrice: number
-  }): Booking => {
-    const booking: Booking = {
-      id: generateId(),
-      ...data,
-      status: 'confirmed',
-      createdAt: new Date().toISOString(),
-      ticketCode: generateTicketCode(),
-    }
-    persist([booking, ...bookings])
-    return booking
-  }, [bookings, persist])
+  const persist = useCallback(
+    (updated: Booking[]) => {
+      setBookings(updated)
+      if (storageKey) setStorageItem(storageKey, updated)
+    },
+    [storageKey]
+  )
 
-  const cancelBooking = useCallback((id: string) => {
-    persist(bookings.map((b) => b.id === id ? { ...b, status: 'cancelled' as const } : b))
-  }, [bookings, persist])
+  const createBooking = useCallback(
+    (data: {
+      destinationId: string
+      destinationName: string
+      date: string
+      visitors: number
+      totalPrice: number
+    }): Booking => {
+      const booking: Booking = {
+        id: generateId(),
+        ...data,
+        status: 'confirmed',
+        createdAt: new Date().toISOString(),
+        ticketCode: generateTicketCode(),
+      }
+      persist([booking, ...bookings])
+      return booking
+    },
+    [bookings, persist]
+  )
+
+  const cancelBooking = useCallback(
+    (id: string) => {
+      persist(bookings.map((b) => (b.id === id ? { ...b, status: 'cancelled' as const } : b)))
+    },
+    [bookings, persist]
+  )
 
   const getUpcomingBookings = useCallback(() => {
     const today = new Date().toISOString().split('T')[0]
