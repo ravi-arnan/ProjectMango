@@ -374,7 +374,7 @@ export default function Prediksi() {
           </div>
         </div>
 
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 lg:hidden">
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-50 lg:hidden">
           <div className="bg-inverse-surface text-inverse-on-surface rounded-full px-5 py-2.5 flex items-center gap-2.5 shadow-lg">
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />

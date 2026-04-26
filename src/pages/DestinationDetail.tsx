@@ -251,7 +251,7 @@ export default function DestinationDetail() {
   )
 
   const BottomActionBar = () => (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-t border-outline-variant px-4 py-3 flex items-center justify-between lg:hidden">
+    <div className="fixed bottom-20 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-t border-outline-variant px-4 py-3 flex items-center justify-between lg:hidden">
       <div className="flex gap-2">
         <Link to="/app/peta" className="flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-outline text-sm font-semibold text-on-surface">
           <Icon name="sensors" size="18px" className="text-error" />Live
@@ -342,7 +342,7 @@ export default function DestinationDetail() {
   return (
     <>
       {/* MOBILE VIEW */}
-      <div className="lg:hidden pb-28">
+      <div className="lg:hidden pb-32">
         <HeroImage height="h-[280px]" />
         <StatusCard />
         <WeatherStrip />
