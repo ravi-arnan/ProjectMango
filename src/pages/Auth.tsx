@@ -31,6 +31,8 @@ export default function Auth() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [resetSent, setResetSent] = useState(false);
+  const [needsResend, setNeedsResend] = useState(false);
+  const [resending, setResending] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
 
@@ -66,6 +68,7 @@ export default function Auth() {
     setShowPassword(false);
     setShowConfirmPassword(false);
     setError('');
+    setNeedsResend(false);
   };
 
   const handleTabSwitch = (tab: Tab) => {
@@ -76,6 +79,7 @@ export default function Auth() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setNeedsResend(false);
     if (!ensureCaptcha()) return;
     setLoading(true);
     try {
@@ -87,10 +91,45 @@ export default function Auth() {
       if (authError) throw authError;
       navigate('/app');
     } catch (err: any) {
-      setError(err.message || t('auth.errors.loginFailed'));
+      const code: string | undefined = err?.code;
+      const msg: string = err?.message || '';
+      const isUnconfirmed =
+        code === 'email_not_confirmed' || /email not confirmed/i.test(msg);
+      if (isUnconfirmed) {
+        setError(t('auth.errors.emailNotConfirmed'));
+        setNeedsResend(true);
+      } else {
+        setError(msg || t('auth.errors.loginFailed'));
+      }
       resetCaptcha();
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    if (!email) {
+      setError(t('auth.errors.emailFirst'));
+      return;
+    }
+    setResending(true);
+    setError('');
+    try {
+      const { error: resendError } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth`,
+          ...(captchaToken ? { captchaToken } : {}),
+        },
+      });
+      if (resendError) throw resendError;
+      setSuccess(t('auth.messages.confirmationResent'));
+      setNeedsResend(false);
+    } catch (err: any) {
+      setError(err?.message || t('auth.errors.resendFailed'));
+    } finally {
+      setResending(false);
     }
   };
 
@@ -270,10 +309,25 @@ export default function Auth() {
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="bg-error-container/95 text-on-error-container rounded-xl p-3 text-sm font-body border border-error/20 flex items-start gap-2"
+              className="bg-error-container/95 text-on-error-container rounded-xl p-3 text-sm font-body border border-error/20 flex flex-col gap-2"
             >
-              <Icon name="error" filled size="18px" className="mt-0.5 shrink-0" />
-              <span>{error}</span>
+              <div className="flex items-start gap-2">
+                <Icon name="error" filled size="18px" className="mt-0.5 shrink-0" />
+                <span>{error}</span>
+              </div>
+              {needsResend && (
+                <button
+                  type="button"
+                  onClick={handleResendConfirmation}
+                  disabled={resending}
+                  className="self-start inline-flex items-center gap-1.5 bg-on-error-container/10 hover:bg-on-error-container/15 text-on-error-container text-xs font-bold px-3 py-1.5 rounded-full transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <Icon name={resending ? 'hourglass_top' : 'mail'} size="14px" />
+                  {resending
+                    ? t('auth.actions.resending')
+                    : t('auth.actions.resendConfirmation')}
+                </button>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

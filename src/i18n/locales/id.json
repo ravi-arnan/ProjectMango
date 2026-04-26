@@ -65,7 +65,9 @@
       "signup": "Daftar",
       "guest": "Masuk sebagai Tamu",
       "forgotPassword": "Lupa kata sandi?",
-      "resetSent": "Email reset terkirim!"
+      "resetSent": "Email reset terkirim!",
+      "resendConfirmation": "Kirim ulang email konfirmasi",
+      "resending": "Mengirim ulang…"
     },
     "errors": {
       "captchaRequired": "Silakan selesaikan verifikasi captcha terlebih dahulu.",
@@ -74,10 +76,13 @@
       "guestFailed": "Gagal masuk sebagai tamu. Silakan coba lagi.",
       "passwordMismatch": "Kata sandi tidak cocok.",
       "emailFirst": "Masukkan email terlebih dahulu untuk reset kata sandi.",
-      "resetFailed": "Gagal mengirim email reset."
+      "resetFailed": "Gagal mengirim email reset.",
+      "emailNotConfirmed": "Email belum dikonfirmasi. Cek inbox kamu atau minta link baru di bawah.",
+      "resendFailed": "Gagal mengirim ulang email konfirmasi. Silakan coba lagi."
     },
     "messages": {
-      "signupSuccess": "Akun berhasil dibuat! Silakan cek email untuk verifikasi."
+      "signupSuccess": "Akun berhasil dibuat! Silakan cek email untuk verifikasi.",
+      "confirmationResent": "Email konfirmasi sudah dikirim ulang. Cek inbox kamu."
     },
     "legal": "Dengan masuk, Anda menyetujui Ketentuan Layanan dan Kebijakan Privasi kami."
   },

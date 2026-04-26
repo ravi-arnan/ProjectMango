@@ -65,7 +65,9 @@
       "signup": "Sign Up",
       "guest": "Continue as Guest",
       "forgotPassword": "Forgot password?",
-      "resetSent": "Reset email sent!"
+      "resetSent": "Reset email sent!",
+      "resendConfirmation": "Resend confirmation email",
+      "resending": "Resending…"
     },
     "errors": {
       "captchaRequired": "Please complete the captcha verification first.",
@@ -74,10 +76,13 @@
       "guestFailed": "Guest sign in failed. Please try again.",
       "passwordMismatch": "Passwords don't match.",
       "emailFirst": "Enter your email first to reset password.",
-      "resetFailed": "Failed to send reset email."
+      "resetFailed": "Failed to send reset email.",
+      "emailNotConfirmed": "Email not confirmed yet. Check your inbox or request a new link below.",
+      "resendFailed": "Couldn't resend confirmation email. Please try again."
     },
     "messages": {
-      "signupSuccess": "Account created! Check your email to verify."
+      "signupSuccess": "Account created! Check your email to verify.",
+      "confirmationResent": "Confirmation email resent. Check your inbox."
     },
     "legal": "By signing in, you agree to our Terms of Service and Privacy Policy."
   },
