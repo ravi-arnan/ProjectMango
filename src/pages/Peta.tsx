@@ -335,49 +335,52 @@ export default function Peta() {
 
       {/* ===== DESKTOP VIEW ===== */}
       <div className="hidden lg:block relative w-full h-[calc(100vh-64px)]">
-        {/* Hero header strip */}
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="absolute top-10 left-8 z-30 max-w-md"
-        >
-          <SpotlightCard
-            spotlightColor="rgba(0, 100, 124, 0.15)"
-            className="bg-white/95 backdrop-blur-xl rounded-3xl p-5 shadow-xl border border-white/60"
+        {/* Hero header strip — hidden when a destination is selected so the
+            detail side card has the left rail to itself */}
+        {!selectedDestination && (
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute top-10 left-8 z-30 max-w-md"
           >
-            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              {t('peta.title')}
-            </span>
-            <h1 className="text-2xl font-extrabold font-headline text-on-surface mt-1.5">
-              <ShinyText text={t('peta.title')} color="#1f1b17" shineColor="#00647c" speed={3} />
-            </h1>
-            <p className="text-xs text-on-surface-variant mt-1">{t('peta.subtitle')}</p>
+            <SpotlightCard
+              spotlightColor="rgba(0, 100, 124, 0.15)"
+              className="bg-white/95 backdrop-blur-xl rounded-3xl p-5 shadow-xl border border-white/60"
+            >
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                {t('peta.title')}
+              </span>
+              <h1 className="text-2xl font-extrabold font-headline text-on-surface mt-1.5">
+                <ShinyText text={t('peta.title')} color="#1f1b17" shineColor="#00647c" speed={3} />
+              </h1>
+              <p className="text-xs text-on-surface-variant mt-1">{t('peta.subtitle')}</p>
 
-            {/* Mini stats */}
-            <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-stone-200">
-              <div>
-                <p className="text-xl font-extrabold text-on-surface font-headline">
-                  <CountUp to={destinations.length} duration={1.4} />
-                </p>
-                <p className="text-[10px] text-on-surface-variant uppercase tracking-wide">{t('peta.stats.tracked')}</p>
+              {/* Mini stats */}
+              <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-stone-200">
+                <div>
+                  <p className="text-xl font-extrabold text-on-surface font-headline">
+                    <CountUp to={destinations.length} duration={1.4} />
+                  </p>
+                  <p className="text-[10px] text-on-surface-variant uppercase tracking-wide">{t('peta.stats.tracked')}</p>
+                </div>
+                <div>
+                  <p className="text-xl font-extrabold text-tertiary font-headline">
+                    <CountUp to={totalActiveUsers} separator="," duration={1.8} />
+                  </p>
+                  <p className="text-[10px] text-on-surface-variant uppercase tracking-wide">{t('peta.stats.active')}</p>
+                </div>
+                <div>
+                  <p className="text-xl font-extrabold text-primary font-headline">
+                    <CountUp to={calmSpots} duration={1.2} />
+                  </p>
+                  <p className="text-[10px] text-on-surface-variant uppercase tracking-wide">{t('peta.stats.calmSpots')}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xl font-extrabold text-tertiary font-headline">
-                  <CountUp to={totalActiveUsers} separator="," duration={1.8} />
-                </p>
-                <p className="text-[10px] text-on-surface-variant uppercase tracking-wide">{t('peta.stats.active')}</p>
-              </div>
-              <div>
-                <p className="text-xl font-extrabold text-primary font-headline">
-                  <CountUp to={calmSpots} duration={1.2} />
-                </p>
-                <p className="text-[10px] text-on-surface-variant uppercase tracking-wide">{t('peta.stats.calmSpots')}</p>
-              </div>
-            </div>
-          </SpotlightCard>
-        </motion.div>
+            </SpotlightCard>
+          </motion.div>
+        )}
 
         {/* Floating Search - Desktop */}
         <motion.div
