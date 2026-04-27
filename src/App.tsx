@@ -17,6 +17,7 @@ const DestinationDetail = lazy(() => import('./pages/DestinationDetail'))
 const Destinasi = lazy(() => import('./pages/Destinasi'))
 const Prediksi = lazy(() => import('./pages/Prediksi'))
 const Profil = lazy(() => import('./pages/Profil'))
+const Watchlist = lazy(() => import('./pages/Watchlist'))
 const AiAnalysis = lazy(() => import('./pages/AiAnalysis'))
 const Admin = lazy(() => import('./pages/Admin'))
 const AiAgent = lazy(() => import('./pages/AiAgent'))
@@ -42,6 +43,7 @@ export default function App() {
               <Route path="prediksi" element={<Prediksi />} />
               <Route path="ai-analysis" element={<AiAnalysis />} />
               <Route path="profil" element={<Profil />} />
+              <Route path="watchlist" element={<Watchlist />} />
               <Route path="admin" element={<AdminRoute><Admin /></AdminRoute>} />
               <Route path="ai-agent" element={<AdminRoute><AiAgent /></AdminRoute>} />
               <Route path="user-management" element={<AdminRoute><UserManagement /></AdminRoute>} />

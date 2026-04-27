@@ -10,6 +10,7 @@ export default function BottomNav() {
     { to: '/app', icon: 'home', label: t('nav.home') },
     { to: '/app/peta', icon: 'map', label: t('nav.map') },
     { to: '/app/prediksi', icon: 'query_stats', label: t('nav.predictions') },
+    { to: '/app/watchlist', icon: 'bookmark', label: t('nav.watchlist') },
     { to: '/app/profil', icon: 'person', label: t('nav.profile') },
   ]
   const adminTabs = [

@@ -188,27 +188,58 @@ export default function Profil() {
         )}
 
         {/* Watchlist */}
-        {canHaveWatchlist && watchlistedDests.length > 0 && (
+        {canHaveWatchlist && (
           <div>
-            <h3 className="text-base font-bold text-on-surface mb-3">{lang === 'en' ? 'Watchlist' : 'Watchlist'}</h3>
-            <div className="flex gap-3 overflow-x-auto no-scrollbar">
-              {watchlistedDests.map((dest, i) => (
-                <motion.div
-                  key={dest.id}
-                  initial={{ opacity: 0, x: 12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="shrink-0 w-32 bg-surface-container-low rounded-xl overflow-hidden cursor-pointer"
-                  onClick={() => navigate(`/app/destinasi/${dest.id}`)}
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-base font-bold text-on-surface">{lang === 'en' ? 'Watchlist' : 'Watchlist'}</h3>
+              {watchlistedDests.length > 0 && (
+                <button
+                  onClick={() => navigate('/app/watchlist')}
+                  className="text-xs font-bold text-primary hover:underline inline-flex items-center gap-1"
                 >
-                  <img src={dest.image} alt={dest.name} className="w-full h-20 object-cover" />
-                  <div className="p-2">
-                    <p className="text-xs font-bold text-on-surface truncate">{dest.name}</p>
-                    <p className="text-[10px] text-on-surface-variant">{dest.densityLabel}</p>
-                  </div>
-                </motion.div>
-              ))}
+                  {lang === 'en' ? 'See all' : 'Lihat semua'}
+                  <Icon name="chevron_right" size="14px" />
+                </button>
+              )}
             </div>
+            {watchlistedDests.length === 0 ? (
+              <button
+                onClick={() => navigate('/app/destinasi')}
+                className="w-full bg-surface-container-low rounded-2xl p-5 flex items-center gap-3 text-left hover:bg-surface-container-high transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Icon name="bookmark_border" size="20px" className="text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-on-surface">
+                    {lang === 'en' ? 'No saved destinations yet' : 'Belum ada destinasi tersimpan'}
+                  </p>
+                  <p className="text-xs text-on-surface-variant mt-0.5">
+                    {lang === 'en' ? 'Tap to browse and add your own' : 'Tap untuk jelajahi dan tambahkan sendiri'}
+                  </p>
+                </div>
+                <Icon name="chevron_right" size="18px" className="text-on-surface-variant" />
+              </button>
+            ) : (
+              <div className="flex gap-3 overflow-x-auto no-scrollbar">
+                {watchlistedDests.map((dest, i) => (
+                  <motion.div
+                    key={dest.id}
+                    initial={{ opacity: 0, x: 12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="shrink-0 w-32 bg-surface-container-low rounded-xl overflow-hidden cursor-pointer"
+                    onClick={() => navigate(`/app/destinasi/${dest.id}`)}
+                  >
+                    <img src={dest.image} alt={dest.name} className="w-full h-20 object-cover" />
+                    <div className="p-2">
+                      <p className="text-xs font-bold text-on-surface truncate">{dest.name}</p>
+                      <p className="text-[10px] text-on-surface-variant">{dest.densityLabel}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -351,20 +382,29 @@ export default function Profil() {
           {canShowStats && (
           <div className={`col-span-5 grid gap-4 ${canHaveWatchlist && canHaveBookings ? 'grid-cols-2' : 'grid-cols-1'}`}>
             {canHaveWatchlist && (
-              <SpotlightCard
-                spotlightColor="rgba(0, 100, 124, 0.18)"
-                className="bg-surface-container-low rounded-[2rem] p-6 flex flex-col justify-between"
+              <button
+                onClick={() => navigate('/app/watchlist')}
+                className="group text-left"
+                title={lang === 'en' ? 'Open watchlist' : 'Buka watchlist'}
               >
-                <div>
-                  <p className="text-sm text-on-surface-variant font-medium">{t('profil.stats.saved')}</p>
-                  <p className="text-4xl font-extrabold text-on-surface mt-1 font-headline">
-                    <CountUp to={watchlist.length} duration={1.4} />
-                  </p>
-                </div>
-                <p className="text-xs text-on-surface-variant mt-4">
-                  {lang === 'en' ? 'in watchlist' : 'di watchlist'}
-                </p>
-              </SpotlightCard>
+                <SpotlightCard
+                  spotlightColor="rgba(0, 100, 124, 0.18)"
+                  className="bg-surface-container-low rounded-[2rem] p-6 flex flex-col justify-between cursor-pointer h-full group-hover:bg-surface-container transition-colors"
+                >
+                  <div>
+                    <p className="text-sm text-on-surface-variant font-medium">{t('profil.stats.saved')}</p>
+                    <p className="text-4xl font-extrabold text-on-surface mt-1 font-headline">
+                      <CountUp to={watchlist.length} duration={1.4} />
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between mt-4">
+                    <p className="text-xs text-on-surface-variant">
+                      {lang === 'en' ? 'in watchlist' : 'di watchlist'}
+                    </p>
+                    <Icon name="chevron_right" size="16px" className="text-on-surface-variant group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                </SpotlightCard>
+              </button>
             )}
             {canHaveBookings && (
               <SpotlightCard
