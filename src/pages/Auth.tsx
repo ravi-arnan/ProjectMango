@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import Icon from '../components/Icon';
+import PageLoader from '../components/PageLoader';
 import BlurText from '../components/reactbits/BlurText';
 import GradientText from '../components/reactbits/GradientText';
 import ShinyText from '../components/reactbits/ShinyText';
@@ -33,6 +34,7 @@ export default function Auth() {
   const [resetSent, setResetSent] = useState(false);
   const [needsResend, setNeedsResend] = useState(false);
   const [resending, setResending] = useState(false);
+  const [navigatingBack, setNavigatingBack] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
 
@@ -193,6 +195,11 @@ export default function Auth() {
 
   return (
     <div className="relative min-h-dvh overflow-hidden flex items-center justify-center p-4 md:p-6">
+      {/* Branded loader shown the moment Back is clicked, so the user gets
+          immediate feedback while Landing's lazy chunk + heavy components
+          load. Suspense fallback (also PageLoader) takes over after Auth
+          unmounts, so the visual stays seamless. */}
+      {navigatingBack && <PageLoader />}
       {/* Video background */}
       <video
         src="/TanahLot.mp4"
@@ -217,7 +224,14 @@ export default function Auth() {
       >
         <button
           type="button"
-          onClick={() => navigate('/', { replace: true })}
+          onClick={() => {
+            // Show the branded loader immediately, then navigate after the
+            // next paint so the user gets visual feedback while Landing's
+            // heavy lazy chunk + WebGL components mount.
+            setNavigatingBack(true)
+            requestAnimationFrame(() => navigate('/', { replace: true }))
+          }}
+          disabled={navigatingBack}
           className="group inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-colors shadow-lg cursor-pointer"
         >
           <Icon
