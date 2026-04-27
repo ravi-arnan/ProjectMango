@@ -40,30 +40,101 @@ function chatCompletionsUrl(providerId: string): string {
   return `${base}/chat/completions`
 }
 
-const destinations = [
-  { name: 'Tanah Lot', location: 'Tabanan', category: 'Pura', density: 0.87, densityLabel: 'Sangat Ramai', visitors: 1248, maxCapacity: 1500, rating: 4.5, reviewCount: 1284, openHours: '06.00 - 19.00', ticketPrice: 'Rp 60.000', description: 'Situs Budaya & Keindahan Pesisir' },
-  { name: 'Uluwatu', location: 'Badung', category: 'Pura', density: 0.85, densityLabel: 'Sangat Ramai', visitors: 4821, maxCapacity: 5500, rating: 4.7, reviewCount: 2156, openHours: '07.00 - 19.00', ticketPrice: 'Rp 50.000', description: 'Pura Luhur dengan pemandangan tebing dramatis' },
-  { name: 'Kuta Beach', location: 'Badung', category: 'Pantai', density: 0.95, densityLabel: 'Sangat Ramai', visitors: 6200, maxCapacity: 7000, rating: 4.2, reviewCount: 3890, openHours: '24 Jam', ticketPrice: 'Gratis', description: 'Pantai ikonik untuk surfing dan sunset' },
-  { name: 'Bedugul', location: 'Tabanan', category: 'Alam', density: 0.22, densityLabel: 'Sepi', visitors: 420, maxCapacity: 2000, rating: 4.8, reviewCount: 980, openHours: '07.00 - 18.00', ticketPrice: 'Rp 75.000', description: 'Danau dan pura di pegunungan yang sejuk' },
-  { name: 'Sanur Beach', location: 'Denpasar', category: 'Pantai', density: 0.29, densityLabel: 'Sepi', visitors: 580, maxCapacity: 2000, rating: 4.6, reviewCount: 1540, openHours: '24 Jam', ticketPrice: 'Gratis', description: 'Pantai tenang untuk sunrise dan budaya lokal' },
-  { name: 'Ubud Monkey Forest', location: 'Gianyar', category: 'Alam', density: 0.45, densityLabel: 'Sedang', visitors: 1205, maxCapacity: 2800, rating: 4.5, reviewCount: 4200, openHours: '08.30 - 18.00', ticketPrice: 'Rp 80.000', description: 'Hutan sakral dengan ratusan monyet ekor panjang' },
-  { name: 'Tegalalang Rice Terrace', location: 'Gianyar', category: 'Alam', density: 0.62, densityLabel: 'Ramai', visitors: 1890, maxCapacity: 3000, rating: 4.6, reviewCount: 2890, openHours: '07.00 - 18.00', ticketPrice: 'Rp 25.000', description: 'Sawah terasering ikonik dengan pemandangan lembah' },
-  { name: 'Pantai Pandawa', location: 'Badung', category: 'Pantai', density: 0.20, densityLabel: 'Sepi', visitors: 840, maxCapacity: 4000, rating: 4.4, reviewCount: 1250, openHours: '07.00 - 18.00', ticketPrice: 'Rp 20.000', description: 'Pantai tersembunyi di balik tebing kapur' },
-  { name: 'Pura Besakih', location: 'Karangasem', category: 'Pura', density: 0.65, densityLabel: 'Ramai', visitors: 2150, maxCapacity: 3500, rating: 4.7, reviewCount: 1870, openHours: '08.00 - 18.00', ticketPrice: 'Rp 60.000', description: 'Pura terbesar dan terpenting di Bali' },
-  { name: 'Kintamani', location: 'Bangli', category: 'Alam', density: 0.35, densityLabel: 'Sepi', visitors: 950, maxCapacity: 3000, rating: 4.6, reviewCount: 1620, openHours: '08.00 - 17.00', ticketPrice: 'Rp 30.000', description: 'Pemandangan Gunung Batur dan Danau Batur' },
+// Destinations catalog. Mirror of src/data/destinations.ts (full list, no
+// images/lat/lng since the LLM doesn't need those). Update both when destinations
+// change. Cross-folder import from src/ breaks @vercel/node bundling so this is
+// intentionally inlined.
+interface DestinationRow {
+  name: string
+  region: string
+  category: string
+  density: number
+  densityLabel: string
+  visitors: number
+  maxCapacity: number
+  rating: number
+  openHours: string
+  ticketPrice: string
+  description: string
+}
+const destinations: DestinationRow[] = [
+  { name: 'Tanah Lot',                region: 'Tabanan, Bali',       category: 'Pura',         density: 0.87, densityLabel: 'Sangat Ramai', visitors: 1248, maxCapacity: 1500, rating: 4.5, openHours: '06.00 - 19.00', ticketPrice: 'Rp 60.000', description: 'Situs budaya & keindahan pesisir, terkenal untuk sunset dramatis' },
+  { name: 'Uluwatu',                  region: 'Pecatu, Badung',      category: 'Pura',         density: 0.85, densityLabel: 'Sangat Ramai', visitors: 4821, maxCapacity: 5500, rating: 4.7, openHours: '07.00 - 19.00', ticketPrice: 'Rp 50.000', description: 'Pura luhur di tebing 70m, tari Kecak setiap senja' },
+  { name: 'Kuta Beach',               region: 'Kuta, Badung',        category: 'Pantai',       density: 0.95, densityLabel: 'Sangat Ramai', visitors: 6200, maxCapacity: 7000, rating: 4.2, openHours: '24 Jam',         ticketPrice: 'Gratis',    description: 'Pantai ikonik untuk surfing pemula dan sunset' },
+  { name: 'Bedugul',                  region: 'Tabanan, Bali',       category: 'Alam',         density: 0.22, densityLabel: 'Sepi',         visitors: 420,  maxCapacity: 2000, rating: 4.8, openHours: '07.00 - 18.00', ticketPrice: 'Rp 75.000', description: 'Danau Beratan & pura di pegunungan, suhu 18-24°C' },
+  { name: 'Sanur Beach',              region: 'Denpasar, Bali',      category: 'Pantai',       density: 0.29, densityLabel: 'Sepi',         visitors: 580,  maxCapacity: 2000, rating: 4.6, openHours: '24 Jam',         ticketPrice: 'Gratis',    description: 'Pantai tenang, ideal untuk sunrise dan keluarga' },
+  { name: 'Ubud Monkey Forest',       region: 'Ubud, Gianyar',       category: 'Alam',         density: 0.45, densityLabel: 'Sedang',       visitors: 1205, maxCapacity: 2800, rating: 4.5, openHours: '08.30 - 18.00', ticketPrice: 'Rp 80.000', description: 'Hutan sakral dengan ratusan monyet ekor panjang' },
+  { name: 'Tegalalang Rice Terrace',  region: 'Ubud, Gianyar',       category: 'Alam',         density: 0.62, densityLabel: 'Ramai',        visitors: 1890, maxCapacity: 3000, rating: 4.6, openHours: '07.00 - 18.00', ticketPrice: 'Rp 25.000', description: 'Sawah terasering ikonik, foto terbaik pagi hari' },
+  { name: 'Pantai Pandawa',           region: 'Kutuh, Badung',       category: 'Pantai',       density: 0.20, densityLabel: 'Sepi',         visitors: 840,  maxCapacity: 4000, rating: 4.4, openHours: '07.00 - 18.00', ticketPrice: 'Rp 20.000', description: 'Pantai tersembunyi di balik tebing kapur, air jernih' },
+  { name: 'Pura Besakih',             region: 'Karangasem, Bali',    category: 'Pura',         density: 0.65, densityLabel: 'Ramai',        visitors: 2150, maxCapacity: 3500, rating: 4.7, openHours: '08.00 - 18.00', ticketPrice: 'Rp 60.000', description: 'Pura terbesar & terpenting di Bali, di kaki Gunung Agung' },
+  { name: 'Kintamani',                region: 'Bangli, Bali',        category: 'Alam',         density: 0.35, densityLabel: 'Sepi',         visitors: 950,  maxCapacity: 3000, rating: 4.6, openHours: '08.00 - 17.00', ticketPrice: 'Rp 30.000', description: 'Pemandangan Gunung Batur & Danau Batur, suhu 16-22°C' },
+  { name: 'Desa Penglipuran',         region: 'Bangli, Bali',        category: 'Desa Wisata',  density: 0.38, densityLabel: 'Sedang',       visitors: 760,  maxCapacity: 2000, rating: 4.7, openHours: '08.00 - 17.00', ticketPrice: 'Rp 25.000', description: 'Desa adat Bali dengan arsitektur tradisional terjaga' },
+  { name: 'Pantai Mengening',         region: 'Cemagi, Badung',      category: 'Pantai',       density: 0.18, densityLabel: 'Sepi',         visitors: 320,  maxCapacity: 1500, rating: 4.5, openHours: '24 Jam',         ticketPrice: 'Gratis',    description: 'Pantai tersembunyi di Cemagi, suasana tenang' },
 ]
 
-const DEFAULT_SYSTEM_PROMPT = `${BASE_SYSTEM_PROMPT}
+// Build a "today" context block injected fresh on every request: live density,
+// current month-driven season, weather hints by category, and external booking
+// link templates the LLM is told to use.
+function buildRuntimeContext(now: Date = new Date()): string {
+  const MONTHS_DRY = [3, 4, 5, 6, 7, 8, 9] // Apr-Oct (0-indexed)
+  const month = now.getUTCMonth()
+  const isDrySeason = MONTHS_DRY.includes(month)
+  const dateStr = now.toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  })
+
+  const seasonBlock = isDrySeason
+    ? 'Musim KEMARAU (Apr-Okt). Curah hujan rendah, langit cerah, ombak besar di pantai selatan. Pantai & sunset optimal. Suhu pesisir 26-32°C, dataran tinggi 18-24°C.'
+    : 'Musim HUJAN (Nov-Mar). Hujan sore/malam, terutama Des-Feb. Pagi biasanya cerah - jadwalkan outdoor pagi hari. Suhu pesisir 25-30°C, dataran tinggi 16-22°C, sering berkabut.'
+
+  // Per-category weather hints. Keep short, the LLM extrapolates.
+  const weatherHintsByCategory: Record<string, string> = {
+    'Pantai':       isDrySeason ? 'Cerah, ombak besar, sunset jelas; UV tinggi 10:00-14:00.' : 'Pagi cerah, hujan singkat siang/sore; ombak kuat & arus tidak menentu - hati-hati berenang.',
+    'Pura':         isDrySeason ? 'Cuaca stabil, panas siang.' : 'Hujan sering siang/sore; bawa payung; pakaian sopan tetap wajib.',
+    'Alam':         isDrySeason ? 'Trail kering, view jelas; sejuk pagi (Bedugul/Kintamani 16-20°C).' : 'Trail basah/licin, kabut tebal pagi & sore; peluang air terjun deras.',
+    'Desa Wisata':  isDrySeason ? 'Cuaca nyaman sepanjang hari.' : 'Hujan singkat; tetap layak kunjungi karena teduh.',
+  }
+
+  const liveDensity = destinations
+    .map((d) => {
+      const pct = Math.round(d.density * 100)
+      const cat = d.category
+      const weather = weatherHintsByCategory[cat] ?? ''
+      return `- ${d.name} (${d.region}, ${cat}): ${pct}% kapasitas (${d.densityLabel}), ${d.visitors}/${d.maxCapacity} pengunjung, rating ${d.rating}, jam ${d.openHours}, tiket ${d.ticketPrice}. ${d.description}.${weather ? ' Cuaca hari ini: ' + weather : ''}`
+    })
+    .join('\n')
+
+  return `
 
 ---
 
-## DATA KEPADATAN REAL-TIME PLATFORM
+## REAL-TIME CONTEXT (auto-injected, do not echo verbatim)
 
-Platform ini memiliki data kepadatan pengunjung real-time untuk destinasi populer berikut. Gunakan data ini saat user bertanya tentang kepadatan atau waktu terbaik berkunjung:
+Today: ${dateStr}
+Bali season: ${seasonBlock}
 
-${JSON.stringify(destinations, null, 2)}
+### Live density & info per destination
+${liveDensity}
 
-Untuk destinasi di luar daftar ini, gunakan pengetahuanmu tentang pola kunjungan wisata Bali secara umum.`
+### How to use this context
+- When user asks "where to go", "where is calm", or "what's busy" - use the percentages above.
+- Recommend Sepi (<30%) destinations for calm, Sangat Ramai (>80%) only if specifically asked.
+- For destinations NOT in the list, fall back to your general Bali knowledge but say so.
+- Mention current season impact (e.g. "Tegalalang sedang sepi 20%, plus musim kemarau jadi sawah hijau cerah").
+- Always cite the percentage when relevant ("kapasitas 65%", "ramai sekitar 60%").
+
+### Booking - tetap di dalam aplikasi
+
+Mango punya alur booking sendiri. JANGAN merekomendasikan platform eksternal seperti Klook, GetYourGuide, Booking.com, Agoda, Traveloka, Tiket.com, TripAdvisor, dsb.
+
+Saat user tertarik berkunjung / book sebuah destinasi:
+- Arahkan ke halaman detail di aplikasi: tombol "Book Now" / "Book" di kartu destinasi atau di halaman detail.
+- Sebut secara natural dalam jawaban, contoh: "Buka detail Tanah Lot di Mango lalu klik 'Book Now' untuk pesan tiket masuk."
+- Jangan menyertakan URL eksternal apapun untuk pemesanan.
+`
+}
+
+const DEFAULT_SYSTEM_PROMPT = BASE_SYSTEM_PROMPT
 
 const DEFAULT_FALLBACK = DEFAULT_FALLBACK_MESSAGE
 const DEFAULT_REFUSAL = DEFAULT_REFUSAL_MESSAGE
@@ -225,10 +296,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  // 3. Build system prompt with persona hint appended
+  // 3. Build system prompt: admin's stored prompt (or our default) + persona hint
+  //    + a fresh runtime context block (live density per destination, current
+  //    season, weather hints, external booking link rules).
   const baseSystem = settings.system_prompt?.trim() || DEFAULT_SYSTEM_PROMPT
   const personaHint = PERSONA_HINT[settings.persona] || ''
-  const systemContent = personaHint ? `${baseSystem}\n\n${personaHint}` : baseSystem
+  const runtimeContext = buildRuntimeContext()
+  const systemContent = [baseSystem, personaHint, runtimeContext]
+    .filter((s) => s && s.trim())
+    .join('\n\n')
 
   try {
     const response = await fetch(chatCompletionsUrl(settings.api_provider), {
