@@ -88,6 +88,12 @@ export default function UserManagement() {
   }, [])
 
   async function handleGrant(target: AdminUser) {
+    const label = target.full_name || target.email || 'this user'
+    const confirmText = lang === 'en'
+      ? `Grant admin access to ${label}? They will be able to manage AI settings, edit and delete users, and view audit logs.`
+      : `Beri akses admin ke ${label}? Mereka akan bisa kelola setting AI, edit dan hapus user, serta lihat audit log.`
+    if (!window.confirm(confirmText)) return
+
     setBusyId(target.id)
     const { error } = await supabase.rpc('admin_grant_admin', { target: target.id })
     setBusyId(null)
