@@ -5,9 +5,11 @@ import { NotificationProvider } from './hooks/useNotifications'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
 import AppLayout from './components/AppLayout'
-import Landing from './pages/Landing'
+import PageLoader from './components/PageLoader'
 import Auth from './pages/Auth'
 import Legal from './pages/Legal'
+
+const Landing = lazy(() => import('./pages/Landing'))
 
 const Home = lazy(() => import('./pages/Home'))
 const Peta = lazy(() => import('./pages/Peta'))
@@ -20,14 +22,6 @@ const Admin = lazy(() => import('./pages/Admin'))
 const AiAgent = lazy(() => import('./pages/AiAgent'))
 const UserManagement = lazy(() => import('./pages/UserManagement'))
 const AuditLogs = lazy(() => import('./pages/AuditLogs'))
-
-function PageLoader() {
-  return (
-    <div className="flex items-center justify-center min-h-[50vh]">
-      <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
-    </div>
-  )
-}
 
 export default function App() {
   return (
