@@ -68,7 +68,23 @@ export default function UserManagement() {
   }
 
   useEffect(() => {
-    load()
+    // Initial fetch via async IIFE so the first await runs before any setState,
+    // satisfying react-hooks/set-state-in-effect. Refetches go through load().
+    let cancelled = false
+    void (async () => {
+      const { data, error } = await supabase.rpc('admin_list_users')
+      if (cancelled) return
+      if (error) {
+        setError(error.message)
+        setUsers([])
+      } else {
+        setUsers((data as AdminUser[]) ?? [])
+      }
+      setLoading(false)
+    })()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   async function handleGrant(target: AdminUser) {
@@ -198,7 +214,7 @@ export default function UserManagement() {
       {/* Header */}
       <SpotlightCard
         spotlightColor="rgba(0, 100, 124, 0.15)"
-        className="bg-gradient-to-br from-surface-container-low via-white to-primary-fixed/30 rounded-[2rem] p-8 border border-stone-200/60"
+        className="bg-linear-to-br from-surface-container-low via-white to-primary-fixed/30 rounded-4xl p-8 border border-stone-200/60"
       >
         <Link
           to="/app/admin"
@@ -416,7 +432,7 @@ export default function UserManagement() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
             onClick={() => !editSaving && setEditing(null)}
           >
             <motion.div
