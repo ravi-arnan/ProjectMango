@@ -4,7 +4,19 @@ import {
   DEFAULT_FALLBACK_MESSAGE,
   DEFAULT_REFUSAL_MESSAGE,
 } from '../src/data/aiDefaults'
-import { chatCompletionsUrl, DEFAULT_PROVIDER_ID } from '../src/data/aiProviders'
+
+// Inlined provider → endpoint map. Kept in sync with src/data/aiProviders.ts.
+const PROVIDER_BASE_URLS: Record<string, string> = {
+  'github-models': 'https://models.inference.ai.azure.com',
+  openai: 'https://api.openai.com/v1',
+  openrouter: 'https://openrouter.ai/api/v1',
+  groq: 'https://api.groq.com/openai/v1',
+}
+const DEFAULT_PROVIDER_ID = 'github-models'
+function chatCompletionsUrl(providerId: string): string {
+  const base = PROVIDER_BASE_URLS[providerId] ?? PROVIDER_BASE_URLS[DEFAULT_PROVIDER_ID]
+  return `${base}/chat/completions`
+}
 
 const destinations = [
   { name: 'Tanah Lot', location: 'Tabanan', category: 'Pura', density: 0.87, densityLabel: 'Sangat Ramai', visitors: 1248, maxCapacity: 1500, rating: 4.5, reviewCount: 1284, openHours: '06.00 - 19.00', ticketPrice: 'Rp 60.000', description: 'Situs Budaya & Keindahan Pesisir' },
@@ -152,14 +164,15 @@ function isBlocked(message: string, keywords: string[]): boolean {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
+  try {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' })
+    }
 
-  const { messages } = req.body
-  if (!messages || !Array.isArray(messages) || messages.length === 0) {
-    return res.status(400).json({ error: 'Messages array is required' })
-  }
+    const { messages } = req.body
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: 'Messages array is required' })
+    }
 
   const trimmedMessages = messages.slice(-20)
   const settings = await fetchAiSettings()
@@ -226,8 +239,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const reply = data.choices?.[0]?.message?.content || settings.fallback_message
 
     return res.status(200).json({ reply })
-  } catch (error) {
-    console.error('AI analysis error:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    } catch (error) {
+      console.error('AI analysis error:', error)
+      return res.status(500).json({ error: 'Internal server error' })
+    }
+  } catch (e) {
+    // Last-resort guard so we never return raw FUNCTION_INVOCATION_FAILED.
+    console.error('[ai-analysis] unhandled error:', e)
+    return res.status(500).json({
+      error: e instanceof Error ? `Handler error: ${e.message}` : 'Unknown handler error',
+    })
   }
 }

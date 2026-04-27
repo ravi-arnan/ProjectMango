@@ -1,5 +1,18 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { chatCompletionsUrl, getProvider } from '../src/data/aiProviders'
+
+// Inlined provider → endpoint map. Kept in sync with src/data/aiProviders.ts.
+// Inlined (not imported from ../src/) so the Vercel function bundle has no
+// cross-folder dependency that could fail to resolve at build time.
+const PROVIDER_ENDPOINTS: Record<string, { baseUrl: string; label: string }> = {
+  'github-models': { baseUrl: 'https://models.inference.ai.azure.com', label: 'GitHub Models' },
+  openai: { baseUrl: 'https://api.openai.com/v1', label: 'OpenAI' },
+  openrouter: { baseUrl: 'https://openrouter.ai/api/v1', label: 'OpenRouter' },
+  groq: { baseUrl: 'https://api.groq.com/openai/v1', label: 'Groq' },
+}
+
+function resolveProvider(id: string): { baseUrl: string; label: string } {
+  return PROVIDER_ENDPOINTS[id] ?? PROVIDER_ENDPOINTS['github-models']
+}
 
 async function isAdmin(token: string | undefined): Promise<boolean> {
   if (!token) return false
@@ -8,7 +21,6 @@ async function isAdmin(token: string | undefined): Promise<boolean> {
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!supabaseUrl || !supabaseAnonKey) return false
 
-  // 1. Verify the token resolves to a user
   let userId: string | null = null
   try {
     const userRes = await fetch(`${supabaseUrl}/auth/v1/user`, {
@@ -25,9 +37,6 @@ async function isAdmin(token: string | undefined): Promise<boolean> {
     return false
   }
 
-  // 2. Check admin row exists for that user
-  // Use service role to bypass RLS if available, otherwise the user's own
-  // session can read its own admins row per existing policy.
   const lookupKey = supabaseServiceKey || supabaseAnonKey
   const lookupAuth = supabaseServiceKey ? supabaseServiceKey : token
   try {
@@ -49,59 +58,69 @@ async function isAdmin(token: string | undefined): Promise<boolean> {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
-
-  const authHeader = req.headers.authorization
-  const accessToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : undefined
-  const admin = await isAdmin(accessToken)
-  if (!admin) {
-    return res.status(403).json({ ok: false, error: 'Admin only' })
-  }
-
-  const { apiKey, model, provider } = req.body ?? {}
-  if (!apiKey || typeof apiKey !== 'string') {
-    return res.status(400).json({ ok: false, error: 'apiKey required' })
-  }
-  if (!model || typeof model !== 'string') {
-    return res.status(400).json({ ok: false, error: 'model required' })
-  }
-  const providerId = typeof provider === 'string' ? provider : 'github-models'
-  const endpoint = chatCompletionsUrl(providerId)
-  const providerLabel = getProvider(providerId).label
-
   try {
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: 8,
-        messages: [
-          { role: 'system', content: 'You reply with a single word.' },
-          { role: 'user', content: 'ping' },
-        ],
-      }),
-    })
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' })
+    }
 
-    if (!response.ok) {
-      const errorText = await response.text()
+    const authHeader = req.headers.authorization
+    const accessToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : undefined
+    const admin = await isAdmin(accessToken)
+    if (!admin) {
+      return res.status(403).json({ ok: false, error: 'Admin only' })
+    }
+
+    const { apiKey, model, provider } = req.body ?? {}
+    if (!apiKey || typeof apiKey !== 'string') {
+      return res.status(400).json({ ok: false, error: 'apiKey required' })
+    }
+    if (!model || typeof model !== 'string') {
+      return res.status(400).json({ ok: false, error: 'model required' })
+    }
+
+    const providerId = typeof provider === 'string' ? provider : 'github-models'
+    const { baseUrl, label } = resolveProvider(providerId)
+    const endpoint = `${baseUrl}/chat/completions`
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: 8,
+          messages: [
+            { role: 'system', content: 'You reply with a single word.' },
+            { role: 'user', content: 'ping' },
+          ],
+        }),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        return res.status(200).json({
+          ok: false,
+          error: `${label} returned ${response.status}: ${errorText.slice(0, 200)}`,
+        })
+      }
+      const data = await response.json()
+      const reply = data.choices?.[0]?.message?.content
+      return res.status(200).json({ ok: true, reply })
+    } catch (e) {
       return res.status(200).json({
         ok: false,
-        error: `${providerLabel} returned ${response.status}: ${errorText.slice(0, 200)}`,
+        error: e instanceof Error ? e.message : 'Network error',
       })
     }
-    const data = await response.json()
-    const reply = data.choices?.[0]?.message?.content
-    return res.status(200).json({ ok: true, reply })
   } catch (e) {
+    // Last-resort guard so we never return raw FUNCTION_INVOCATION_FAILED.
+    console.error('[ai-test] unhandled error:', e)
     return res.status(200).json({
       ok: false,
-      error: e instanceof Error ? e.message : 'Network error',
+      error: e instanceof Error ? `Handler error: ${e.message}` : 'Unknown handler error',
     })
   }
 }
