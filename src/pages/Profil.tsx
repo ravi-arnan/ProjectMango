@@ -40,6 +40,8 @@ export default function Profil() {
   const initials = getUserInitials(user)
   const isGuest = user?.is_anonymous
   const canHaveBookings = !isAdmin && !isGuest
+  const canHaveWatchlist = !isAdmin
+  const canShowStats = canHaveBookings || canHaveWatchlist
   const upcomingBookings = getUpcomingBookings()
   const watchlistedDests = destinations.filter((d) => watchlist.includes(d.id))
 
@@ -134,9 +136,11 @@ export default function Profil() {
         </motion.div>
 
         <div className="flex flex-wrap justify-center gap-2">
-          <span className="bg-surface-container-high rounded-full px-4 py-2 text-xs font-semibold text-on-surface">
-            <CountUp to={watchlist.length} duration={1.2} /> {t('profil.stats.saved')}
-          </span>
+          {canHaveWatchlist && (
+            <span className="bg-surface-container-high rounded-full px-4 py-2 text-xs font-semibold text-on-surface">
+              <CountUp to={watchlist.length} duration={1.2} /> {t('profil.stats.saved')}
+            </span>
+          )}
           {canHaveBookings && (
             <span className="bg-surface-container-high rounded-full px-4 py-2 text-xs font-semibold text-on-surface">
               <CountUp to={bookings.length} duration={1.2} /> {lang === 'en' ? 'Bookings' : 'Booking'}
@@ -184,7 +188,7 @@ export default function Profil() {
         )}
 
         {/* Watchlist */}
-        {watchlistedDests.length > 0 && (
+        {canHaveWatchlist && watchlistedDests.length > 0 && (
           <div>
             <h3 className="text-base font-bold text-on-surface mb-3">{lang === 'en' ? 'Watchlist' : 'Watchlist'}</h3>
             <div className="flex gap-3 overflow-x-auto no-scrollbar">
@@ -288,7 +292,7 @@ export default function Profil() {
         <div className="grid grid-cols-12 gap-4">
           <SpotlightCard
             spotlightColor="rgba(0, 100, 124, 0.15)"
-            className="col-span-7 bg-surface-container-low rounded-[2.5rem] p-8 flex items-center gap-8"
+            className={`${canShowStats ? 'col-span-7' : 'col-span-12'} bg-surface-container-low rounded-[2.5rem] p-8 flex items-center gap-8`}
           >
             <div
               className={`w-[160px] h-[160px] rounded-full ${avatarColors[selectedAvatar]} flex items-center justify-center shrink-0 cursor-pointer shadow-2xl hover:scale-105 transition-transform`}
@@ -344,21 +348,24 @@ export default function Profil() {
             </div>
           </SpotlightCard>
 
-          <div className={`col-span-5 grid gap-4 ${canHaveBookings ? 'grid-cols-2' : 'grid-cols-1'}`}>
-            <SpotlightCard
-              spotlightColor="rgba(0, 100, 124, 0.18)"
-              className="bg-surface-container-low rounded-[2rem] p-6 flex flex-col justify-between"
-            >
-              <div>
-                <p className="text-sm text-on-surface-variant font-medium">{t('profil.stats.saved')}</p>
-                <p className="text-4xl font-extrabold text-on-surface mt-1 font-headline">
-                  <CountUp to={watchlist.length} duration={1.4} />
+          {canShowStats && (
+          <div className={`col-span-5 grid gap-4 ${canHaveWatchlist && canHaveBookings ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            {canHaveWatchlist && (
+              <SpotlightCard
+                spotlightColor="rgba(0, 100, 124, 0.18)"
+                className="bg-surface-container-low rounded-[2rem] p-6 flex flex-col justify-between"
+              >
+                <div>
+                  <p className="text-sm text-on-surface-variant font-medium">{t('profil.stats.saved')}</p>
+                  <p className="text-4xl font-extrabold text-on-surface mt-1 font-headline">
+                    <CountUp to={watchlist.length} duration={1.4} />
+                  </p>
+                </div>
+                <p className="text-xs text-on-surface-variant mt-4">
+                  {lang === 'en' ? 'in watchlist' : 'di watchlist'}
                 </p>
-              </div>
-              <p className="text-xs text-on-surface-variant mt-4">
-                {lang === 'en' ? 'in watchlist' : 'di watchlist'}
-              </p>
-            </SpotlightCard>
+              </SpotlightCard>
+            )}
             {canHaveBookings && (
               <SpotlightCard
                 spotlightColor="rgba(163, 103, 0, 0.18)"
@@ -376,6 +383,7 @@ export default function Profil() {
               </SpotlightCard>
             )}
           </div>
+          )}
         </div>
 
         {/* Booking History */}
