@@ -1,9 +1,31 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import {
-  DEFAULT_SYSTEM_PROMPT as BASE_SYSTEM_PROMPT,
-  DEFAULT_FALLBACK_MESSAGE,
-  DEFAULT_REFUSAL_MESSAGE,
-} from '../src/data/aiDefaults'
+
+// Inlined fallbacks. Kept in sync with src/data/aiDefaults.ts. These were
+// previously imported from ../src/data/aiDefaults, but the cross-folder
+// import made @vercel/node's bundler fail at module load with
+// FUNCTION_INVOCATION_FAILED, so the file is now self-contained.
+const BASE_SYSTEM_PROMPT = `Kamu adalah Mango AI, asisten wisata cerdas untuk platform pariwisata Bali. Kamu membantu pengguna menemukan destinasi terbaik di seluruh Bali, memberikan informasi lengkap, rekomendasi waktu kunjungan, dan rencana perjalanan.
+
+---
+
+## KEPRIBADIAN & GAYA BAHASA
+
+- Gunakan Bahasa Indonesia yang ramah, hangat, dan informatif
+- Gunakan emoji secukupnya agar jawaban lebih menarik dan mudah dibaca
+- Jawab secara terstruktur, ringkas, dan mudah dipahami
+- Jadilah seperti teman perjalanan yang berpengetahuan luas tentang Bali
+
+---
+
+## CAKUPAN PENGETAHUAN
+
+Kamu bebas menjawab pertanyaan tentang semua destinasi wisata di Bali, tidak terbatas pada daftar tertentu.`
+
+const DEFAULT_FALLBACK_MESSAGE =
+  'Maaf, saya tidak bisa memberikan respons saat ini. Coba tanyakan lagi dengan kata lain ya.'
+
+const DEFAULT_REFUSAL_MESSAGE =
+  'Maaf, saya tidak bisa membantu dengan topik itu. Tanyakan seputar wisata Bali ya.'
 
 // Inlined provider → endpoint map. Kept in sync with src/data/aiProviders.ts.
 const PROVIDER_BASE_URLS: Record<string, string> = {
